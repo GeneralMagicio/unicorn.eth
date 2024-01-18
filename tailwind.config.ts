@@ -15,6 +15,7 @@ module.exports = {
       colors: {
         "border-secondary": "var(--border-secondary)",
         "text-secondary": "var(--text-secondary)",
+        "background-secondary": "var(--background-secondary)",
       },
     },
   },

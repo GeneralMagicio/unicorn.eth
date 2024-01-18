@@ -1,4 +1,4 @@
-import { SVGProps } from "react";
+import { SVGProps } from 'react'
 
 export const UnicornIcon: React.FC<SVGProps<SVGSVGElement>> = ({
   ...props
@@ -9,16 +9,14 @@ export const UnicornIcon: React.FC<SVGProps<SVGSVGElement>> = ({
     viewBox="0 0 43 40"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
-  >
+    {...props}>
     <rect x="0.902832" width="41.194" height="40" fill="url(#pattern0)" />
     <defs>
       <pattern
         id="pattern0"
         patternContentUnits="objectBoundingBox"
         width="1"
-        height="1"
-      >
+        height="1">
         <use
           href="#image0_256_3238"
           transform="scale(0.000905797 0.000932836)"
@@ -32,4 +30,4 @@ export const UnicornIcon: React.FC<SVGProps<SVGSVGElement>> = ({
       />
     </defs>
   </svg>
-);
+)
