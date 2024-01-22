@@ -1,11 +1,13 @@
 'use client'
 
+import { AuthGuard } from '@/components/AuthGuard'
 import { ClockIcon } from '@/components/Icons/Clock'
 import { SettingsIcon } from '@/components/Icons/Settings'
 import { TransactionsIcon } from '@/components/Icons/Transactions'
 import { SettingsModal } from '@/components/SettingsModal'
+import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { Button, Typography } from '@ensdomains/thorin'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 const StyledLayout = styled.div({
@@ -57,32 +59,35 @@ export default function DashboardLayout({
 }) {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const toggleSettings = () => setIsSettingsOpen(!isSettingsOpen)
+  const { isAuthenticated, safeAuthPack, signInInfo } = useSafeAuth()
 
   return (
-    <StyledLayout>
-      {children}
-      <BottomNav>
-        <NavItem>
-          <ClockIcon />
-          <Typography fontVariant="extraSmall" color="inherit">
-            History
-          </Typography>
-        </NavItem>
-        <div className="flex w-16 items-center justify-center">
-          <div className="absolute m-auto ">
-            <TransactionButton size="medium" shape="circle">
-              <TransactionsIcon />
-            </TransactionButton>
+    <AuthGuard>
+      <StyledLayout>
+        {children}
+        <BottomNav>
+          <NavItem>
+            <ClockIcon />
+            <Typography fontVariant="extraSmall" color="inherit">
+              History
+            </Typography>
+          </NavItem>
+          <div className="flex w-16 items-center justify-center">
+            <div className="absolute m-auto ">
+              <TransactionButton size="medium" shape="circle">
+                <TransactionsIcon />
+              </TransactionButton>
+            </div>
           </div>
-        </div>
-        <NavItem onClick={toggleSettings}>
-          <SettingsIcon />
-          <Typography fontVariant="extraSmall" color="inherit">
-            Settings
-          </Typography>
-        </NavItem>
-      </BottomNav>
-      <SettingsModal open={isSettingsOpen} onDismiss={toggleSettings} />
-    </StyledLayout>
+          <NavItem onClick={toggleSettings}>
+            <SettingsIcon />
+            <Typography fontVariant="extraSmall" color="inherit">
+              Settings
+            </Typography>
+          </NavItem>
+        </BottomNav>
+        <SettingsModal open={isSettingsOpen} onDismiss={toggleSettings} />
+      </StyledLayout>
+    </AuthGuard>
   )
 }

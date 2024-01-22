@@ -24,7 +24,7 @@ const MOCK_TOKENS = [
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo } = useSafeAuth()
+  const { userInfo, userName } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
 
   return (
@@ -39,7 +39,9 @@ export default function Dashboard() {
               width={40}
               height={40}
             />
-            <Typography fontVariant="bodyBold">moenick.unicorn.eth</Typography>
+            <Typography fontVariant="bodyBold">
+              {userName}.unicorn.eth
+            </Typography>
           </UserInfo>
           <div className="flex items-center gap-2">
             <ScanIcon color={theme.colors.grey} />

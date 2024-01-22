@@ -20,13 +20,26 @@ import {
 import { nsService } from '@/services/enService'
 import { debounce } from '@/utils/debounce'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
+import styled from 'styled-components'
+
+const UserNameWrapper = styled.div<{ varient?: 'success' | 'error' }>(
+  ({ theme, varient }) => ({
+    '.sc-jNJODI': {
+      borderColor:
+        varient === 'success' ? `${theme.colors.green} !important` : undefined,
+    },
+    '.sc-eDvShL': {
+      color:
+        varient === 'success' ? `${theme.colors.green} !important` : undefined,
+    },
+  })
+)
 
 export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
-  const [userName, setUserName] = useState('')
   const [isSigning, setIsSigning] = useState(false)
-  const [IsNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
+  const [isNameAvailable, setisNameAvailable] = useState<boolean | null>(null)
   const {
     safeAuthPack,
     isAuthenticated,
@@ -34,6 +47,8 @@ export default function Login() {
     setUserInfo,
     userInfo,
     setSafeAuthSignInInfo,
+    userName,
+    setUserName,
   } = useSafeAuth()
 
   useEffect(() => {
@@ -65,20 +80,25 @@ export default function Login() {
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
-      setStep(0)
     }
   }
 
   const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      await nsService.getIsNameAvailable(e.target.value)
-      setIsNameAvailable(true)
+      const res = await nsService.getIsNameAvailable(e.target.value)
+      setisNameAvailable(e.target.value ? res : null)
     } catch (err) {
-      setIsNameAvailable(false)
+      setisNameAvailable(false)
     }
   }
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
 
+  const handleBack = () => {
+    if (step === 1) {
+      logout()
+    }
+    setStep(step - 1)
+  }
   return (
     <main className="flex min-h-screen flex-col items-center justify-center">
       {isSigning && <SigningInPage />}
@@ -87,7 +107,7 @@ export default function Login() {
           {isAuthenticated && userInfo && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
-              onClick={logout}
+              onClick={handleBack}
             />
           )}
           <Image src="/img/background-image.png" alt="Unicorn" fill />
@@ -121,20 +141,34 @@ export default function Login() {
                   <Typography fontVariant="extraLarge">
                     Choose your wallet name.
                   </Typography>
-                  <Input
-                    value={userName}
-                    onChange={(e) => {
-                      setUserName(e.target.value)
-                      debouncedCheckUserName(e)
-                    }}
-                    label=""
-                    name="username"
-                    placeholder="username"
-                    suffix=".unicorn.eth"
-                    size="large"
-                  />
+                  <UserNameWrapper
+                    varient={
+                      isNameAvailable && userName ? 'success' : undefined
+                    }>
+                    <Input
+                      description={
+                        userName && isNameAvailable
+                          ? 'Great choice! That’s available.'
+                          : ''
+                      }
+                      value={userName}
+                      onChange={(e) => {
+                        setUserName(e.target.value)
+                        debouncedCheckUserName(e)
+                      }}
+                      label=""
+                      name="username"
+                      placeholder="username"
+                      suffix=".unicorn.eth"
+                      size="large"
+                      error={
+                        isNameAvailable === false && "Oops! That's unavailable."
+                      }
+                    />
+                  </UserNameWrapper>
+
                   <Button
-                    disabled={!userName && Boolean(IsNameAvailable)}
+                    disabled={!userName || !Boolean(isNameAvailable)}
                     onClick={() => setStep(2)}>
                     Next
                   </Button>
@@ -156,7 +190,7 @@ export default function Login() {
                       />
                     )}
                     <Typography className="flex items-center gap-1 lowercase ">
-                      {userInfo?.name}.unicorn.eth <Copy />
+                      {userName}.unicorn.eth <Copy />
                     </Typography>
                     <Typography className="text-text-secondary">
                       {userInfo?.email}

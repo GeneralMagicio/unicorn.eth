@@ -9,7 +9,7 @@ import {
 } from '@/store/atoms'
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import { useAtom } from 'jotai'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -40,8 +40,8 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         await authPack.init(options)
 
         setSafeAuthPack(authPack)
-
         authPack.subscribe('accountsChanged', async (accounts) => {
+          console.log('accountsChanged')
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
 
