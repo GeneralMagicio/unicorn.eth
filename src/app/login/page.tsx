@@ -39,9 +39,11 @@ export default function Login() {
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return
     ;(async () => {
-      const userInfo = await safeAuthPack.getUserInfo()
-      setUserInfo(userInfo)
-      setStep(1)
+      const userInfo = (await safeAuthPack.getUserInfo()) || {}
+      if (Object.keys(userInfo).length) {
+        setUserInfo(userInfo)
+        setStep(1)
+      }
     })()
   }, [isAuthenticated, safeAuthPack, setUserInfo])
 
@@ -65,8 +67,8 @@ export default function Login() {
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
-      setStep(0)
     }
+    setStep(0)
   }
 
   const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
