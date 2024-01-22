@@ -63,7 +63,7 @@ export const SettingsModal: React.FC<{
     }
   }
   return (
-    <Modal open={open} onDismiss={onDismiss}>
+    <Modal open={open} onDismiss={onDismiss} mobileOnly>
       <div className="flex min-h-[40%] w-full flex-col gap-6 rounded-t-[32px] border-b bg-white p-5 py-12">
         <header className="text-center">
           <Typography fontVariant="large" weight="bold">

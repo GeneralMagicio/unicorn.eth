@@ -19,7 +19,11 @@ export default function RootLayout({
     <ClientProviders>
       <SafeAuthProvider>
         <html lang="en">
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className}>
+            <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white">
+              {children}
+            </main>
+          </body>
         </html>
       </SafeAuthProvider>
     </ClientProviders>

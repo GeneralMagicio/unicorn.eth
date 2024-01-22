@@ -100,10 +100,10 @@ export default function Login() {
     setStep(step - 1)
   }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <>
       {isSigning && <SigningInPage />}
-      <div className="fixed h-screen w-screen">
-        <div className="relative mb-28 flex h-2/3 w-full">
+      <div className="relative h-full w-full grow">
+        <div className="absolute mb-28 flex h-2/3 w-full">
           {isAuthenticated && userInfo && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
@@ -205,6 +205,6 @@ export default function Login() {
           </div>
         </div>
       </div>
-    </main>
+    </>
   )
 }

@@ -10,13 +10,6 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-const StyledLayout = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  height: '100vh',
-  width: '100vw',
-})
-
 const BottomNav = styled.nav(({ theme }) => ({
   position: 'fixed',
   bottom: '40px',
@@ -63,7 +56,7 @@ export default function DashboardLayout({
 
   return (
     <AuthGuard>
-      <StyledLayout>
+      <div className="flex w-full grow flex-col">
         {children}
         <BottomNav>
           <NavItem>
@@ -87,7 +80,7 @@ export default function DashboardLayout({
           </NavItem>
         </BottomNav>
         <SettingsModal open={isSettingsOpen} onDismiss={toggleSettings} />
-      </StyledLayout>
+      </div>
     </AuthGuard>
   )
 }
