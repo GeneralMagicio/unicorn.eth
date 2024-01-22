@@ -97,7 +97,7 @@ export default function Login() {
     if (step === 1) {
       logout()
     }
-    setStep(step - 1)
+    setStep(Math.max(step - 1, 0))
   }
   return (
     <>
