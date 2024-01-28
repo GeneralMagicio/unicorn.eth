@@ -1,15 +1,17 @@
 'use client'
 
 import Image from 'next/image'
-import { BalanceBox, UserInfo } from '@/components/Styled/Dashboard'
-import { Modal, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
-import { useAtom } from 'jotai'
-import { userInfoAtom } from '@/store/atoms'
 import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { BalanceBox, UserInfo } from '@/components/Styled'
+import { useAtom } from 'jotai'
+import { activeModalAtom, selectedTokenAtom } from '@/store'
+import { MODAL_TYPE } from './layout'
+import { TokenDetailModal } from '@/components/TokenDetailModal'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -26,6 +28,8 @@ export default function Dashboard() {
   const theme = useTheme()
   const { userInfo, userName } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
+  const [, setSelectedToken] = useAtom(selectedTokenAtom)
+  const [, setActiveModal] = useAtom(activeModalAtom)
 
   return (
     <div className="flex flex-col gap-10 px-[20px] py-10">
@@ -68,7 +72,15 @@ export default function Dashboard() {
       </nav>
       <div className="flex flex-col gap-4">
         {MOCK_TOKENS.map((token, idx) => (
-          <TokenItem key={idx} token={token} />
+          <div
+            key={idx}
+            onClick={() => {
+              setSelectedToken(token)
+              setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
+            }}
+            role="button">
+            <TokenItem token={token} />
+          </div>
         ))}
       </div>
     </div>

@@ -4,10 +4,13 @@ import { AuthGuard } from '@/components/AuthGuard'
 import { ClockIcon } from '@/components/Icons/Clock'
 import { SettingsIcon } from '@/components/Icons/Settings'
 import { TransactionsIcon } from '@/components/Icons/Transactions'
+import { SendModal } from '@/components/SendModal'
 import { SettingsModal } from '@/components/SettingsModal'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { TokenDetailModal } from '@/components/TokenDetailModal'
+import { TransactionModal } from '@/components/TransactionModal'
+import { activeModalAtom } from '@/store'
 import { Button, Typography } from '@ensdomains/thorin'
-import { useEffect, useState } from 'react'
+import { useAtom } from 'jotai'
 import styled from 'styled-components'
 
 const BottomNav = styled.nav(({ theme }) => ({
@@ -44,15 +47,19 @@ const TransactionButton = styled(Button)({
     height: '32px',
   },
 })
+export const enum MODAL_TYPE {
+  SETTINGS = 'SETTINGS',
+  TRANSACTION = 'TRANSACTION',
+  SEND = 'SEND',
+  TOKEN_DETAIL = 'TOKEN_DETAIL',
+}
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
 }: {
   children: React.ReactNode
 }) {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const toggleSettings = () => setIsSettingsOpen(!isSettingsOpen)
-  const { isAuthenticated, safeAuthPack, signInInfo } = useSafeAuth()
+  const [activeModal, setActiveModal] = useAtom(activeModalAtom)
 
   return (
     <AuthGuard>
@@ -67,19 +74,34 @@ export default function DashboardLayout({
           </NavItem>
           <div className="flex w-16 items-center justify-center">
             <div className="absolute m-auto ">
-              <TransactionButton size="medium" shape="circle">
+              <TransactionButton
+                size="medium"
+                shape="circle"
+                onClick={() => setActiveModal(MODAL_TYPE.TRANSACTION)}>
                 <TransactionsIcon />
               </TransactionButton>
             </div>
           </div>
-          <NavItem onClick={toggleSettings}>
+          <NavItem onClick={() => setActiveModal(MODAL_TYPE.SETTINGS)}>
             <SettingsIcon />
             <Typography fontVariant="extraSmall" color="inherit">
               Settings
             </Typography>
           </NavItem>
         </BottomNav>
-        <SettingsModal open={isSettingsOpen} onDismiss={toggleSettings} />
+        <SettingsModal
+          open={activeModal === MODAL_TYPE.SETTINGS}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <TransactionModal
+          open={activeModal === MODAL_TYPE.TRANSACTION}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <SendModal
+          open={activeModal === MODAL_TYPE.SEND}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <TokenDetailModal />
       </div>
     </AuthGuard>
   )

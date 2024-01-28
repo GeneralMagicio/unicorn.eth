@@ -1,7 +1,6 @@
-import { numberFormatter } from '@/utils/price'
+import { numberFormatter, priceFormatter } from '@/utils/price'
 import { Typography } from '@ensdomains/thorin'
 import Image from 'next/image'
-
 interface TokenItemProps {
   token: {
     name: string
@@ -10,9 +9,14 @@ interface TokenItemProps {
     icon: string
   }
   label?: string
+  showOnlyName?: boolean
 }
 
-export const TokenItem: React.FC<TokenItemProps> = ({ token, label = '' }) => {
+export const TokenItem: React.FC<TokenItemProps> = ({
+  token,
+  label = '',
+  showOnlyName,
+}) => {
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
@@ -23,15 +27,20 @@ export const TokenItem: React.FC<TokenItemProps> = ({ token, label = '' }) => {
           height={46}
           className="rounded"
         />
-        <div className="flex flex-col justify-between">
+        <div
+          className={`flex flex-col justify-${
+            showOnlyName ? 'center' : 'between'
+          }`}>
           <Typography weight="bold">{token.name}</Typography>
-          <Typography fontVariant="small" color="grey">
-            {label} {numberFormatter.format(token.price)}
-          </Typography>
+          {!showOnlyName && (
+            <Typography fontVariant="small" color="grey">
+              {label} {numberFormatter.format(token.price)}
+            </Typography>
+          )}
         </div>
       </div>
       <Typography weight="bold">
-        {numberFormatter.format(token.value)}
+        {!showOnlyName && priceFormatter.format(token.value)}
       </Typography>
     </div>
   )

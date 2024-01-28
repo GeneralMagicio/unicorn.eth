@@ -12,6 +12,11 @@ const customTheme = {
     ...lightTheme.colors,
     textSecondary: '#9B9BA7',
   },
+  fontWeights: {
+    ...lightTheme.fontWeights,
+    extraBold: '700',
+    bold: '600',
+  },
 }
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {

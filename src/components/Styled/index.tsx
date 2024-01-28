@@ -1,4 +1,18 @@
+import { Button } from '@ensdomains/thorin'
 import styled from 'styled-components'
+
+export const IconButton = styled(Button)<{ height?: string }>(
+  ({ theme, height }) => ({
+    padding: 0,
+    width: height,
+    height: height,
+    svg: {
+      width: 'unset',
+      height: 'unset',
+      color: 'unset',
+    },
+  })
+)
 
 export const UserInfo = styled.div(({ theme }) => ({
   display: 'flex',

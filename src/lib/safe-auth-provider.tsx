@@ -1,15 +1,9 @@
 'use client'
 
-import { useSafeAuth } from '@/hooks/useSafeAuth'
-import {
-  isAuthenticatedAtom,
-  safeAuthPackAtom,
-  safeAuthSignInInfoAtom,
-  userInfoAtom,
-} from '@/store/atoms'
+import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
+
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
-import { useAtom } from 'jotai'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   const {
@@ -19,6 +13,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated,
     setSafeAuthSignInInfo,
     setUserInfo,
+    setAuthStatus,
   } = useSafeAuth()
 
   useEffect(() => {
@@ -34,6 +29,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
           rpcTarget: 'https://gnosis.drpc.org',
         },
       }
+
       import('@safe-global/auth-kit').then(async ({ SafeAuthPack }) => {
         const authPack = new SafeAuthPack()
 
@@ -44,10 +40,10 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
           console.log('accountsChanged')
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
-
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
           }
+          setAuthStatus(AUTH_STATUS.RESOLVED)
         })
       })
     })()

@@ -7,8 +7,9 @@ import { LogOutIcon } from '@/components/Icons/LogOut'
 import { SettingsIcon } from '@/components/Icons/Settings'
 import { Modal, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/navigation'
+import { ModalHeader } from '../ModalHeader'
 
-enum ACTION_TYPE {
+export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
   SECURITY,
   GENERAL,
@@ -20,17 +21,25 @@ const SETTINGS_ACTIONS = [
   {
     icon: <AccountIcon />,
     label: 'Account Details',
-    type: ACTION_TYPE.DETAILS,
+    type: SETTINGS_ACTION_TYPE.DETAILS,
   },
-  { icon: <LockIcon />, label: 'Security', type: ACTION_TYPE.SECURITY },
+  {
+    icon: <LockIcon />,
+    label: 'Security',
+    type: SETTINGS_ACTION_TYPE.SECURITY,
+  },
   {
     icon: <SettingsIcon />,
     label: 'General Settings',
-    type: ACTION_TYPE.GENERAL,
+    type: SETTINGS_ACTION_TYPE.GENERAL,
   },
-  { icon: <ChatIcon />, label: 'Help & Support', type: ACTION_TYPE.HELP },
-  { icon: <AlertIcon />, label: 'About us', type: ACTION_TYPE.ABOUT },
-  { icon: <LogOutIcon />, label: 'Log out', type: ACTION_TYPE.LOGOUT },
+  {
+    icon: <ChatIcon />,
+    label: 'Help & Support',
+    type: SETTINGS_ACTION_TYPE.HELP,
+  },
+  { icon: <AlertIcon />, label: 'About us', type: SETTINGS_ACTION_TYPE.ABOUT },
+  { icon: <LogOutIcon />, label: 'Log out', type: SETTINGS_ACTION_TYPE.LOGOUT },
 ]
 
 export const SettingsModal: React.FC<{
@@ -47,7 +56,7 @@ export const SettingsModal: React.FC<{
   } = useSafeAuth()
   const handleActionClick = (action: (typeof SETTINGS_ACTIONS)[number]) => {
     switch (action.type) {
-      case ACTION_TYPE.LOGOUT:
+      case SETTINGS_ACTION_TYPE.LOGOUT:
         logout()
         router.replace('/login')
         break
@@ -64,13 +73,9 @@ export const SettingsModal: React.FC<{
   }
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
-      <div className="flex min-h-[40%] w-full flex-col gap-6 rounded-t-[32px] border-b bg-white p-5 py-12">
-        <header className="text-center">
-          <Typography fontVariant="large" weight="bold">
-            Settings
-          </Typography>
-        </header>
-        <hr />
+      <div className="flex min-h-[40%] w-full flex-col gap-6 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
+        <ModalHeader title="Settings" />
+        {/* <hr /> */}
         {SETTINGS_ACTIONS.map((action) => (
           <div
             className="flex items-center gap-4"

@@ -7,16 +7,8 @@ import { GoogleIcon } from '@/components/Icons/Google'
 import { ArrowLeft } from '@/components/Icons/ArrowLeft'
 import { SigningInPage } from '@/components/SigningInPage'
 import { Copy } from '@/components/Icons/Copy'
-import { useTheme } from 'styled-components'
 import { SignUpButton } from '@/components/SignUp/inde'
 import { useRouter } from 'next/navigation'
-import { useAtom } from 'jotai'
-import {
-  isAuthenticatedAtom,
-  safeAuthPackAtom,
-  safeAuthSignInInfoAtom,
-  userInfoAtom,
-} from '@/store/atoms'
 import { nsService } from '@/services/enService'
 import { debounce } from '@/utils/debounce'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
@@ -71,8 +63,6 @@ export default function Login() {
       setIsSigning(false)
     }
   }
-
-  console.log({ isAuthenticated })
 
   const logout = async () => {
     if (isAuthenticated) {
@@ -168,7 +158,7 @@ export default function Login() {
                   </UserNameWrapper>
 
                   <Button
-                    disabled={!userName || !Boolean(isNameAvailable)}
+                    // disabled={!userName || !Boolean(isNameAvailable)}
                     onClick={() => setStep(2)}>
                     Next
                   </Button>
