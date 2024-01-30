@@ -1,11 +1,8 @@
 import { Input, Modal, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TokenItem } from '../TokenItem'
-import { ModalHandlIcon } from '../Icons/ModalHandleIcon'
 import { ScanIcon } from '../Icons/Scan'
 import { IconButton } from '../Styled'
-import { ICryptoToken } from '@/services/types'
 import { ChevronRight } from '../Icons/ChevronRight'
 import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
@@ -26,7 +23,6 @@ export const SendModal: React.FC<{
   open: boolean
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
-  const router = useRouter()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
 
@@ -39,7 +35,7 @@ export const SendModal: React.FC<{
           placeholder="To: Username or ENS address"
           clearable
           suffix={
-            <div className="flex gap-1 items-center">
+            <div className="flex items-center gap-1">
               <Typography color="bluePrimary">Paste</Typography>
               <IconButton colorStyle="transparent" size="small" shape="circle">
                 <ScanIcon width={16} height={16} />
@@ -49,7 +45,7 @@ export const SendModal: React.FC<{
 
         {selectedToken && (
           <div className="flex flex-col gap-8">
-            <div className="flex justify-between px-4 py-2 rounded-2xl border border-gray-200">
+            <div className="flex justify-between rounded-2xl border border-gray-200 px-4 py-2">
               <TokenItem token={selectedToken} showOnlyName />
               <IconButton
                 colorStyle="transparent"
@@ -81,6 +77,7 @@ export const SendModal: React.FC<{
             <div className="flex flex-col gap-4">
               {MOCK_TOKENS.map((token, idx) => (
                 <div
+                  key={idx}
                   className="cursor-pointer"
                   role="button"
                   onClick={() => setSelectedToken(token)}>
