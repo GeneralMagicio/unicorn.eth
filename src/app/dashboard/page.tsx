@@ -32,7 +32,7 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   return (
-    <div className="flex flex-col gap-10 px-[20px] py-10">
+    <>
       <header className="flex items-center justify-between">
         <UserInfo>
           <Image
@@ -83,6 +83,6 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-    </div>
+    </>
   )
 }
