@@ -12,17 +12,9 @@ import { useAtom } from 'jotai'
 import { activeModalAtom, selectedTokenAtom } from '@/store'
 import { MODAL_TYPE } from './layout'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
+import { MOCK_TOKENS } from '@/utils/db'
 
 const TABS = ['Tokens', 'Collectibles']
-
-const MOCK_TOKENS = [
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-]
 
 export default function Dashboard() {
   const theme = useTheme()

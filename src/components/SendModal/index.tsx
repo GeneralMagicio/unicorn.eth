@@ -7,17 +7,9 @@ import { ChevronRight } from '../Icons/ChevronRight'
 import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
+import { MOCK_TOKENS } from '@/utils/db'
 
 const TABS = ['Tokens', 'Collectibles']
-
-const MOCK_TOKENS = [
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-  { name: 'ENS', price: 4308, value: 3726, icon: '/img/ens.png' },
-]
 
 export const SendModal: React.FC<{
   open: boolean

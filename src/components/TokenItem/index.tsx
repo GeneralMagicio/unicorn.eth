@@ -1,13 +1,9 @@
+import { ICryptoToken } from '@/services/types'
 import { numberFormatter, priceFormatter } from '@/utils/price'
 import { Typography } from '@ensdomains/thorin'
 import Image from 'next/image'
 interface TokenItemProps {
-  token: {
-    name: string
-    price: number
-    value: number
-    icon: string
-  }
+  token: ICryptoToken
   label?: string
   showOnlyName?: boolean
 }
@@ -25,22 +21,22 @@ export const TokenItem: React.FC<TokenItemProps> = ({
           alt={token.name}
           width={46}
           height={46}
-          className="rounded"
+          className="h-[46px] w-[46px] rounded-full"
         />
         <div
-          className={`flex flex-col justify-${
-            showOnlyName ? 'center' : 'between'
+          className={`flex flex-col ${
+            showOnlyName ? 'justify-center' : 'justify-between'
           }`}>
           <Typography weight="bold">{token.name}</Typography>
           {!showOnlyName && (
             <Typography fontVariant="small" color="grey">
-              {label} {numberFormatter.format(token.price)}
+              {label} {numberFormatter.format(token.value)}
             </Typography>
           )}
         </div>
       </div>
       <Typography weight="bold">
-        {!showOnlyName && priceFormatter.format(token.value)}
+        {!showOnlyName && priceFormatter.format(token.price)}
       </Typography>
     </div>
   )
