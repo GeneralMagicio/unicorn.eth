@@ -7,6 +7,7 @@ import {
   userNameAtom,
 } from '@/store'
 import { useAtom } from 'jotai'
+import { useEffect } from 'react'
 
 export const enum AUTH_STATUS {
   PENDING,
@@ -19,6 +20,7 @@ export const useSafeAuth = () => {
   const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
   const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
   const [authStatus, setAuthStatus] = useAtom(authStatusAtom)
+
   return {
     safeAuthPack,
     setSafeAuthPack,
