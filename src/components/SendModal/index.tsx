@@ -1,4 +1,5 @@
 import { Input, Modal, Typography } from '@ensdomains/thorin'
+import { css } from 'styled-components'
 import { useState } from 'react'
 import { TokenItem } from '../TokenItem'
 import { ScanIcon } from '../Icons/Scan'
@@ -17,6 +18,26 @@ export const SendModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const [activeTab, setActiveTab] = useState('Tokens')
   const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
+  const [error, setError] = useState<string | null>(null)
+  const [warning, setWaring] = useState<string | null>('this is a warning')
+
+  const getInputParentStyles = () => {
+    if (!!error) {
+      return css`
+        div {
+          border-color: ${({ theme }) => theme.colors.red} !important;
+        }
+      `
+    }
+    if (!!warning) {
+      return css`
+        div {
+          border-color: ${({ theme }) => theme.colors.yellow} !important;
+        }
+      `
+    }
+    return css``
+  }
 
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
@@ -24,6 +45,11 @@ export const SendModal: React.FC<{
         <ModalHeader title="Send" />
         <Input
           label=""
+          description={
+            warning && <Typography color="yellow">{warning}</Typography>
+          }
+          error={error}
+          parentStyles={getInputParentStyles()}
           placeholder="To: Username or ENS address"
           clearable
           suffix={
@@ -33,7 +59,10 @@ export const SendModal: React.FC<{
                 <ScanIcon width={16} height={16} />
               </IconButton>
             </div>
-          }></Input>
+          }
+          onChange={() => {
+            setError('some error')
+          }}></Input>
 
         {selectedToken && (
           <div className="flex flex-col gap-8">
