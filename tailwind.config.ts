@@ -1,3 +1,5 @@
+import { lightTheme } from "@ensdomains/thorin"
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -16,6 +18,7 @@ module.exports = {
         "border-secondary": "var(--border-secondary)",
         "text-secondary": "var(--text-secondary)",
         "background-secondary": "var(--background-secondary)",
+        ...lightTheme.colors
       },
     },
   },

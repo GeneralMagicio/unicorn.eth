@@ -13,26 +13,6 @@ import { PenIcon } from '@/components/Icons/Pen'
 import { ArrowRightIcon } from '@/components/Icons/ArrowRight'
 import { MODAL_TYPE } from '@/app/dashboard/layout'
 
-const UserInfoBox = styled.div(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  borderRadius: '16px',
-  gap: theme.space['4'],
-  backgroundColor: theme.colors.backgroundSecondary,
-  color: theme.colors.textSecondary,
-  padding: '8px',
-}))
-
-const BuyEnsBox = styled.div(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  borderRadius: '16px',
-  gap: theme.space['4'],
-  backgroundColor: theme.colors.blueSurface,
-  padding: '12px',
-}))
-
 export const AccountDetailsModal: React.FC<{
   open: boolean
   onDismiss: () => void
@@ -45,7 +25,7 @@ export const AccountDetailsModal: React.FC<{
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
       <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
         <ModalHeader title="Account Details" />
-        <UserInfoBox>
+        <div className='flex justify-between space-x-4 rounded-2xl bg-backgroundSecondary p-2 text-textSecondary'>
           <div className="flex gap-2 ">
             <div className="relative">
               <Image
@@ -70,9 +50,10 @@ export const AccountDetailsModal: React.FC<{
             onClick={() => setActiveModal(MODAL_TYPE.SETTINGS_CHANGE_DOMIAN)}>
             <PenIcon />
           </IconButton>
-        </UserInfoBox>
+        </div>
         <div>
-          <BuyEnsBox
+          <div
+            className={`flex items-center justify-between space-x-4 rounded-2xl bg-blueSurface p-3`}
             onClick={() => setActiveModal(MODAL_TYPE.SETTINGS_BUY_ENS)}
             role="button">
             <div className="flex gap-2 ">
@@ -95,7 +76,7 @@ export const AccountDetailsModal: React.FC<{
             <IconButton colorStyle="transparent" shape="square" height="24px">
               <ArrowRightIcon />
             </IconButton>
-          </BuyEnsBox>
+          </div>
           <div className="mt-4 flex flex-col gap-4">
             <Input
               clearable
