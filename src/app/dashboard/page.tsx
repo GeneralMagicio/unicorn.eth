@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <header className="flex items-center justify-between">
+      <header className="flex  items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
@@ -36,7 +36,7 @@ export default function Dashboard() {
           />
           <Typography fontVariant="bodyBold">{userName}.unicorn.eth</Typography>
         </UserInfo>
-        <div className="flex items-center gap-2">
+        <div className="flex  items-center gap-2">
           <ScanIcon color={theme.colors.grey} />
         </div>
       </header>

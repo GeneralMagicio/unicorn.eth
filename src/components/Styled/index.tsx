@@ -52,7 +52,11 @@ export const UserNameInput = styled.div<{ varient?: 'success' | 'error' }>(
     },
     '& > div > div:last-child': {
       color:
-        varient === 'success' ? `${theme.colors.green} !important` : 'white',
+        varient === 'success'
+          ? `${theme.colors.green} !important`
+          : varient === 'error'
+            ? theme.colors.redPrimary
+            : 'white',
     },
     label: {
       background: 'transparent',

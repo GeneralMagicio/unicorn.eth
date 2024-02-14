@@ -1,6 +1,7 @@
 'use client'
 
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
+import { getSubnameResolution } from '@/services/enService'
 
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import { useEffect } from 'react'
@@ -13,6 +14,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated,
     setSafeAuthSignInInfo,
     setUserInfo,
+    setUserName,
     setAuthStatus,
   } = useSafeAuth()
 
@@ -37,23 +39,29 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
 
         setSafeAuthPack(authPack)
         authPack.subscribe('accountsChanged', async (accounts) => {
-          console.log('accountsChanged')
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
+            getSubnameResolution({ address: signInInfo.eoa }).then((res) => {
+              setUserName(res[res.length - 1].label)
+            })
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })
       })
     })()
-  }, [setIsAuthenticated, setSafeAuthPack, setSafeAuthSignInInfo])
+  }, [
+    setAuthStatus,
+    setIsAuthenticated,
+    setSafeAuthPack,
+    setSafeAuthSignInInfo,
+  ])
 
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return
     ;(async () => {
       const userInfo = await safeAuthPack.getUserInfo()
-      console.log({ userInfo })
       setUserInfo(userInfo)
     })()
   }, [isAuthenticated, safeAuthPack, setUserInfo])

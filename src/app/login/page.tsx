@@ -37,6 +37,7 @@ export default function Login() {
     debouncedCheckUserName,
     createEnsSubname,
   } = useEnsResolver()
+
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return
     ;(async () => {
@@ -73,6 +74,7 @@ export default function Login() {
     }
     setStep(Math.max(step - 1, 0))
   }
+
   return (
     <>
       {isSigning && <SigningInPage />}
@@ -113,7 +115,11 @@ export default function Login() {
                   </Typography>
                   <UserNameInput
                     varient={
-                      isNameAvailable && userName ? 'success' : undefined
+                      isNameAvailable === false
+                        ? 'error'
+                        : isNameAvailable === true
+                          ? 'success'
+                          : undefined
                     }>
                     <Input
                       description={

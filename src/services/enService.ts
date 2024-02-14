@@ -1,27 +1,39 @@
-import { axiosInstance } from './axiosInstance'
+import axios from 'axios'
 
-export function getIsNameAvailable(name: string) {
-  return axiosInstance
-    .get<boolean>('/ns/isAvailable', { params: { name } })
-    .then((res) => res.data)
-}
+export const axiosInstance = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_OFFCHAIN_BASE_URL ||
+    'https://offchain.namespace.tech',
+  headers: {
+    'Content-type': 'application/json',
+    Authorization: `Bearer ${process.env.NEXT_PUBLIC_OFFCHIAN_API_KEY}`,
+  },
+})
 
 export function createSubname(body: {
-  safe: string
-  name: string
-  chain: string
+  domain: string
+  label: string
+  address: string
 }) {
   return axiosInstance
-    .post<boolean>('/ns/createSubname', body)
+    .post<boolean>('/v1/subname/mint', body)
     .then((res) => res.data)
 }
 
-export function getSubname(body: { safe: string }) {
+export function getIsNameAvailable(params: { label: string; domain: string }) {
   return axiosInstance
-    .get<boolean>('/ns/getSubname', { params: body })
+    .get<{ isAvailable: boolean }>(
+      `/v1/subname/availability/${params.label}/${params.domain}`
+    )
     .then((res) => res.data)
 }
-
+export function getSubnameResolution(params: { address: string }) {
+  return axiosInstance
+    .get<Array<{ label: string; domain: string; fullName: string }>>(
+      `/v1/subname/resolution/${params.address}/60`
+    )
+    .then((res) => res.data)
+}
 export const nsService = {
   getIsNameAvailable,
 }
