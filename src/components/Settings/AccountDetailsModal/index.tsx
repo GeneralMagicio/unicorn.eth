@@ -17,6 +17,7 @@ import useSWR from 'swr'
 import { EnsRecordType, getSubnameMetadata } from '@/services/enService'
 import { useEffect, useMemo, useRef } from 'react'
 import { convertImageToBase64 } from '@/utils/image'
+import { UploadIcon } from '@/components/Icons/Upload'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -131,6 +132,9 @@ export const AccountDetailsModal: React.FC<{
                 width={60}
                 height={60}
               />
+              <div className="!absolute bottom-0 right-0 rounded-full bg-white p-1">
+                <UploadIcon />
+              </div>
             </div>
             <div className="flex flex-col justify-center gap-2">
               <Typography fontVariant="bodyBold">
