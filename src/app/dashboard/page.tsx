@@ -18,7 +18,7 @@ const TABS = ['Tokens', 'Collectibles']
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName } = useSafeAuth()
+  const { userInfo, userName, profileImage } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
@@ -29,7 +29,7 @@ export default function Dashboard() {
         <UserInfo>
           <Image
             className="rounded-full"
-            src={userInfo?.profileImage || ''}
+            src={profileImage || userInfo?.profileImage || ''}
             alt={userInfo?.name || ''}
             width={40}
             height={40}

@@ -6,6 +6,7 @@ import {
   userInfoAtom,
   userNameAtom,
 } from '@/store'
+import { userProfileImg } from '@/store/settings'
 import { useAtom } from 'jotai'
 import { useEffect } from 'react'
 
@@ -20,6 +21,7 @@ export const useSafeAuth = () => {
   const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
   const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
   const [authStatus, setAuthStatus] = useAtom(authStatusAtom)
+  const [profileImage, setProfileImage] = useAtom(userProfileImg)
 
   return {
     safeAuthPack,
@@ -32,6 +34,8 @@ export const useSafeAuth = () => {
     setUserInfo,
     userName,
     setUserName,
+    profileImage,
+    setProfileImage,
     authStatus,
     setAuthStatus,
   }

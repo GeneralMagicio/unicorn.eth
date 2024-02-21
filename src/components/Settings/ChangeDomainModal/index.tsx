@@ -7,13 +7,16 @@ import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect, useState } from 'react'
 import { TickCircleIcon } from '@/components/Icons/TickCircle'
+import { useSWRConfig } from 'swr'
 
 export const ChangeDomainModal: React.FC<{
   open: boolean
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
+  const { mutate } = useSWRConfig()
   const theme = useTheme()
-  const { userName, setUserName } = useSafeAuth()
+  const { userName, setUserName, setProfileImage } = useSafeAuth()
+  const [newUserName, setNewUserName] = useState('')
   const [changed, setChanged] = useState(false)
   const {
     isRegistering,
@@ -22,6 +25,23 @@ export const ChangeDomainModal: React.FC<{
     debouncedCheckUserName,
     createEnsSubname,
   } = useEnsResolver()
+
+  useEffect(() => {
+    setChanged(false)
+    setNewUserName('')
+  }, [open])
+
+  const updateUserName = () => {
+    createEnsSubname(newUserName)
+      .then(() => {
+        setChanged(true)
+        setUserName(newUserName)
+      })
+      .then(() => {
+        mutate(['account_info', newUserName])
+        setProfileImage('')
+      })
+  }
 
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
@@ -52,21 +72,21 @@ export const ChangeDomainModal: React.FC<{
             </Typography>
             <UserNameInput
               varient={
-                isNameAvailable === false
+                newUserName && isNameAvailable === false
                   ? 'error'
-                  : isNameAvailable === true
+                  : newUserName && isNameAvailable === true
                     ? 'success'
                     : undefined
               }>
               <Input
                 description={
-                  userName && isNameAvailable
+                  newUserName && isNameAvailable
                     ? 'Great choice! That’s available.'
                     : 'Hide'
                 }
-                value={userName}
+                value={newUserName}
                 onChange={(e) => {
-                  setUserName(e.target.value)
+                  setNewUserName(e.target.value)
                   setIsNameAvailable(null)
                   debouncedCheckUserName(e)
                 }}
@@ -82,11 +102,7 @@ export const ChangeDomainModal: React.FC<{
             <Button
               loading={isRegistering}
               disabled={!userName || !Boolean(isNameAvailable)}
-              onClick={() => {
-                createEnsSubname().then(() => {
-                  setChanged(true)
-                })
-              }}>
+              onClick={updateUserName}>
               Update Username
             </Button>
           </div>

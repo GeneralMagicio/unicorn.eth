@@ -148,7 +148,7 @@ export default function Login() {
                     loading={isRegistering}
                     // disabled={!userName || !Boolean(isNameAvailable)}
                     onClick={() => {
-                      createEnsSubname().then(() => {
+                      createEnsSubname(userName).then(() => {
                         setStep(2)
                       })
                     }}>

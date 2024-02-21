@@ -1,7 +1,11 @@
 'use client'
 
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
-import { getSubnameResolution } from '@/services/enService'
+import {
+  EnsRecordType,
+  getCustomSubnameData,
+  getSubnameResolution,
+} from '@/services/enService'
 
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import { useEffect } from 'react'
@@ -16,6 +20,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setUserInfo,
     setUserName,
     setAuthStatus,
+    setProfileImage,
   } = useSafeAuth()
 
   useEffect(() => {
@@ -38,14 +43,26 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         await authPack.init(options)
 
         setSafeAuthPack(authPack)
-        authPack.subscribe('accountsChanged', async (accounts) => {
+        authPack.subscribe('accountsChanged', async () => {
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
-            getSubnameResolution({ address: signInInfo.eoa }).then((res) => {
-              setUserName(res[res.length - 1].label)
-            })
+            try {
+              const res = await getSubnameResolution({
+                address: signInInfo.eoa,
+              })
+              const userName = res[res.length - 1].label
+              setUserName(userName)
+
+              const data = await getCustomSubnameData({
+                label: userName,
+                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+              })
+              console.log({ data })
+            } catch (err) {
+              console.error(err)
+            }
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })
@@ -54,8 +71,10 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   }, [
     setAuthStatus,
     setIsAuthenticated,
+    setProfileImage,
     setSafeAuthPack,
     setSafeAuthSignInInfo,
+    setUserName,
   ])
 
   useEffect(() => {

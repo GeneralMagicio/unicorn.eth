@@ -20,3 +20,4 @@ export type LocalCurrencyType = keyof typeof LocalCurrenciesDict
 export const appearanceAtom = atom<(typeof Appearances)[number]>('light')
 export const localCurrencyAtom = atom<LocalCurrencyType>('USD')
 export const showUnverifiedTokensAtom = atom<boolean>(false)
+export const userProfileImg = atom<string>('')
