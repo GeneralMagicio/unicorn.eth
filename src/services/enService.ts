@@ -68,7 +68,7 @@ export function createCustomSubnameData(body: {
 export function getCustomSubnameData(params: { label: string; key: string }) {
   const { label, key } = params
   return axiosInstance
-    .get<boolean>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`)
+    .get<string>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`)
     .then((res) => res.data)
 }
 

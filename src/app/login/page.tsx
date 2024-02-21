@@ -26,6 +26,7 @@ export default function Login() {
     setUserInfo,
     userInfo,
     setSafeAuthSignInInfo,
+    signInInfo,
     userName,
     setUserName,
   } = useSafeAuth()
@@ -36,6 +37,7 @@ export default function Login() {
     setIsNameAvailable,
     debouncedCheckUserName,
     createEnsSubname,
+    getSubnameResolution,
   } = useEnsResolver()
 
   useEffect(() => {
@@ -46,6 +48,16 @@ export default function Login() {
       setStep(1)
     })()
   }, [isAuthenticated, safeAuthPack, setUserInfo])
+
+  useEffect(() => {
+    if (step === 1) {
+      getSubnameResolution({ address: signInInfo?.eoa! }).then((res) => {
+        if (res.length) {
+          router.replace('/dashboard')
+        }
+      })
+    }
+  }, [signInInfo?.eoa, step, userInfo])
 
   const login = async () => {
     setIsSigning(true)

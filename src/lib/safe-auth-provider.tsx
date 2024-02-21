@@ -10,6 +10,8 @@ import {
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import { useEffect } from 'react'
 
+export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
+
 export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   const {
     safeAuthPack,
@@ -18,6 +20,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated,
     setSafeAuthSignInInfo,
     setUserInfo,
+    signInInfo,
     setUserName,
     setAuthStatus,
     setProfileImage,
@@ -48,21 +51,6 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
             const signInInfo = await authPack?.signIn()
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
-            try {
-              const res = await getSubnameResolution({
-                address: signInInfo.eoa,
-              })
-              const userName = res[res.length - 1].label
-              setUserName(userName)
-
-              const data = await getCustomSubnameData({
-                label: userName,
-                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
-              })
-              console.log({ data })
-            } catch (err) {
-              console.error(err)
-            }
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })
@@ -82,8 +70,55 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     ;(async () => {
       const userInfo = await safeAuthPack.getUserInfo()
       setUserInfo(userInfo)
+
+      try {
+        const res = await getSubnameResolution({
+          address: signInInfo?.eoa!,
+        })
+        const userName = res[res.length - 1].label
+        const data = await getCustomSubnameData({
+          label: userName,
+          key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+        })
+
+        setUserName(userName)
+        setProfileImage(data)
+      } catch (err) {
+        console.error(err)
+      }
+
+      // Checking auth storage
+      const storageUserInfo = localStorage.getItem(USER_INFO_STORAGE_KEY)
+      const parsedStorageInfo = storageUserInfo
+        ? JSON.parse(storageUserInfo)
+        : null
+
+      if (parsedStorageInfo) {
+        const time = new Date(parsedStorageInfo.time)
+        if (Date.now() - time.valueOf() >= 86400 * 1000 /* 1 day */) {
+          localStorage.removeItem(USER_INFO_STORAGE_KEY)
+          safeAuthPack.signOut()
+          setUserInfo(null)
+          setSafeAuthSignInInfo(null)
+          setIsAuthenticated(false)
+        }
+      } else {
+        localStorage.setItem(
+          USER_INFO_STORAGE_KEY,
+          JSON.stringify({ time: Date.now(), userInfo })
+        )
+      }
     })()
-  }, [isAuthenticated, safeAuthPack, setUserInfo])
+  }, [
+    isAuthenticated,
+    safeAuthPack,
+    setIsAuthenticated,
+    setProfileImage,
+    setSafeAuthSignInInfo,
+    setUserInfo,
+    setUserName,
+    signInInfo,
+  ])
 
   return <>{children}</>
 }

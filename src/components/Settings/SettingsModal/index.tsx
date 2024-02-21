@@ -13,6 +13,7 @@ import { activeModalAtom } from '@/store'
 import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { ModalHeader } from '@/components/ModalHeader'
 import { IconButton } from '@/components/Styled'
+import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -59,6 +60,7 @@ export const SettingsModal: React.FC<{
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
+      localStorage.removeItem(USER_INFO_STORAGE_KEY)
     }
   }
 

@@ -1,22 +1,15 @@
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
+import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
 import { useRouter } from 'next/navigation'
 import React, { PropsWithChildren, useEffect } from 'react'
 
 export const AuthGuard: React.FC<PropsWithChildren> = ({ children }) => {
   const { replace } = useRouter()
-  const { safeAuthPack, isAuthenticated, signInInfo, authStatus } =
-    useSafeAuth()
+  const { safeAuthPack, isAuthenticated, authStatus } = useSafeAuth()
 
   useEffect(() => {
-    console.log({ authStatus, safeAuthPack })
-    if (
-      safeAuthPack &&
-      authStatus === AUTH_STATUS.RESOLVED &&
-      !isAuthenticated
-    ) {
-      // TODO: Find a way to safely redirect to the login page
-      console.log('Redirecting to /login', safeAuthPack.isAuthenticated)
-      //   replace('/login')
+    if (!isAuthenticated) {
+      if (!localStorage.getItem(USER_INFO_STORAGE_KEY)) replace('/login')
     }
   }, [replace, safeAuthPack, isAuthenticated, authStatus])
 

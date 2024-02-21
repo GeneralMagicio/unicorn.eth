@@ -106,7 +106,7 @@ export const AccountDetailsModal: React.FC<{
         createCustomSubnameData({
           label: userName,
           key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
-          data: encodeURIComponent(base64),
+          data: base64,
         })
       })
     }
