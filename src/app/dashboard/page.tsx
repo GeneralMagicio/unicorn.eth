@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
@@ -13,6 +13,7 @@ import { activeModalAtom, selectedTokenAtom } from '@/store'
 import { MODAL_TYPE } from './layout'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { MOCK_TOKENS } from '@/utils/db'
+import { getTotalBalance, supportedTokens } from './utils/balance'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -72,6 +73,23 @@ export default function Dashboard() {
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
 
+  // useEffect(() => {
+  //   const func = 
+  //   func()
+  // }, [])
+
+  const calculateBalance = async () => {
+    try {
+      console.log("THIS STARTED RUNNING!")
+      const walletAddress = "0x6Fd4FEaE970D3c7c165d9f488285Cac2F9c35434";
+      const totalBalance = await getTotalBalance(supportedTokens, walletAddress);
+      console.log("Total balance:", totalBalance);
+    } catch(e) {
+      console.error("Encountered this err:", e)
+    }
+  };
+
+
   return (
     <>
       <header className="flex  items-center justify-between">
@@ -90,7 +108,7 @@ export default function Dashboard() {
         </div>
       </header>
       <BalanceBox>
-        <Typography color="inherit" fontVariant="small">
+        <Typography onClick={calculateBalance} color="inherit" fontVariant="small">
           Estimated Value
         </Typography>
         <Typography color="text" className='!text-3xl !font-bold'>
