@@ -1,6 +1,11 @@
 'use client'
 
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
+import {
+  EnsRecordType,
+  getCustomSubnameData,
+  getSubnameResolution,
+} from '@/services/enService'
 
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import { useEffect } from 'react'
@@ -13,7 +18,9 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setIsAuthenticated,
     setSafeAuthSignInInfo,
     setUserInfo,
+    setUserName,
     setAuthStatus,
+    setProfileImage,
   } = useSafeAuth()
 
   useEffect(() => {
@@ -36,24 +43,44 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         await authPack.init(options)
 
         setSafeAuthPack(authPack)
-        authPack.subscribe('accountsChanged', async (accounts) => {
-          console.log('accountsChanged')
+        authPack.subscribe('accountsChanged', async () => {
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
+            try {
+              const res = await getSubnameResolution({
+                address: signInInfo.eoa,
+              })
+              const userName = res[res.length - 1].label
+              setUserName(userName)
+
+              const data = await getCustomSubnameData({
+                label: userName,
+                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+              })
+              console.log({ data })
+            } catch (err) {
+              console.error(err)
+            }
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })
       })
     })()
-  }, [setIsAuthenticated, setSafeAuthPack, setSafeAuthSignInInfo])
+  }, [
+    setAuthStatus,
+    setIsAuthenticated,
+    setProfileImage,
+    setSafeAuthPack,
+    setSafeAuthSignInInfo,
+    setUserName,
+  ])
 
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return
     ;(async () => {
       const userInfo = await safeAuthPack.getUserInfo()
-      console.log({ userInfo })
       setUserInfo(userInfo)
     })()
   }, [isAuthenticated, safeAuthPack, setUserInfo])
