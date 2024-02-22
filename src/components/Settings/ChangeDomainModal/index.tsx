@@ -1,19 +1,16 @@
 import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
-import { useAtom } from 'jotai'
 import { ModalHeader } from '@/components/ModalHeader'
 import { UserNameInput } from '@/components/Styled'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect, useState } from 'react'
 import { TickCircleIcon } from '@/components/Icons/TickCircle'
-import { useSWRConfig } from 'swr'
 
 export const ChangeDomainModal: React.FC<{
   open: boolean
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
-  const { mutate } = useSWRConfig()
   const theme = useTheme()
   const { userName, setUserName, setProfileImage } = useSafeAuth()
   const [newUserName, setNewUserName] = useState('')
@@ -38,7 +35,6 @@ export const ChangeDomainModal: React.FC<{
         setUserName(newUserName)
       })
       .then(() => {
-        mutate(['account_info', newUserName])
         setProfileImage('')
       })
   }
