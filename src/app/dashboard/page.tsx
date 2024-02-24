@@ -18,25 +18,25 @@ const TABS = ['Tokens', 'Collectibles']
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName } = useSafeAuth()
+  const { userInfo, userName, profileImage } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   return (
     <>
-      <header className="flex items-center justify-between">
+      <header className="flex  items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
-            src={userInfo?.profileImage || ''}
+            src={profileImage || userInfo?.profileImage || ''}
             alt={userInfo?.name || ''}
             width={40}
             height={40}
           />
           <Typography fontVariant="bodyBold">{userName}.unicorn.eth</Typography>
         </UserInfo>
-        <div className="flex items-center gap-2">
+        <div className="flex  items-center gap-2">
           <ScanIcon color={theme.colors.grey} />
         </div>
       </header>

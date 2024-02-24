@@ -10,6 +10,7 @@ import {
   providerAtom,
   signerAtom,
 } from '@/store'
+import { userProfileImg } from '@/store/settings'
 
 export const enum AUTH_STATUS {
   PENDING,
@@ -75,6 +76,7 @@ export const useSafeAuth = () => {
       console.error('Transaction failed:', error)
     }
   }
+  const [profileImage, setProfileImage] = useAtom(userProfileImg)
 
   return {
     safeAuthPack,
@@ -87,6 +89,8 @@ export const useSafeAuth = () => {
     setUserInfo,
     userName,
     setUserName,
+    profileImage,
+    setProfileImage,
     authStatus,
     setAuthStatus,
     sendToken,

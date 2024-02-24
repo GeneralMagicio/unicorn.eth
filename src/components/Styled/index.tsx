@@ -35,3 +35,32 @@ export const BalanceBox = styled.div(({ theme }) => ({
   color: theme.colors.textSecondary,
   padding: '24px 16px',
 }))
+
+export const UserNameInput = styled.div<{ varient?: 'success' | 'error' }>(
+  ({ theme, varient }) => ({
+    '& > div > div:first-child': {
+      display: 'none',
+    },
+    '& > div > div:nth-child(2)': {
+      height: '56px',
+      '> div': {
+        borderColor:
+          varient === 'success'
+            ? `${theme.colors.green} !important`
+            : undefined,
+      },
+    },
+    '& > div > div:last-child': {
+      color:
+        varient === 'success'
+          ? `${theme.colors.green} !important`
+          : varient === 'error'
+            ? theme.colors.redPrimary
+            : 'white',
+    },
+    label: {
+      background: 'transparent',
+      color: theme.colors.textPrimary,
+    },
+  })
+)

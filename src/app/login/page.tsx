@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button, Input, Typography } from '@ensdomains/thorin'
 import { GoogleIcon } from '@/components/Icons/Google'
@@ -9,57 +9,36 @@ import { SigningInPage } from '@/components/SigningInPage'
 import { Copy } from '@/components/Icons/Copy'
 import { SignUpButton } from '@/components/SignUp/inde'
 import { useRouter } from 'next/navigation'
-import { createSubname, nsService } from '@/services/enService'
-import { debounce } from '@/utils/debounce'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
-import styled from 'styled-components'
 import cn from 'classnames'
-import useSWRMutation from 'swr/mutation'
-
-const UserNameInput = styled.div<{ varient?: 'success' | 'error' }>(
-  ({ theme, varient }) => ({
-    '& > div > div:first-child': {
-      display: 'none',
-    },
-    '& > div > div:nth-child(2)': {
-      height: '56px',
-      '> div': {
-        borderColor:
-          varient === 'success'
-            ? `${theme.colors.green} !important`
-            : undefined,
-      },
-    },
-    '& > div > div:last-child': {
-      color:
-        varient === 'success' ? `${theme.colors.green} !important` : 'white',
-    },
-    label: {
-      background: 'transparent',
-      color: theme.colors.textPrimary,
-    },
-  })
-)
+import { UserNameInput } from '@/components/Styled'
+import { useEnsResolver } from '@/hooks/useEnsResolver'
 
 export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [isSigning, setIsSigning] = useState(false)
-  const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
+
   const {
     safeAuthPack,
-    signInInfo,
     isAuthenticated,
     setIsAuthenticated,
     setUserInfo,
     userInfo,
     setSafeAuthSignInInfo,
+    signInInfo,
     userName,
     setUserName,
   } = useSafeAuth()
-  const { trigger, isMutating } = useSWRMutation('/ens/createSubname', () =>
-    createSubname({ safe: signInInfo?.eoa || '', name: userName, chain: 'ETH' })
-  )
+
+  const {
+    isRegistering,
+    isNameAvailable,
+    setIsNameAvailable,
+    debouncedCheckUserName,
+    createEnsSubname,
+    getSubnameResolution,
+  } = useEnsResolver()
 
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return
@@ -69,6 +48,16 @@ export default function Login() {
       setStep(1)
     })()
   }, [isAuthenticated, safeAuthPack, setUserInfo])
+
+  useEffect(() => {
+    if (step === 1) {
+      getSubnameResolution({ address: signInInfo?.eoa! }).then((res) => {
+        if (res.length) {
+          router.replace('/dashboard')
+        }
+      })
+    }
+  }, [signInInfo?.eoa, step, userInfo])
 
   const login = async () => {
     setIsSigning(true)
@@ -91,22 +80,13 @@ export default function Login() {
     }
   }
 
-  const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    try {
-      const res = await nsService.getIsNameAvailable(e.target.value)
-      setIsNameAvailable(e.target.value ? res : null)
-    } catch (err) {
-      setIsNameAvailable(false)
-    }
-  }
-  const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
-
   const handleBack = () => {
     if (step === 1) {
       logout()
     }
     setStep(Math.max(step - 1, 0))
   }
+
   return (
     <>
       {isSigning && <SigningInPage />}
@@ -147,7 +127,11 @@ export default function Login() {
                   </Typography>
                   <UserNameInput
                     varient={
-                      isNameAvailable && userName ? 'success' : undefined
+                      isNameAvailable === false
+                        ? 'error'
+                        : isNameAvailable === true
+                          ? 'success'
+                          : undefined
                     }>
                     <Input
                       description={
@@ -173,10 +157,10 @@ export default function Login() {
                   </UserNameInput>
 
                   <Button
-                    loading={isMutating}
+                    loading={isRegistering}
                     // disabled={!userName || !Boolean(isNameAvailable)}
                     onClick={() => {
-                      trigger().then(() => {
+                      createEnsSubname(userName).then(() => {
                         setStep(2)
                       })
                     }}>

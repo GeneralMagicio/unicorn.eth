@@ -3,7 +3,9 @@
 import { AuthGuard } from '@/components/AuthGuard'
 import { BottomNav } from '@/components/BottomNav'
 import { SendModal } from '@/components/SendModal'
-import { SettingsModal } from '@/components/SettingsModal'
+import { Settings } from '@/components/Settings'
+import { GeneralSettingsModal } from '@/components/Settings/GeneralSettingsModal'
+import { SettingsModal } from '@/components/Settings/SettingsModal'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { TransactionModal } from '@/components/TransactionModal'
 import { activeModalAtom } from '@/store'
@@ -14,6 +16,11 @@ export const enum MODAL_TYPE {
   TRANSACTION = 'TRANSACTION',
   SEND = 'SEND',
   TOKEN_DETAIL = 'TOKEN_DETAIL',
+  SETTINGS_GENERAL = 'SETTINGS_GENERAL',
+  SETTINGS_CHANGE_CURRENCY = 'SECURITY_CHANGE_CURRENCY',
+  SETTINGS_ACCOUNT_DETAILS = 'SETTINGS_ACCOUNT_DETAILS',
+  SETTINGS_CHANGE_DOMIAN = 'SETTINGS_CHANGE_DOMIAN',
+  SETTINGS_BUY_ENS = 'SETTINGS_BUY_ENS',
 }
 
 export default function DashboardLayout({
@@ -28,10 +35,6 @@ export default function DashboardLayout({
       <div className="flex w-full grow flex-col">
         <div className="flex flex-col gap-10 px-[20px] py-10">{children}</div>
         <BottomNav />
-        <SettingsModal
-          open={activeModal === MODAL_TYPE.SETTINGS}
-          onDismiss={() => setActiveModal(null)}
-        />
         <TransactionModal
           open={activeModal === MODAL_TYPE.TRANSACTION}
           onDismiss={() => setActiveModal(null)}
@@ -41,6 +44,7 @@ export default function DashboardLayout({
           onDismiss={() => setActiveModal(null)}
         />
         <TokenDetailModal />
+        <Settings />
       </div>
     </AuthGuard>
   )
