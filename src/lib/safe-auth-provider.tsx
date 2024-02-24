@@ -27,23 +27,19 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setAuthStatus,
     setProvider,
     setSigner,
+    setEthBalance,
     setProfileImage,
   } = useSafeAuth()
 
   const fetchEthBalance = async (provider: BrowserProvider, signer: Signer) => {
-    console.log('FETCH BALANCE', {
-      provider,
-      signer,
-      isAuthenticated,
-    })
-    if (!provider || !signer || !isAuthenticated) return
+    if (!provider || !signer) return
     try {
       const signerAddress = await signer.getAddress()
       const balance = await provider.getBalance(signerAddress)
       console.log(
         `ETH Balance for ${signerAddress}: ${ethers.formatEther(balance)} ETH`
       )
-      // Here you can set the ETH balance in your state or context for global access
+      setEthBalance(ethers.formatEther(balance))
     } catch (error) {
       console.error('Failed to fetch ETH balance:', error)
     }
@@ -75,6 +71,9 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         const signer = await provider.getSigner()
         setProvider(provider)
         setSigner(signer)
+
+        // Fetch ETH balance
+        await fetchEthBalance(provider, signer)
         authPack.subscribe('accountsChanged', async (accounts) => {
           console.log('accountsChanged')
           if (authPack.isAuthenticated) {
@@ -82,8 +81,8 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
 
-            // Fetch ETH balance
-            await fetchEthBalance(provider, signer)
+            // // Fetch ETH balance
+            // await fetchEthBalance(provider, signer)
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })

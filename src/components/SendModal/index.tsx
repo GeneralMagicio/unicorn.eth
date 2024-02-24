@@ -1,6 +1,7 @@
 import { Input, Modal, Typography } from '@ensdomains/thorin'
 import { css } from 'styled-components'
 import { useState } from 'react'
+import { isAddress } from 'ethers'
 import { TokenItem } from '../TokenItem'
 import { ScanIcon } from '../Icons/Scan'
 import { IconButton } from '../Styled'
@@ -10,6 +11,7 @@ import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
 import { MOCK_TOKENS } from '@/utils/db'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { ICryptoToken } from '@/services/types'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -20,8 +22,10 @@ export const SendModal: React.FC<{
   const [activeTab, setActiveTab] = useState('Tokens')
   const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
   const [error, setError] = useState<string | null>(null)
-  const [warning, setWaring] = useState<string | null>('this is a warning')
-  const { sendToken } = useSafeAuth()
+  const [destination, setDestination] = useState<string | null>(null)
+  const [amount, setAmount] = useState<string | null>(null)
+  const [warning, setWaring] = useState<string | null>(null)
+  const { sendToken, ethBalance } = useSafeAuth()
 
   const getInputParentStyles = () => {
     if (!!error) {
@@ -39,6 +43,13 @@ export const SendModal: React.FC<{
       `
     }
     return css``
+  }
+
+  const ethToken: ICryptoToken = {
+    name: 'ETH',
+    value: Number(ethBalance),
+    price: 3000,
+    icon: '/img/ens.png',
   }
 
   return (
@@ -62,8 +73,8 @@ export const SendModal: React.FC<{
               </IconButton>
             </div>
           }
-          onChange={() => {
-            setError('some error')
+          onChange={(e: any) => {
+            setDestination(e.target.value)
           }}></Input>
 
         {selectedToken && (
@@ -79,6 +90,13 @@ export const SendModal: React.FC<{
                 <ChevronRight />
               </IconButton>
             </div>
+            <Input
+              label="Amount"
+              placeholder="0.0"
+              clearable
+              onChange={(e: any) => {
+                setAmount(e.target.value)
+              }}></Input>
           </div>
         )}
         {!selectedToken && (
@@ -98,12 +116,18 @@ export const SendModal: React.FC<{
               ))}
             </nav>
             <div className="flex flex-col gap-4">
-              {MOCK_TOKENS.map((token, idx) => (
+              {[ethToken, ...MOCK_TOKENS].map((token, idx) => (
                 <div
                   key={idx}
                   className="cursor-pointer"
                   role="button"
-                  onClick={() => setSelectedToken(token)}>
+                  onClick={() => {
+                    if (!isAddress(destination)) {
+                      return setError('Not a valid address')
+                    }
+                    setError(null)
+                    setSelectedToken(token)
+                  }}>
                   <TokenItem key={idx} token={token} />
                 </div>
               ))}
@@ -111,12 +135,10 @@ export const SendModal: React.FC<{
           </>
         )}
         <button
-          onClick={async () =>
-            await sendToken(
-              '0x00d18ca9782bE1CaEF611017c2Fbc1a39779A57C',
-              '0.01'
-            )
-          }
+          onClick={async () => {
+            if (!destination || !amount) return
+            await sendToken(destination, amount)
+          }}
           className="btn-primary">
           send
         </button>

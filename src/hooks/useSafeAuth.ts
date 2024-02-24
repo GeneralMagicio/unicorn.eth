@@ -9,6 +9,7 @@ import {
   userNameAtom,
   providerAtom,
   signerAtom,
+  ethBalanceAtom,
 } from '@/store'
 import { userProfileImg } from '@/store/settings'
 
@@ -25,6 +26,7 @@ export const useSafeAuth = () => {
   const [authStatus, setAuthStatus] = useAtom(authStatusAtom)
   const [provider, setProvider] = useAtom(providerAtom)
   const [signer, setSigner] = useAtom(signerAtom)
+  const [ethBalance, setEthBalance] = useAtom(ethBalanceAtom)
 
   const sendToken = async (
     toAddress: string,
@@ -96,5 +98,7 @@ export const useSafeAuth = () => {
     sendToken,
     setProvider,
     setSigner,
+    ethBalance,
+    setEthBalance,
   }
 }
