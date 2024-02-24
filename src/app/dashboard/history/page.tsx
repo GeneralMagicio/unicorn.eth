@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 
 export default function HistoryPage() {
   const router = useRouter()
+
   return (
     <>
       <div className="flex items-center gap-2">

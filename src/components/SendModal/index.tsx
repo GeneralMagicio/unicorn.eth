@@ -9,6 +9,7 @@ import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
 import { MOCK_TOKENS } from '@/utils/db'
+import { useSafeAuth } from '@/hooks/useSafeAuth'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -20,6 +21,7 @@ export const SendModal: React.FC<{
   const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
   const [error, setError] = useState<string | null>(null)
   const [warning, setWaring] = useState<string | null>('this is a warning')
+  const { sendToken } = useSafeAuth()
 
   const getInputParentStyles = () => {
     if (!!error) {
@@ -108,6 +110,16 @@ export const SendModal: React.FC<{
             </div>
           </>
         )}
+        <button
+          onClick={async () =>
+            await sendToken(
+              '0x00d18ca9782bE1CaEF611017c2Fbc1a39779A57C',
+              '0.01'
+            )
+          }
+          className="btn-primary">
+          send
+        </button>
       </div>
     </Modal>
   )
