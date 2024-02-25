@@ -63,7 +63,6 @@ export default function Login() {
     setIsSigning(true)
     try {
       const signInInfo = (await safeAuthPack?.signIn()) || null
-      console.log("sign in info:", signInInfo)
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
     } catch (err) {

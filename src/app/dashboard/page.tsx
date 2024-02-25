@@ -13,7 +13,8 @@ import { activeModalAtom, selectedTokenAtom } from '@/store'
 import { MODAL_TYPE } from './layout'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { MOCK_TOKENS } from '@/utils/db'
-import { getTotalBalance, supportedTokens } from './utils/balance'
+import { getTotalBalance } from './utils/balance'
+import { supportedTokens } from './data/supported_tokens'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -72,11 +73,6 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
-
-  // useEffect(() => {
-  //   const func = 
-  //   func()
-  // }, [])
 
   const calculateBalance = async () => {
     try {
