@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { SubnameResolutionResponse } from './types/ens'
 
 export const axiosInstance = axios.create({
   baseURL:
@@ -6,7 +7,7 @@ export const axiosInstance = axios.create({
     'https://offchain.namespace.tech',
   headers: {
     'Content-type': 'application/json',
-    Authorization: `Bearer ${process.env.NEXT_PUBLIC_OFFCHIAN_API_KEY}`,
+    Authorization: `Bearer ${process.env.OFFCHIAN_API_KEY}`,
   },
 })
 
@@ -42,7 +43,7 @@ export function getIsNameAvailable(params: { label: string }) {
 }
 export function getSubnameResolution(params: { address: string }) {
   return axiosInstance
-    .get<Array<{ label: string; domain: string; fullName: string }>>(
+    .get<Array<SubnameResolutionResponse>>(
       `/v1/subname/resolution/${params.address}/${COIN_TYPE}`
     )
     .then((res) => res.data)

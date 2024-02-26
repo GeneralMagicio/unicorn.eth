@@ -60,6 +60,7 @@ export const SettingsModal: React.FC<{
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
+      setActiveModal(null)
       localStorage.removeItem(USER_INFO_STORAGE_KEY)
     }
   }

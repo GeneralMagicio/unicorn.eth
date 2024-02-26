@@ -15,9 +15,10 @@ import { Controller, useForm } from 'react-hook-form'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import useSWR from 'swr'
 import { EnsRecordType, getSubnameMetadata } from '@/services/enService'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { convertImageToBase64 } from '@/utils/image'
 import { UploadIcon } from '@/components/Icons/Upload'
+import axios from 'axios'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -51,21 +52,8 @@ export const AccountDetailsModal: React.FC<{
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const { createTextRecord, createCustomSubnameData } = useEnsResolver()
+  const [accountDetails, setAccountDetails] = useState(null)
   const { userInfo, userName, setProfileImage, profileImage } = useSafeAuth()
-  const { data: metaData, error } = useSWR(
-    [`account_info`, userName],
-    ([, userName]) =>
-      getSubnameMetadata({ label: userName, key: EnsRecordType.ACCOUNT_INFO }),
-    { revalidateOnFocus: false }
-  )
-
-  const accountInfo = useMemo(() => {
-    if (metaData?.record) {
-      return JSON.parse(metaData?.record)
-    }
-    return {}
-  }, [metaData])
 
   const [, setActiveModal] = useAtom(activeModalAtom)
 
@@ -77,37 +65,57 @@ export const AccountDetailsModal: React.FC<{
   } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: useMemo(
-      () => accountInfo || { name: '', bio: '', website: '' },
-      [accountInfo]
+      () => accountDetails || { name: '', bio: '', website: '' },
+      [accountDetails]
     ),
   })
   const onSubmit = (data: FormData) => {
-    return createTextRecord({
+    return axios.put('/api/subname/record', {
       label: userName,
       key: EnsRecordType.ACCOUNT_INFO,
       text: encodeURIComponent(JSON.stringify(data)),
     })
   }
-  useEffect(() => {
-    if (error) {
-      reset({ name: '', bio: '', website: '' })
-    }
-  }, [error, reset])
 
   useEffect(() => {
-    reset(accountInfo)
-  }, [accountInfo, reset])
+    if (open) {
+      axios
+        .get<{ record: string }>('/api/subname/record', {
+          params: {
+            label: userName,
+            key: EnsRecordType.ACCOUNT_INFO,
+          },
+        })
+        .then((data) => {
+          if (data.data?.record) {
+            setAccountDetails(JSON.parse(data.data?.record))
+          }
+          return {}
+        })
+    }
+  }, [open, userName])
+
+  useEffect(() => {
+    if (accountDetails) reset(accountDetails)
+  }, [accountDetails, reset])
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       convertImageToBase64(e.target.files[0], (base64) => {
         setProfileImage(base64)
 
-        createCustomSubnameData({
-          label: userName,
-          key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
-          data: base64,
-        })
+        axios.put(
+          '/api/subname/data',
+          {
+            data: base64,
+          },
+          {
+            params: {
+              label: userName,
+              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+            },
+          }
+        )
       })
     }
   }
