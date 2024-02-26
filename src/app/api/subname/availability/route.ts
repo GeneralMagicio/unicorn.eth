@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const label = searchParams.get('label') || ''
   if (label) {
     const data = await getIsNameAvailable({ label })
+    console.log({ data })
     return Response.json(data)
   }
   return Response.json({ isAvailable: false })
