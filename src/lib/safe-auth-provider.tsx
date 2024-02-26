@@ -1,12 +1,14 @@
 'use client'
 
+import { useEffect } from 'react'
+import { BrowserProvider, Signer, ethers } from 'ethers'
+
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
 import { EnsRecordType } from '@/services/enService'
 
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import axios from 'axios'
-import { useEffect } from 'react'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
@@ -21,10 +23,27 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     signInInfo,
     setUserName,
     setAuthStatus,
+    setProvider,
+    setSigner,
+    setEthBalance,
     setProfileImage,
     userInfo,
   } = useSafeAuth()
   const { getSubnameDataset } = useEnsResolver()
+
+  const fetchEthBalance = async (provider: BrowserProvider, signer: Signer) => {
+    if (!provider || !signer) return
+    try {
+      const signerAddress = await signer.getAddress()
+      const balance = await provider.getBalance(signerAddress)
+      console.log(
+        `ETH Balance for ${signerAddress}: ${ethers.formatEther(balance)} ETH`
+      )
+      setEthBalance(ethers.formatEther(balance))
+    } catch (error) {
+      console.error('Failed to fetch ETH balance:', error)
+    }
+  }
 
   useEffect(() => {
     ;(async () => {
@@ -42,11 +61,24 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         await authPack.init(options)
 
         setSafeAuthPack(authPack)
-        authPack.subscribe('accountsChanged', async () => {
+        const provider: any = await new ethers.BrowserProvider(
+          authPack?.safeAuthEmbed.provider!
+        )
+        const signer = await provider.getSigner()
+        setProvider(provider)
+        setSigner(signer)
+
+        // Fetch ETH balance
+        await fetchEthBalance(provider, signer)
+        authPack.subscribe('accountsChanged', async (accounts) => {
+          console.log('accountsChanged')
           if (authPack.isAuthenticated) {
             const signInInfo = await authPack?.signIn()
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
+
+            // // Fetch ETH balance
+            // await fetchEthBalance(provider, signer)
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })

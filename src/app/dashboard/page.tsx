@@ -15,6 +15,9 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
+import { TokenDetailModal } from '@/components/TokenDetailModal'
+import { ICryptoToken } from '@/services/types'
+import { priceFormatter } from '@/utils/price'
 import { MOCK_COLLECTIBLES, MOCK_TOKENS } from '@/utils/db'
 import { getTotalBalance } from './utils/balance'
 import { supportedTokens } from './data/supported_tokens'
@@ -24,7 +27,7 @@ const TABS = ['Tokens', 'Collectibles']
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName, profileImage } = useSafeAuth()
+  const { userInfo, userName, profileImage, ethBalance } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
@@ -41,18 +44,29 @@ export default function Dashboard() {
     }
   }
 
+  const ethToken: ICryptoToken = {
+    name: 'xDAI', ///  TODO: check on current network
+    value: Number(ethBalance),
+    price: 3000,
+    icon: '/img/eth.png',
+  }
+
   return (
     <>
       <header className="flex  items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
-            src={profileImage || userInfo?.profileImage || '/img/validator.eth.png'}
+            src={
+              profileImage || userInfo?.profileImage || '/img/validator.eth.png'
+            }
             alt={userInfo?.name || ''}
             width={40}
             height={40}
           />
-          <Typography fontVariant="bodyBold">{userName || 'moenick'}.unicorn.eth</Typography>
+          <Typography fontVariant="bodyBold">
+            {userName || 'moenick'}.unicorn.eth
+          </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
           <ScanIcon color={theme.colors.grey} />
@@ -65,7 +79,7 @@ export default function Dashboard() {
           fontVariant="small">
           Estimated Value
         </Typography>
-        <Typography color="text" className="!text-3xl !font-bold">
+        <Typography color="text" fontVariant="extraLarge">
           $28,652.54
         </Typography>
       </BalanceBox>
@@ -92,9 +106,9 @@ export default function Dashboard() {
           </Typography>
         ))}
       </nav>
-      {activeTab === TABS[0] && (
-        <div className="flex flex-col gap-4">
-          {MOCK_TOKENS.map((token, idx) => (
+      <div className="flex flex-col gap-4">
+        {activeTab === 'Tokens' &&
+          [ethToken, ...MOCK_TOKENS].map((token, idx) => (
             <div
               key={idx}
               onClick={() => {
@@ -105,8 +119,7 @@ export default function Dashboard() {
               <TokenItem token={token} />
             </div>
           ))}
-        </div>
-      )}
+      </div>
       {activeTab === TABS[1] && (
         <div className="grid grid-cols-2 gap-4 gap-x-2 ">
           {MOCK_COLLECTIBLES.map((collectible, id) => (

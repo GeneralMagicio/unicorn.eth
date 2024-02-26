@@ -36,6 +36,7 @@
     "yup": "^1.3.3"
   },
   "devDependencies": {
+    "@safe-global/safe-core-sdk-types": "^4.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-tailwindcss": "^3.13.1",
