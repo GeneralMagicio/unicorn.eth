@@ -11,6 +11,7 @@ const customTheme = {
   colors: {
     ...lightTheme.colors,
     textSecondary: '#9B9BA7',
+    additionalBorder: '#E8E8E8',
   },
   fontWeights: {
     ...lightTheme.fontWeights,
