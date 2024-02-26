@@ -9,7 +9,6 @@ import { ChevronRight } from '../Icons/ChevronRight'
 import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
-import { MOCK_TOKENS } from '@/utils/db'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { ICryptoToken } from '@/services/types'
 
@@ -144,7 +143,7 @@ export const SendModal: React.FC<{
               </nav>
               <div className="flex flex-col gap-4">
                 {activeTab === 'Tokens' &&
-                  [ethToken, ...MOCK_TOKENS].map((token, idx) => (
+                  [ethToken].map((token, idx) => (
                     <div
                       key={idx}
                       className="cursor-pointer"
