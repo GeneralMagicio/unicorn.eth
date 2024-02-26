@@ -6,12 +6,14 @@ interface TokenItemProps {
   token: ICryptoToken
   label?: string
   showOnlyName?: boolean
+  showOnlyValue?: boolean
 }
 
 export const TokenItem: React.FC<TokenItemProps> = ({
   token,
   label = '',
   showOnlyName,
+  showOnlyValue,
 }) => {
   return (
     <div className="flex items-center justify-between">
@@ -28,7 +30,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
             showOnlyName ? 'justify-center' : 'justify-between'
           }`}>
           <Typography weight="bold">{token.name}</Typography>
-          {!showOnlyName && (
+          {(!showOnlyName || showOnlyValue) && (
             <Typography fontVariant="small" color="grey">
               {label} {numberFormatter.format(token.value)}
             </Typography>
@@ -36,7 +38,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
         </div>
       </div>
       <Typography weight="bold">
-        {!showOnlyName && priceFormatter.format(token.price)}
+        {!showOnlyName && priceFormatter.format(token.price * token.value)}
       </Typography>
     </div>
   )

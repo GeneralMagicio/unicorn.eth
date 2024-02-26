@@ -13,15 +13,24 @@ import { activeModalAtom, selectedTokenAtom } from '@/store'
 import { MODAL_TYPE } from './layout'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { MOCK_TOKENS } from '@/utils/db'
+import { ICryptoToken } from '@/services/types'
+import { priceFormatter } from '@/utils/price'
 
 const TABS = ['Tokens', 'Collectibles']
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName, profileImage } = useSafeAuth()
+  const { userInfo, userName, profileImage, ethBalance } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
+
+  const ethToken: ICryptoToken = {
+    name: 'xDAI', ///  TODO: check on current network
+    value: Number(ethBalance),
+    price: 3000,
+    icon: '/img/eth.png',
+  }
 
   return (
     <>
@@ -45,7 +54,7 @@ export default function Dashboard() {
           Estimated Value
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
-          $28,652.54
+          {priceFormatter.format(ethToken.price * ethToken.value)}
         </Typography>
       </BalanceBox>
       <nav className="flex gap-4">
@@ -63,17 +72,18 @@ export default function Dashboard() {
         ))}
       </nav>
       <div className="flex flex-col gap-4">
-        {MOCK_TOKENS.map((token, idx) => (
-          <div
-            key={idx}
-            onClick={() => {
-              setSelectedToken(token)
-              setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
-            }}
-            role="button">
-            <TokenItem token={token} />
-          </div>
-        ))}
+        {activeTab === 'Tokens' &&
+          [ethToken, ...MOCK_TOKENS].map((token, idx) => (
+            <div
+              key={idx}
+              onClick={() => {
+                setSelectedToken(token)
+                setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
+              }}
+              role="button">
+              <TokenItem token={token} />
+            </div>
+          ))}
       </div>
     </>
   )

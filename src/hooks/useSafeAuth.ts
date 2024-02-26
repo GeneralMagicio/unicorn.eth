@@ -52,6 +52,7 @@ export const useSafeAuth = () => {
         const txResponse = await signer.sendTransaction(transaction)
         await txResponse.wait() // Wait for the transaction to be mined
         console.log(`Ether transfer successful with hash: ${txResponse.hash}`)
+        return txResponse.hash
       } else {
         // Sending ERC20 token
         if (!ethers.isAddress(tokenAddress)) {
@@ -67,15 +68,17 @@ export const useSafeAuth = () => {
           signer
         )
 
-        const amountInWei = ethers.parseUnits(amount, 'ether') // Assuming token has 18 decimals, adjust if needed
+        const amountInWei = ethers.parseUnits(amount, 'ether') // Assuming token has 18 decimals
         const txResponse = await tokenContract.transfer(toAddress, amountInWei)
-        await txResponse.wait() // Wait for the transaction to be mined
+        await txResponse.wait()
         console.log(
           `ERC20 token transfer successful with hash: ${txResponse.hash}`
         )
+        return txResponse.hash
       }
     } catch (error) {
       console.error('Transaction failed:', error)
+      return false
     }
   }
   const [profileImage, setProfileImage] = useAtom(userProfileImg)
