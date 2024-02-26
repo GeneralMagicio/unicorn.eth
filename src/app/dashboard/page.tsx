@@ -9,61 +9,56 @@ import { TokenItem } from '@/components/TokenItem'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { useAtom } from 'jotai'
-import { activeModalAtom, selectedTokenAtom } from '@/store'
+import { activeModalAtom, selectedCollectibleAtom, selectedTokenAtom } from '@/store'
 import { MODAL_TYPE } from './layout'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { MOCK_TOKENS } from '@/utils/db'
 import { getTotalBalance } from './utils/balance'
 import { supportedTokens } from './data/supported_tokens'
+import { Collectible } from '@/services/types'
 
 const TABS = ['Tokens', 'Collectibles']
 
-interface MockCollectibles {
-  id: number
-  name: string
-  floorPrice: number
-  description: string
-  about: string
-  link: string
-  image: string
-}
-
-const MOCK_COLLECTIBLES: MockCollectibles[] = [
+const MOCK_COLLECTIBLES: Collectible[] = [
   {
     id: 1,
-    name: 'LiL Noun 547',
-    floorPrice: 0.084,
-    description: 'LiL Noun 547 is a member of the Lil Nouns DAO.',
-    about: 'One Lil Noun, every 15 minutes, forever.',
-    link: 'lilnouns.wtf',
-    image: '/img/ln547.png',
+    name: 'Cute Cat',
+    org: 'Cats',
+    floorPrice: 0.2,
+    description: 'Cute cats are lovely',
+    about: 'Cute cats are lovely',
+    website: 'cute.cat',
+    img: '/img/domico.eth.png',
   },
   {
     id: 2,
     name: 'LiL Noun 547',
+    org: 'Lil Nouns',
     floorPrice: 0.084,
     description: 'LiL Noun 547 is a member of the Lil Nouns DAO.',
     about: 'One Lil Noun, every 15 minutes, forever.',
-    link: 'lilnouns.wtf',
-    image: '/img/ln547.png',
+    website: 'lilnouns.wtf',
+    img: '/img/ln547.png',
   },
   {
     id: 3,
     name: 'LiL Noun 547',
+    org: 'Lil Nouns',
     floorPrice: 0.084,
     description: 'LiL Noun 547 is a member of the Lil Nouns DAO.',
     about: 'One Lil Noun, every 15 minutes, forever.',
-    link: 'lilnouns.wtf',
-    image: '/img/ln547.png',
+    website: 'lilnouns.wtf',
+    img: '/img/jefflau.eth.png',
   },
   {
     id: 4,
     name: 'LiL Noun 547',
+    org: 'Lil Nouns',
     floorPrice: 0.084,
     description: 'LiL Noun 547 is a member of the Lil Nouns DAO.',
     about: 'One Lil Noun, every 15 minutes, forever.',
-    link: 'lilnouns.wtf',
-    image: '/img/ln547.png',
+    website: 'lilnouns.wtf',
+    img: '/img/luc.computer.png',
   },
 ]
 
@@ -71,21 +66,23 @@ export default function Dashboard() {
   const theme = useTheme()
   const { userInfo, userName, profileImage } = useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
+  const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   const calculateBalance = async () => {
     try {
-      console.log("THIS STARTED RUNNING!")
-      const walletAddress = "0x6Fd4FEaE970D3c7c165d9f488285Cac2F9c35434";
-      const totalBalance = await getTotalBalance(supportedTokens, walletAddress);
-      console.log("Total balance:", totalBalance);
-    } catch(e) {
-      console.error("Encountered this err:", e)
+      console.log('THIS STARTED RUNNING!')
+      const walletAddress = '0x6Fd4FEaE970D3c7c165d9f488285Cac2F9c35434'
+      const totalBalance = await getTotalBalance(supportedTokens, walletAddress)
+      console.log('Total balance:', totalBalance)
+    } catch (e) {
+      console.error('Encountered this err:', e)
     }
-  };
+  }
 
-
+  // console.log("sc", selectedCollectible)
+  // console.log("am", activeModal)
   return (
     <>
       <header className="flex  items-center justify-between">
@@ -104,13 +101,23 @@ export default function Dashboard() {
         </div>
       </header>
       <BalanceBox>
-        <Typography onClick={calculateBalance} color="inherit" fontVariant="small">
+        <Typography
+          onClick={calculateBalance}
+          color="inherit"
+          fontVariant="small">
           Estimated Value
         </Typography>
-        <Typography color="text" className='!text-3xl !font-bold'>
+        <Typography color="text" className="!text-3xl !font-bold">
           $28,652.54
         </Typography>
       </BalanceBox>
+      {/* {selectedCollectible &&
+        activeModal === MODAL_TYPE.COLLECTIBLE_DETAIL && (
+          <CollectibleDetailModal
+            collectible={selectedCollectible}
+            onDismiss={() => setActiveModal(null)}
+          />
+        )} */}
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography
@@ -147,13 +154,13 @@ export default function Dashboard() {
               key={id}
               // className='rounded-md'
               onClick={() => {
-                // setSelectedToken(token)
+                setSelectedCollectible(collectible)
                 setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
               }}
               role="button">
               <Image
-                className='rounded-2xl'
-                src={collectible.image}
+                className="rounded-2xl"
+                src={collectible.img}
                 width={170}
                 height={170}
                 alt={collectible.name}

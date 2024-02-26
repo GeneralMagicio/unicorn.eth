@@ -2,6 +2,7 @@
 
 import { AuthGuard } from '@/components/AuthGuard'
 import { BottomNav } from '@/components/BottomNav'
+import { CollectibleDetailModal } from '@/components/CollectibleDetailModal'
 import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { GeneralSettingsModal } from '@/components/Settings/GeneralSettingsModal'
@@ -46,6 +47,7 @@ export default function DashboardLayout({
         />
         <TokenDetailModal />
         <Settings />
+        <CollectibleDetailModal />
       </div>
     </AuthGuard>
   )
