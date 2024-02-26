@@ -3,14 +3,12 @@
 import { useEffect } from 'react'
 import { BrowserProvider, Signer, ethers } from 'ethers'
 
+import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
-import {
-  EnsRecordType,
-  getCustomSubnameData,
-  getSubnameResolution,
-} from '@/services/enService'
+import { EnsRecordType } from '@/services/enService'
 
 import { SafeAuthInitOptions } from '@safe-global/auth-kit'
+import axios from 'axios'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
@@ -29,7 +27,9 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setSigner,
     setEthBalance,
     setProfileImage,
+    userInfo,
   } = useSafeAuth()
+  const { getSubnameDataset } = useEnsResolver()
 
   const fetchEthBalance = async (provider: BrowserProvider, signer: Signer) => {
     if (!provider || !signer) return
@@ -46,15 +46,11 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    // @ts-expect-error - Missing globals
-    const params = new URL(window.document.location).searchParams
-    const chainId = params.get('chainId')
-
     ;(async () => {
       const options: SafeAuthInitOptions = {
         buildEnv: 'production',
         chainConfig: {
-          chainId: chainId || '0x64',
+          chainId: '0x64',
           rpcTarget: 'https://gnosis.drpc.org',
         },
       }
@@ -91,10 +87,8 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   }, [
     setAuthStatus,
     setIsAuthenticated,
-    setProfileImage,
     setSafeAuthPack,
     setSafeAuthSignInInfo,
-    setUserName,
   ])
 
   useEffect(() => {
@@ -104,17 +98,18 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
       setUserInfo(userInfo)
 
       try {
-        const res = await getSubnameResolution({
-          address: signInInfo?.eoa!,
-        })
-        const userName = res[res.length - 1].label
-        const data = await getCustomSubnameData({
-          label: userName,
-          key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+        const res = await getSubnameDataset()
+        const userName = res.data[res.data.length - 1].label
+        setUserName(userName)
+
+        const { data } = await axios.get('/api/subname/data', {
+          params: {
+            label: userName,
+            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+          },
         })
 
-        setUserName(userName)
-        setProfileImage(data)
+        setProfileImage(data.data)
       } catch (err) {
         console.error(err)
       }
@@ -142,6 +137,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
       }
     })()
   }, [
+    getSubnameDataset,
     isAuthenticated,
     safeAuthPack,
     setIsAuthenticated,
