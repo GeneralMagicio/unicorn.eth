@@ -5,6 +5,7 @@ const PrecisionDigits = 4
 
 function getProviderUrl(chainId: number) {
 
+  // This is a public api key so don't worry.
   const infuraApiKey = "75268e971ab6449981ac429cf62c5fb7"
 
   const urls : Record<number, string> = {

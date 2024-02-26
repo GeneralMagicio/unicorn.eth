@@ -21,7 +21,8 @@ export const UserInfo = styled.div(({ theme }) => ({
   padding: '4px',
   paddingRight: '16px',
   gap: theme.space['2'],
-  border: `1px solid ${theme.colors.greyPrimary}`,
+  // @ts-ignore
+  border: `1px solid ${theme.colors.additionalBorder}`,
   minHeight: '50px',
 }))
 
