@@ -2,6 +2,7 @@
 
 import { AuthGuard } from '@/components/AuthGuard'
 import { BottomNav } from '@/components/BottomNav'
+import { CollectibleDetailModal } from '@/components/CollectibleDetailModal'
 import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { GeneralSettingsModal } from '@/components/Settings/GeneralSettingsModal'
@@ -21,6 +22,7 @@ export const enum MODAL_TYPE {
   SETTINGS_ACCOUNT_DETAILS = 'SETTINGS_ACCOUNT_DETAILS',
   SETTINGS_CHANGE_DOMIAN = 'SETTINGS_CHANGE_DOMIAN',
   SETTINGS_BUY_ENS = 'SETTINGS_BUY_ENS',
+  COLLECTIBLE_DETAIL = 'COLLECTIBLE_DETAIL',
 }
 
 export default function DashboardLayout({
@@ -45,6 +47,7 @@ export default function DashboardLayout({
         />
         <TokenDetailModal />
         <Settings />
+        <CollectibleDetailModal />
       </div>
     </AuthGuard>
   )
