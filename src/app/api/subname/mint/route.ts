@@ -1,7 +1,7 @@
-import { createCustomSubnameData } from '@/services/enService'
+import { createSubname } from '@/services/enService'
 
 export async function POST(request: Request) {
   const body = await request.json()
-  const data = await createCustomSubnameData(body)
+  const data = await createSubname(body)
   return Response.json(data)
 }
