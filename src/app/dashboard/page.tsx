@@ -65,7 +65,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName || 'moenick'}.unicorn.eth
+            {userName || ''}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
