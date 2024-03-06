@@ -23,6 +23,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     signInInfo,
     setUserName,
     setAuthStatus,
+    setMainnetProvider,
     setProvider,
     setSigner,
     setEthBalance,
@@ -49,9 +50,13 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     ;(async () => {
       const options: SafeAuthInitOptions = {
         buildEnv: 'production',
+        enableLogging: true,
+        showWidgetButton: false,
         chainConfig: {
           chainId: '0x64',
-          rpcTarget: 'https://gnosis.drpc.org',
+          // rpcTarget: 'https://gnosis.drpc.org',
+          rpcTarget:
+            'https://soft-blissful-friday.xdai.quiknode.pro/43484a3be76827b515d4fa460ea1bf08961ed9fb/',
         },
       }
 
@@ -64,6 +69,12 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         const provider: any = await new ethers.BrowserProvider(
           authPack?.safeAuthEmbed.provider!
         )
+        const mainnetProvider = new ethers.JsonRpcProvider(
+          'https://eth.llamarpc.com'
+        )
+
+        setMainnetProvider(mainnetProvider)
+
         const signer = await provider.getSigner()
         setProvider(provider)
         setSigner(signer)

@@ -8,6 +8,7 @@ import {
   userInfoAtom,
   userNameAtom,
   providerAtom,
+  mainnetProviderAtom,
   signerAtom,
   ethBalanceAtom,
 } from '@/store'
@@ -24,6 +25,7 @@ export const useSafeAuth = () => {
   const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
   const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
   const [authStatus, setAuthStatus] = useAtom(authStatusAtom)
+  const [mainnetProvider, setMainnetProvider] = useAtom(mainnetProviderAtom)
   const [provider, setProvider] = useAtom(providerAtom)
   const [signer, setSigner] = useAtom(signerAtom)
   const [ethBalance, setEthBalance] = useAtom(ethBalanceAtom)
@@ -99,7 +101,10 @@ export const useSafeAuth = () => {
     authStatus,
     setAuthStatus,
     sendToken,
+    provider,
+    mainnetProvider,
     setProvider,
+    setMainnetProvider,
     setSigner,
     ethBalance,
     setEthBalance,

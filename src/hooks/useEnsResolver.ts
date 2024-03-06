@@ -2,11 +2,12 @@ import { getSubnameMetadata } from '@/services/enService'
 import { useSafeAuth } from './useSafeAuth'
 import { useCallback, useState } from 'react'
 import { debounce } from '@/utils/debounce'
+import { resolveAddress } from 'ethers'
 import axios from 'axios'
 import { SubnameResolutionResponse } from '@/services/types/ens'
 
 export function useEnsResolver() {
-  const { signInInfo } = useSafeAuth()
+  const { signInInfo, mainnetProvider } = useSafeAuth()
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
@@ -46,6 +47,15 @@ export function useEnsResolver() {
     [signInInfo?.eoa]
   )
 
+  const getENSAddress = async (ens: string) => {
+    try {
+      return await resolveAddress(ens, mainnetProvider)
+    } catch (err) {
+      console.log({ err })
+      return false
+    }
+  }
+
   return {
     checkUserName,
     debouncedCheckUserName,
@@ -55,5 +65,6 @@ export function useEnsResolver() {
     createEnsSubname: handleCreateSubname,
     getSubnameDataset,
     getSubnameMetadata,
+    getENSAddress,
   }
 }

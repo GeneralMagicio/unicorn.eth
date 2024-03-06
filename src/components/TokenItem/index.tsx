@@ -4,20 +4,27 @@ import { Typography } from '@ensdomains/thorin'
 import Image from 'next/image'
 interface TokenItemProps {
   token: ICryptoToken
+  amount?: number | bigint
   label?: string
   showOnlyName?: boolean
   showOnlyValue?: boolean
+  reverse?: boolean
 }
 
 export const TokenItem: React.FC<TokenItemProps> = ({
   token,
+  amount,
   label = '',
   showOnlyName,
   showOnlyValue,
+  reverse = false,
 }) => {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex gap-2">
+    <div className={`flex items-center justify-between ${reverse && 'w-full'}`}>
+      <div
+        className={`flex gap-2 ${
+          reverse && 'flex-row-reverse w-[100%] justify-between'
+        }`}>
         <Image
           src={token.icon || '/images/ens.png'}
           alt={token.name}
@@ -29,10 +36,12 @@ export const TokenItem: React.FC<TokenItemProps> = ({
           className={`flex flex-col ${
             showOnlyName ? 'justify-center' : 'justify-between'
           }`}>
-          <Typography weight="bold">{token.name}</Typography>
+          <Typography weight="bold">{` ${amount && amount} ${
+            token.name
+          }`}</Typography>
           {(!showOnlyName || showOnlyValue) && (
             <Typography fontVariant="small" color="grey">
-              {label} {numberFormatter.format(token.value)}
+              {label} {numberFormatter.format(amount || token.value)}
             </Typography>
           )}
         </div>
