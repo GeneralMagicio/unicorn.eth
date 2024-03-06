@@ -1,4 +1,4 @@
-type SupportedChainIds = 1 | 42161 | 10 | 100 | 56
+type SupportedChainIds = 1 | 42161 | 10 | 100 | 56       // Mainnet - Arbitrum One - Optimism - Gnosis Chain
 
 export type SupportedToken = {
   symbol: string
