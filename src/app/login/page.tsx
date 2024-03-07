@@ -61,7 +61,10 @@ export default function Login() {
   const login = async () => {
     setIsSigning(true)
     try {
-      const signInInfo = (await safeAuthPack?.signIn()) || null
+      const signInInfo =
+        (await safeAuthPack?.signIn({
+          loginProvider: 'google',
+        })) || null
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
     } catch (err) {
