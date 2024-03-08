@@ -28,8 +28,6 @@ export const getChainNames = () => {
   return result
 }
 
-// export const mapChainIdsToNames = () =>
-// export const mapChainNamesToIds = () =>
 
 export type SupportedToken = {
   symbol: string
@@ -116,7 +114,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://ethereum.org',
     logo: {
-      src: 'https://etherscan.io/token/images/ether28_2.png',
+      src: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -231,7 +229,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://tether.to',
     logo: {
-      src: 'https://etherscan.io/token/images/tether28_2.png',
+      src: 'https://assets.coingecko.com/coins/images/325/large/Tether.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -311,11 +309,11 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 6,
-    name: 'USD//Coin',
+    name: 'USD Coin',
     ens_address: '',
     website: 'https://www.centre.io',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/6319/large/usdc.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -345,7 +343,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://www.binance.com',
     logo: {
-      src: 'https://etherscan.io/token/images/binance_28.png',
+      src: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -389,7 +387,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://link.smartcontract.com',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -423,7 +421,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://polygon.technology/',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -509,7 +507,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://shibatoken.com',
     logo: {
-      src: 'https://i.ibb.co/bQqBbSH/shib-logo.png',
+      src: 'https://assets.coingecko.com/coins/images/11939/large/shiba.png',
       width: 128,
       height: 128,
       ipfs_hash: '',
@@ -544,7 +542,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://giveth.io/',
     logo: {
-      src: 'https://raw.githubusercontent.com/Giveth/giveth-design-assets/master/02-logos/GIV%20Token/GIVToken_200x200.png',
+      src: 'https://assets.coingecko.com/coins/images/21792/large/GIVToken_200x200.png',
       width: 226,
       height: 226,
       ipfs_hash: '',
@@ -580,7 +578,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: 'cardano.eth',
     website: 'https://cardano.org',
     logo: {
-      src: 'https://assets.coingecko.com/coins/images/12170/large/cardano.png',
+      src: 'https://assets.coingecko.com/coins/images/975/large/cardano.png',
       width: 128,
       height: 128,
       ipfs_hash: 'QmeSjSinHpPnmXmspMjwiXyN6zS4E9zccariGR3jxcaWtq',
@@ -646,7 +644,7 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     website: 'http://avax.network',
     logo: {
-      src: 'https://assets.coingecko.com/coins/images/4648/large/Ripple.png',
+      src: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png',
       width: 128,
       height: 128,
       ipfs_hash: 'QmXK9QxNCPx4tPQgYx2QgRQEjLZkjMGy6kxqx4Yxgq4PqP',
@@ -671,7 +669,7 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'Solana',
     website: '',
-    logo: { src: '', width: 64, height: 64, ipfs_hash: '' },
+    logo: { src: 'https://assets.coingecko.com/coins/images/4128/large/solana.png', width: 64, height: 64, ipfs_hash: '' },
     support: { email: '', url: '' },
     social: {},
   },
@@ -687,7 +685,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     decimals: 8,
     website: '',
-    logo: { src: '', width: 64, height: 64, ipfs_hash: '' },
+    logo: { src: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png', width: 64, height: 64, ipfs_hash: '' },
     support: { email: '', url: '' },
     social: {},
   },
@@ -706,7 +704,7 @@ export const supportedTokens: SupportedToken[] = [
     name: 'TRON',
     decimals: 6,
     website: 'https://tron.network/',
-    logo: { src: '', width: 64, height: 64, ipfs_hash: '' },
+    logo: { src: 'https://assets.coingecko.com/coins/images/1094/large/tron-logo.png', width: 64, height: 64, ipfs_hash: '' },
     social: {
       twitter: 'https://twitter.com/Tronfoundation',
       telegram: 'https://t.me/tronnetworkEN',
@@ -723,7 +721,7 @@ export const supportedTokens: SupportedToken[] = [
     name: 'BNB pegged Polkadot Token',
     decimals: 18,
     website: 'https://polkadot.network',
-    logo: { src: '', width: 64, height: 64, ipfs_hash: '' },
+    logo: { src: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png', width: 64, height: 64, ipfs_hash: '' },
     social: {},
   },
   {
@@ -759,11 +757,11 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 18,
-    name: 'Dai Stablecoin v2.0',
+    name: 'Dai Stablecoin',
     ens_address: '',
     website: 'https://makerdao.com',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/9956/large/Badge_Dai.png',
       width: 64,
       height: 64,
       ipfs_hash: '',
@@ -814,7 +812,7 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     website: 'https://app.optimism.io/governance',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
       width: 64,
       height: 64,
       ipfs_hash: '',
@@ -840,7 +838,7 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     website: 'https://arbitrum.foundation/',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg',
       width: 64,
       height: 64,
       ipfs_hash: '',
@@ -861,7 +859,7 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     website: 'https://ens.domains',
     logo: {
-      src: '',
+      src: 'https://assets.coingecko.com/coins/images/19785/large/acatxTm8_400x400.jpg',
       width: 64,
       height: 64,
       ipfs_hash: '',

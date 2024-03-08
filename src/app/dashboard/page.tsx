@@ -15,15 +15,55 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
-import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { ICryptoToken } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
-import { MOCK_COLLECTIBLES, MOCK_TOKENS } from '@/utils/db'
-import { getTotalBalance } from './utils/balance'
+import { MOCK_COLLECTIBLES } from '@/utils/db'
+import {
+  getAggregatedTotalBalance,
+  getBalanceForTokenChainPairs,
+} from './utils/balance'
+import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
+import { axiosInstance } from '@/services/axiosInstance'
 
 const TABS = ['Tokens', 'Collectibles']
+
+const fetcher = async () => {
+  const url = 'https://unicorn.melodicdays.shop/pricing/all'
+  const res = await axiosInstance.get<Record<string, number>>(url)
+
+  return res.data
+}
+
+const calculateBalance = async () => {
+  const walletAddress = '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
+  const totalBalance = await getBalanceForTokenChainPairs(
+    supportedTokens,
+    walletAddress
+  )
+  return getAggregatedTotalBalance(totalBalance)
+}
+
+const createCryptoTokenObject = (
+  balances: Record<string, number>,
+  prices: Record<string, number>
+) => {
+  const result: ICryptoToken[] = []
+  for (const symbol in balances) {
+    const balance = balances[symbol]
+    const tokenInfo = supportedTokens.find((item) => item.symbol === symbol)
+    if (!tokenInfo || balance <= 0) continue
+    result.push({
+      name: tokenInfo.name,
+      icon: tokenInfo.logo.src,
+      price: prices[symbol],
+      value: balance,
+    })
+  }
+
+  return result.sort((a, b) => (b.price * b.value) - (a.price * a.value))
+}
 
 export default function Dashboard() {
   const theme = useTheme()
@@ -34,22 +74,32 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  const calculateBalance = async () => {
-    try {
-      const walletAddress = '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
-      const totalBalance = await getTotalBalance(supportedTokens, walletAddress)
-      console.log(totalBalance)
-    } catch (e) {
-      console.error(e)
-    }
-  }
+  const { data: tokenPrices, error } = useSWR<Record<string, number>>(
+    'token-prices',
+    fetcher
+  )
 
-  const ethToken: ICryptoToken = {
-    name: 'xDAI', ///  TODO: check on current network
-    value: Number(ethBalance),
-    price: 3000,
-    icon: '/img/eth.png',
-  }
+  const { data: balance, error: error2 } = useSWR<Record<string, number>>(
+    'balance',
+    calculateBalance
+  )
+
+  // TODO: Better error handling
+  if (error || error2) return
+  // Probably use some spinner to indicate the loading time
+  if (!tokenPrices || !balance) return
+
+  // const ethToken: ICryptoToken = {
+  //   name: 'xDAI', ///  TODO: check on current network
+  //   value: Number(ethBalance),
+  //   price: 3000,
+  //   icon: '/img/eth.png',
+  // }
+
+  const estimatedTotalValue = createCryptoTokenObject(
+    balance,
+    tokenPrices
+  ).reduce((acc, curr) => (acc += curr.price * curr.value), 0)
 
   return (
     <>
@@ -80,7 +130,7 @@ export default function Dashboard() {
           Estimated Value
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
-          $28,652.54
+          {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
       {showPromotionBox && (
@@ -108,7 +158,7 @@ export default function Dashboard() {
       </nav>
       <div className="flex flex-col gap-4">
         {activeTab === 'Tokens' &&
-          [ethToken, ...MOCK_TOKENS].map((token, idx) => (
+          createCryptoTokenObject(balance, tokenPrices).map((token, idx) => (
             <div
               key={idx}
               onClick={() => {
