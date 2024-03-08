@@ -15,7 +15,7 @@ export const getChainIds = () => {
       result.push(Number(item))
     }
   }
-  return result;
+  return result
 }
 
 export const getChainNames = () => {
@@ -25,11 +25,11 @@ export const getChainNames = () => {
       result.push(item)
     }
   }
-  return result;
+  return result
 }
 
-// export const mapChainIdsToNames = () => 
-// export const mapChainNamesToIds = () => 
+// export const mapChainIdsToNames = () =>
+// export const mapChainNamesToIds = () =>
 
 export type SupportedToken = {
   symbol: string
@@ -68,11 +68,19 @@ export type SupportedToken = {
   }
 }
 
-const mergeableTokens = [
-  ['ETH', 'stETH', 'WETH'],
-  ['USDC', 'USDC.e'],
-  ['USDT', 'USDT.e'],
-]
+const mergeableTokens = {
+  ETH: ['stETH', 'WETH'],
+  USDC: ['USDC.e'],
+  DAI: ['xDAI'],
+}
+
+export const getAggregateSymbol = (symbol: string) => {
+  let aggregateSymbol : keyof typeof mergeableTokens;
+  for (aggregateSymbol in mergeableTokens) {
+    if (mergeableTokens[aggregateSymbol].includes(symbol)) return aggregateSymbol
+  }
+  return symbol
+}
 
 export const supportedTokens: SupportedToken[] = [
   {
@@ -90,10 +98,6 @@ export const supportedTokens: SupportedToken[] = [
         chainId: SupportedChainIds.OP,
         address: '',
       },
-      // {
-      //   chainId: SupportedChainIds.Polygon,
-      //   address: '',
-      // },
       {
         chainId: SupportedChainIds.Base,
         address: '',
@@ -357,7 +361,7 @@ export const supportedTokens: SupportedToken[] = [
     },
   },
   {
-    symbol: 'LINK (Chainlink)',
+    symbol: 'LINK',
     addresses: [
       {
         chainId: SupportedChainIds.Mainnet,
@@ -375,10 +379,10 @@ export const supportedTokens: SupportedToken[] = [
         chainId: SupportedChainIds.BSC,
         address: '0xf8a0bf9cf54bb92f17374d9e9a321e6a111a51bd',
       },
-      // {
-      //   chainId: SupportedChainIds.Gnosis,
-      //   address: '0xE2e73A1c69ecF83F464EFCE6A5be353a37cA09b2',
-      // },
+      {
+        chainId: SupportedChainIds.Gnosis,
+        address: '0xE2e73A1c69ecF83F464EFCE6A5be353a37cA09b2',
+      },
     ],
     decimals: 18,
     name: 'LINK Chainlink',
@@ -773,6 +777,29 @@ export const supportedTokens: SupportedToken[] = [
       github: 'https://github.com/makerdao',
       reddit: 'https://www.reddit.com/r/MakerDAO',
       twitter: 'https://twitter.com/MakerDAO',
+    },
+  },
+  {
+    symbol: 'xDAI',
+    addresses: [
+      {
+        chainId: SupportedChainIds.Gnosis,
+        address: '',
+      },
+    ],
+    decimals: 18,
+    name: 'xDai',
+    ens_address: '',
+    logo: {
+      src: '',
+      width: 64,
+      height: 64,
+      ipfs_hash: '',
+    },
+    website: 'https://xdaichain.com',
+    social: {
+      github: 'https://github.com/xdaichain',
+      twitter: 'https://twitter.com/xdaichain',
     },
   },
   {

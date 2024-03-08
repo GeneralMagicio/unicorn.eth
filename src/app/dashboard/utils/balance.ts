@@ -1,5 +1,10 @@
 import { JsonRpcProvider, ethers } from 'ethers'
-import { SupportedChainIds, SupportedToken, getChainIds } from '../data/supported_tokens'
+import {
+  SupportedChainIds,
+  SupportedToken,
+  getAggregateSymbol,
+  getChainIds,
+} from '../data/supported_tokens'
 
 const PrecisionDigits = 4
 
@@ -10,7 +15,7 @@ function getProviderUrl(chainId: number) {
   const urls: Record<number, string> = {
     [SupportedChainIds.Mainnet]: `https://mainnet.infura.io/v3/${infuraApiKey}`,
     [SupportedChainIds.OP]: `https://optimism-mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Gnosis]: `https://rpc.gnosischain.com`,
+    [SupportedChainIds.Gnosis]: `https://gnosis-rpc.publicnode.com`,
     [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
     [SupportedChainIds.Base]: `https://mainnet.base.org`,
     [SupportedChainIds.Polygon]: `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
@@ -25,7 +30,6 @@ async function getTokenBalance(
   tokenAddress: string,
   walletAddress: string
 ) {
-  if (chainId === SupportedChainIds.Gnosis) return BigInt(0)
   const provider = new JsonRpcProvider(getProviderUrl(chainId))
   // when token is the native token of the chain
   if (tokenAddress === '') {
@@ -54,11 +58,10 @@ async function getTokenBalance(
     contract.balanceOf(walletAddress),
     contract.decimals(),
   ])
-  // console.log('Decimals', Number(decimals) - PrecisionDigits)
   return balance / BigInt(Math.pow(10, Number(decimals) - PrecisionDigits))
 }
 
-export async function getTotalBalance(
+export async function getBalanceForTokenChainPairs(
   supportedTokens: SupportedToken[],
   walletAddress: string
 ) {
@@ -75,16 +78,22 @@ export async function getTotalBalance(
     }),
     {}
   )
+  const promises : Promise<void>[] = []
+  const func = async (symbol: string, address: string, chainId: SupportedChainIds) => {
+    totalBalance[symbol][chainId] = await getTokenBalance(
+      chainId,
+      address,
+      walletAddress
+    )
+  }
   for (const token of supportedTokens) {
     for (const { address, chainId } of token.addresses) {
-      {
-        const balance = await getTokenBalance(chainId, address, walletAddress)
-        totalBalance[token.symbol][chainId] = balance
-        // if (token.symbol === 'USDC')
-        //   console.log(`Added ${balance} USDC found on ${chainId}`)
-      }
+      promises.push(func(token.symbol, address, chainId))
     }
   }
+
+  await Promise.all(promises)
+
   const result: Record<string, Record<SupportedChainIds, number>> = {}
 
   Object.keys(totalBalance).forEach(
@@ -92,10 +101,26 @@ export async function getTotalBalance(
       (result[key] = getChainIds().reduce(
         (acc, curr: SupportedChainIds) => ({
           ...acc,
-          [curr]: Number(totalBalance[key][curr]) / Math.pow(10, PrecisionDigits),
+          [curr]:
+            Number(totalBalance[key][curr]) / Math.pow(10, PrecisionDigits),
         }),
         {} as Record<SupportedChainIds, number>
       ))
   )
   return result
+}
+
+export const getAggregatedTotalBalance = (tokenChainBalances: Record<string, Record<SupportedChainIds, number>>) => {
+  const result : Record<string, number> = {} 
+  for (const token of Object.keys(tokenChainBalances)) {
+    const sum = getChainIds().reduce((acc, curr: SupportedChainIds) => acc += tokenChainBalances[token][curr], 0)
+    const aggregateSymbol = getAggregateSymbol(token)
+    result[aggregateSymbol] = (!isNaN(result[aggregateSymbol]) ? result[aggregateSymbol] : 0) + sum
+  }
+
+  for (const token of Object.keys(result)) {
+    result[token] = Math.round(result[token] * Math.pow(10, PrecisionDigits)) / Math.pow(10, PrecisionDigits)
+  }
+
+  return result;
 }
