@@ -73,9 +73,8 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
 
         authPack.subscribe('accountsChanged', async (accounts) => {
           if (authPack.isAuthenticated) {
-            const signInInfo = await authPack?.signIn({
-              loginProvider: 'google',
-            })
+            console.log('RUNNN')
+            const signInInfo = await authPack?.signIn({})
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
 
