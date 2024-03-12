@@ -110,7 +110,9 @@ export default function Login() {
               alt="Unicorn"
               width={170}
               height={48}
-              className={cn('mx-auto', { 'mt-[57px]': step === 0 })}
+              className={cn('mx-auto object-cover', {
+                'mt-[57px]': step === 0,
+              })}
             />
             <div className="flex flex-col gap-6">
               {step === 0 && (
