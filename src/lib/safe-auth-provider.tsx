@@ -61,19 +61,20 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         await authPack.init(options)
 
         setSafeAuthPack(authPack)
-        const provider: any = await new ethers.BrowserProvider(
-          authPack?.safeAuthEmbed.provider!
-        )
-        const signer = await provider.getSigner()
-        setProvider(provider)
-        setSigner(signer)
+        // const provider: any = await new ethers.BrowserProvider(
+        //   authPack?.getProvider()!
+        // )
+        // const signer = await provider.getSigner()
+        // setProvider(provider)
+        // setSigner(signer)
 
-        // Fetch ETH balance
-        await fetchEthBalance(provider, signer)
+        // // Fetch ETH balance
+        // await fetchEthBalance(provider, signer)
+
         authPack.subscribe('accountsChanged', async (accounts) => {
-          console.log('accountsChanged')
           if (authPack.isAuthenticated) {
-            const signInInfo = await authPack?.signIn()
+            console.log('RUNNN')
+            const signInInfo = await authPack?.signIn({})
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
 

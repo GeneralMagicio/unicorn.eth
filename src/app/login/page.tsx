@@ -18,6 +18,7 @@ export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [isSigning, setIsSigning] = useState(false)
+  const [error, setError] = useState('')
 
   const {
     safeAuthPack,
@@ -61,7 +62,10 @@ export default function Login() {
   const login = async () => {
     setIsSigning(true)
     try {
-      const signInInfo = (await safeAuthPack?.signIn()) || null
+      const signInInfo =
+        (await safeAuthPack?.signIn({
+          loginProvider: 'google',
+        })) || null
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
     } catch (err) {
@@ -72,7 +76,7 @@ export default function Login() {
 
   const logout = async () => {
     if (isAuthenticated) {
-      await safeAuthPack?.signOut()
+      await safeAuthPack?.signOut({ reset: true })
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
