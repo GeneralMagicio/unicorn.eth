@@ -12,6 +12,9 @@ export function useEnsResolver() {
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
   const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (/[A-Z]/.test(e.target.value)) {
+      return setIsNameAvailable(false)
+    }
     try {
       const res = await axios.get<{ isAvailable: boolean }>(
         '/api/subname/availability',
@@ -28,6 +31,7 @@ export function useEnsResolver() {
   }
   const handleCreateSubname = (label: string) => {
     setIsNameAvailable(true)
+
     return axios
       .post('/api/subname/mint', {
         address: signInInfo?.eoa!,

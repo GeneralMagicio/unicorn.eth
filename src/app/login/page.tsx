@@ -18,6 +18,7 @@ export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [isSigning, setIsSigning] = useState(false)
+  const [error, setError] = useState('')
 
   const {
     safeAuthPack,
@@ -61,7 +62,10 @@ export default function Login() {
   const login = async () => {
     setIsSigning(true)
     try {
-      const signInInfo = (await safeAuthPack?.signIn()) || null
+      const signInInfo =
+        (await safeAuthPack?.signIn({
+          loginProvider: 'google',
+        })) || null
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
     } catch (err) {
@@ -72,7 +76,7 @@ export default function Login() {
 
   const logout = async () => {
     if (isAuthenticated) {
-      await safeAuthPack?.signOut()
+      await safeAuthPack?.signOut({ reset: true })
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
@@ -106,7 +110,9 @@ export default function Login() {
               alt="Unicorn"
               width={170}
               height={48}
-              className={cn('mx-auto', { 'mt-[57px]': step === 0 })}
+              className={cn('mx-auto object-cover', {
+                'mt-[57px]': step === 0,
+              })}
             />
             <div className="flex flex-col gap-6">
               {step === 0 && (
