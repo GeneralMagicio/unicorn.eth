@@ -65,7 +65,6 @@ export const SendModal: React.FC<{
       }
 
       const isEns = await getENSAddress(destination)
-      console.log({ isEns })
       !!isEns && (currentDestination = isEns)
 
       if (!isAddress(currentDestination)) {

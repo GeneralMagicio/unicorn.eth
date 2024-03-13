@@ -3,6 +3,7 @@ import { CancelButton, FlexRow, Summary } from './send.styles'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { useState } from 'react'
 import { TokenItem } from '../TokenItem'
+import LoadingArc from './LoadingArc'
 import Image from 'next/image'
 import { truncateEthAddress } from '@/utils/strings'
 
@@ -20,6 +21,7 @@ const SendConfirmation = ({
   amount,
 }: ISendConfirmation) => {
   const [txLoading, setTxLoading] = useState<boolean>(false)
+  const [txComplete, setTxComplete] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const { sendToken } = useSafeAuth()
@@ -27,12 +29,42 @@ const SendConfirmation = ({
   const sendTx = async () => {
     // TODO: ADAPT THIS FOR ERC20, sendToken is already apt for it
     setTxLoading(true)
-    if (!destination || !amount) return
-    const sendSuccess: any = await sendToken(destination, amount) // third param can be ERC20 address
-    setTxLoading(false)
-    if (!!sendSuccess) {
-      setSuccessMessage(`Successful tx with hash ${sendSuccess}`)
+    setTxComplete(false)
+    try {
+      if (!destination || !amount) return
+      const sendSuccess: any = await sendToken(destination, amount) // third param can be ERC20 address
+      setTxLoading(false)
+      setTxComplete(true)
+      if (!!sendSuccess) {
+        setSuccessMessage(`Successful tx with hash ${sendSuccess}`)
+      }
+    } catch (error) {
+      // Handle the error here
+      console.error(error)
+      setTxLoading(false)
     }
+  }
+
+  if (txLoading || txComplete) {
+    return (
+      <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
+        <LoadingArc duration={5000} txComplete={txComplete} />
+        <Typography fontVariant="headingThree" weight="bold">
+          Sending Transaction
+        </Typography>
+        <Typography className="mt-8 ">
+          The transaction is still pending. <br /> You can check the status on
+          Transaction History.
+        </Typography>
+        <Button
+          onClick={async () => {
+            sendTx()
+          }}
+          className="btn-primary mt-8">
+          Go to Transaction History
+        </Button>
+      </div>
+    )
   }
 
   return (
@@ -48,7 +80,7 @@ const SendConfirmation = ({
             />
             <div className="flex justify-between">
               <Typography weight="bold">
-                {truncateEthAddress(destination || '')}
+                {truncateEthAddress(destination || 'destination')}
               </Typography>
               <Image
                 src={
@@ -64,6 +96,14 @@ const SendConfirmation = ({
             </div>
           </div>
         )}
+      </Summary>
+      <Summary>
+        <div className="flex justify-between">
+          <Typography color="text" weight="bold">
+            Transaction Fee
+          </Typography>
+          <Typography color="blue">$1.50 (0.000635 ETH)</Typography>
+        </div>
       </Summary>
       <FlexRow>
         <CancelButton

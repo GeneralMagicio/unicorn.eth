@@ -2,11 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-:root{
-    --border-secondary: #B8B8B8;
-    --text-secondary: #9B9BA7;
-    --background-secondary: #F6F6F6;
+:root {
+  --border-secondary: #b8b8b8;
+  --text-secondary: #9b9ba7;
+  --background-secondary: #f6f6f6;
 }
 
-
-
+@keyframes progress {
+  0% {
+    stroke-dasharray: 0 100;
+  }
+}
