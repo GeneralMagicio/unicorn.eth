@@ -26,7 +26,8 @@ import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
-import { findAllNFTs } from './utils/nft-balance'
+import { findAllGoodNFTs, findAllNFTs, supportedNFTsWithFunctionSupport } from './utils/nft-balance'
+import { supportedNFTs } from './data/collections_temp'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -89,10 +90,11 @@ export default function Dashboard() {
 
   useEffect(() => {
     const func = async () => {
-      const walletAddress = '0x30Ad9c33809f33b599F1b9e6B69958e1C22b3aE0'
-      const nfts = await findAllNFTs(walletAddress)
+      const walletAddress = '0x40D336b5e8fa5aceF13761c22de4a17B11D7121F'
+      const nfts = await findAllGoodNFTs(walletAddress)
       // return nfts
-      console.log("Here are all NFTs:", nfts)
+      // console.log("Here are all NFTs:", nfts)
+      console.log("Here are all Good NFT Collections:", supportedNFTsWithFunctionSupport)
     }
     func()
     // console.log("Here are all NFTs:", func())
