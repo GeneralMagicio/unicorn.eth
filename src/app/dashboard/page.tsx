@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
@@ -26,6 +26,7 @@ import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
+import { findAllNFTs } from './utils/nft-balance'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -86,6 +87,16 @@ export default function Dashboard() {
     calculateBalance
   )
 
+  useEffect(() => {
+    const func = async () => {
+      const walletAddress = '0x30Ad9c33809f33b599F1b9e6B69958e1C22b3aE0'
+      const nfts = await findAllNFTs(walletAddress)
+      // return nfts
+      console.log("Here are all NFTs:", nfts)
+    }
+    func()
+    // console.log("Here are all NFTs:", func())
+  }, [])
   // TODO: Better error handling
   if (error || error2) return
   // Probably use some spinner to indicate the loading time
