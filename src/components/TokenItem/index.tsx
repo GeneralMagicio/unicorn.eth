@@ -36,7 +36,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
           className={`flex flex-col ${
             showOnlyName ? 'justify-center' : 'justify-between'
           }`}>
-          <Typography weight="bold">{` ${amount && amount} ${
+          <Typography weight="bold">{` ${amount ? amount : ''} ${
             token.name
           }`}</Typography>
           {(!showOnlyName || showOnlyValue) && (

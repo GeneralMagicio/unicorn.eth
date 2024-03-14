@@ -36,15 +36,6 @@ const fetcher = async () => {
   return res.data
 }
 
-const calculateBalance = async () => {
-  const walletAddress = '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
-  const totalBalance = await getBalanceForTokenChainPairs(
-    supportedTokens,
-    walletAddress
-  )
-  return getAggregatedTotalBalance(totalBalance)
-}
-
 const createCryptoTokenObject = (
   balances: Record<string, number>,
   prices: Record<string, number>
@@ -67,12 +58,23 @@ const createCryptoTokenObject = (
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName, profileImage, ethBalance } = useSafeAuth()
+  const { userInfo, userName, profileImage, ethBalance, userAddress } =
+    useSafeAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
+
+  const calculateBalance = async () => {
+    const walletAddress =
+      userAddress || '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
+    const totalBalance = await getBalanceForTokenChainPairs(
+      supportedTokens,
+      walletAddress
+    )
+    return getAggregatedTotalBalance(totalBalance)
+  }
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',

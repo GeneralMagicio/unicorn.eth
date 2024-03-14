@@ -24,11 +24,15 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setUserName,
     setAuthStatus,
     setMainnetProvider,
+    provider,
     setProvider,
+    signer,
     setSigner,
     setEthBalance,
     setProfileImage,
     userInfo,
+    userAddress,
+    setUserAddress,
   } = useSafeAuth()
   const { getSubnameDataset } = useEnsResolver()
 
@@ -72,25 +76,11 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         )
         setMainnetProvider(mainnetProvider)
 
-        // const provider: any = await new ethers.BrowserProvider(
-        //   authPack?.getProvider()!
-        // )
-        // const signer = await provider.getSigner()
-        // setProvider(provider)
-        // setSigner(signer)
-
-        // // Fetch ETH balance
-        // await fetchEthBalance(provider, signer)
-
         authPack.subscribe('accountsChanged', async (accounts) => {
           if (authPack.isAuthenticated) {
-            console.log('RUNNN')
             const signInInfo = await authPack?.signIn({})
             setSafeAuthSignInInfo(signInInfo)
             setIsAuthenticated(true)
-
-            // // Fetch ETH balance
-            // await fetchEthBalance(provider, signer)
           }
           setAuthStatus(AUTH_STATUS.RESOLVED)
         })
@@ -102,6 +92,29 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setSafeAuthPack,
     setSafeAuthSignInInfo,
   ])
+
+  const authSetup = async () => {
+    console.log({ provider, signer, isAuthenticated, safeAuthPack })
+    if (provider && signer) return
+    if (!isAuthenticated || !safeAuthPack) return
+    const safeProvider: any = await new ethers.BrowserProvider(
+      safeAuthPack?.getProvider()!
+    )
+    console.log('getting signer')
+    const safeSigner = await safeProvider.getSigner()
+    setUserInfo(userInfo)
+    setUserAddress(await safeSigner.getAddress())
+
+    setProvider(provider)
+    setSigner(safeSigner)
+
+    // Fetch ETH balance
+    await fetchEthBalance(safeProvider, safeSigner)
+  }
+
+  useEffect(() => {
+    authSetup()
+  }, [JSON.stringify(userInfo)])
 
   useEffect(() => {
     if (!safeAuthPack || !isAuthenticated) return

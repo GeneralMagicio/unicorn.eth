@@ -7,6 +7,7 @@ import {
   safeAuthSignInInfoAtom,
   userInfoAtom,
   userNameAtom,
+  userAddressAtom,
   providerAtom,
   mainnetProviderAtom,
   signerAtom,
@@ -20,6 +21,7 @@ export const enum AUTH_STATUS {
 }
 export const useSafeAuth = () => {
   const [userName, setUserName] = useAtom(userNameAtom)
+  const [userAddress, setUserAddress] = useAtom(userAddressAtom)
   const [userInfo, setUserInfo] = useAtom(userInfoAtom)
   const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom)
   const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
@@ -29,6 +31,7 @@ export const useSafeAuth = () => {
   const [provider, setProvider] = useAtom(providerAtom)
   const [signer, setSigner] = useAtom(signerAtom)
   const [ethBalance, setEthBalance] = useAtom(ethBalanceAtom)
+  const [profileImage, setProfileImage] = useAtom(userProfileImg)
 
   const sendToken = async (
     toAddress: string,
@@ -83,7 +86,6 @@ export const useSafeAuth = () => {
       return false
     }
   }
-  const [profileImage, setProfileImage] = useAtom(userProfileImg)
 
   return {
     safeAuthPack,
@@ -105,8 +107,11 @@ export const useSafeAuth = () => {
     mainnetProvider,
     setProvider,
     setMainnetProvider,
+    signer,
     setSigner,
     ethBalance,
     setEthBalance,
+    userAddress,
+    setUserAddress,
   }
 }

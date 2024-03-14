@@ -11,24 +11,23 @@ const LoadingArc = ({ duration, txComplete }: any) => {
 
     const loadingInterval = setInterval(() => {
       setPercentLoaded((oldPercentLoaded) => {
-        // TODO: Uncomment this when functionality is ready
-        // if (oldPercentLoaded >= 80) {
-        //   // Once we hit 80%, slow down the progress
-        //   if (!slowProgress) {
-        //     clearInterval(loadingInterval)
-        //     slowProgress = true // Enable slow progress
-        //     // Start a new interval with slower progress
-        //     setInterval(() => {
-        //       setPercentLoaded((oldPercentLoaded) => {
-        //         if (oldPercentLoaded < 95) {
-        //           return oldPercentLoaded + 0.1
-        //         }
-        //         return oldPercentLoaded
-        //       })
-        //     }, slowInterval)
-        //   }
-        //   return oldPercentLoaded
-        // }
+        if (oldPercentLoaded >= 80) {
+          // Once we hit 80%, slow down the progress
+          if (!slowProgress) {
+            clearInterval(loadingInterval)
+            slowProgress = true // Enable slow progress
+            // Start a new interval with slower progress
+            setInterval(() => {
+              setPercentLoaded((oldPercentLoaded) => {
+                if (oldPercentLoaded < 95) {
+                  return oldPercentLoaded + 0.1
+                }
+                return oldPercentLoaded
+              })
+            }, slowInterval)
+          }
+          return oldPercentLoaded
+        }
         return oldPercentLoaded + 1
       })
     }, fastInterval)
@@ -70,9 +69,9 @@ const LoadingArc = ({ duration, txComplete }: any) => {
             <path
               d="M2.91602 13.1327L12.6702 22.8786C17.3637 14.6735 23.8589 7.64116 31.666 2.31191L32.0869 2.02441"
               stroke="#3889FF"
-              stroke-width="4"
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
           </svg>
         ))}

@@ -29,7 +29,7 @@ export const SendModal: React.FC<{
     const [amountError, setAmountError] = useState<string | null>(null)
     const [destination, setDestination] = useState<string | null>(null)
     const [amount, setAmount] = useState<string | null>(null)
-    const [confirmTx, setConfirmTx] = useState<boolean>(true)
+    const [confirmTx, setConfirmTx] = useState<boolean>(false)
 
     const [destinationWarning, setDestinationWarning] = useState<string | null>(
       null

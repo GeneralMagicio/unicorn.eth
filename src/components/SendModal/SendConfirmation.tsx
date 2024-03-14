@@ -80,7 +80,7 @@ const SendConfirmation = ({
             />
             <div className="flex justify-between">
               <Typography weight="bold">
-                {truncateEthAddress(destination || '0x...0')}
+                {truncateEthAddress(destination || '')}
               </Typography>
               <Image
                 src={
