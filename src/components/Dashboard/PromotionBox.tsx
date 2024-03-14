@@ -32,7 +32,7 @@ export const PromotionBox: FC<MessageBoxProps> = ({
       </div>
       <div className="flex cursor-pointer items-center gap-4">
         <span className="rounded-full bg-blue-500 p-1">
-          <Image src={'/img/poap.png'} alt="poap" width={40} height={40} />
+          <Image src={'/img/poap1.png'} alt="poap" width={40} height={40} />
         </span>
         <div className="flex flex-col gap-1">
           <Typography

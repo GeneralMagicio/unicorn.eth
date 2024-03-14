@@ -62,7 +62,7 @@ const createCryptoTokenObject = (
     })
   }
 
-  return result.sort((a, b) => (b.price * b.value) - (a.price * a.value))
+  return result.sort((a, b) => b.price * b.value - a.price * a.value)
 }
 
 export default function Dashboard() {
@@ -169,28 +169,28 @@ export default function Dashboard() {
               <TokenItem token={token} />
             </div>
           ))}
+        {activeTab === TABS[1] && (
+          <div className="grid grid-cols-2 gap-4 gap-x-2 ">
+            {MOCK_COLLECTIBLES.map((collectible, id) => (
+              <div
+                key={id}
+                onClick={() => {
+                  setSelectedCollectible(collectible)
+                  setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
+                }}
+                role="button">
+                <Image
+                  className="rounded-2xl"
+                  src={collectible.img}
+                  width={180}
+                  height={180}
+                  alt={collectible.name}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-      {activeTab === TABS[1] && (
-        <div className="grid grid-cols-2 gap-4 gap-x-2 ">
-          {MOCK_COLLECTIBLES.map((collectible, id) => (
-            <div
-              key={id}
-              onClick={() => {
-                setSelectedCollectible(collectible)
-                setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
-              }}
-              role="button">
-              <Image
-                className="rounded-2xl"
-                src={collectible.img}
-                width={180}
-                height={180}
-                alt={collectible.name}
-              />
-            </div>
-          ))}
-        </div>
-      )}
     </>
   )
 }
