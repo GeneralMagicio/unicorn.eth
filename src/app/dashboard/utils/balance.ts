@@ -112,10 +112,13 @@ export async function getBalanceForTokenChainPairs(
 
 export const getAggregatedTotalBalance = (tokenChainBalances: Record<string, Record<SupportedChainIds, number>>) => {
   const result : Record<string, number> = {} 
-  for (const token of Object.keys(tokenChainBalances)) {
-    const sum = getChainIds().reduce((acc, curr: SupportedChainIds) => acc += tokenChainBalances[token][curr], 0)
-    const aggregateSymbol = getAggregateSymbol(token)
-    result[aggregateSymbol] = (!isNaN(result[aggregateSymbol]) ? result[aggregateSymbol] : 0) + sum
+  for (const token in tokenChainBalances) {
+    for (const chain in tokenChainBalances[token]) {
+      const chainId = chain as unknown as SupportedChainIds
+      const amount = tokenChainBalances[token][chainId]
+      const aggregateSymbol = getAggregateSymbol(token, chainId)
+      result[aggregateSymbol] = (!isNaN(result[aggregateSymbol]) ? result[aggregateSymbol] : 0) + amount
+    }
   }
 
   for (const token of Object.keys(result)) {

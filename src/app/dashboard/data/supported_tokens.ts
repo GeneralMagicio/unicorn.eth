@@ -66,16 +66,37 @@ export type SupportedToken = {
   }
 }
 
-const mergeableTokens = {
-  ETH: ['stETH', 'WETH'],
-  USDC: ['USDC.e'],
-  DAI: ['xDAI'],
+const mergeableTokens : Record<SupportedChainIds, Record<string, string[]>> = {
+  [SupportedChainIds.Mainnet]: {
+    ETH: ['stETH', 'WETH'],
+  },
+  [SupportedChainIds.Arbitrum]: {
+    ETH: ['WETH'],
+    USDC: ['USDC.e'],
+  },
+  [SupportedChainIds.OP]: {
+    ETH: ['WETH'],
+    USDC: ['USDC.e'],
+  },
+  [SupportedChainIds.Polygon]: {
+    ETH: ['WETH'],
+    USDC: ['USDC.e'],
+  },
+  [SupportedChainIds.Gnosis]: {
+    ETH: ['WETH'],
+    DAI: ['xDAI'],
+  },
+  [SupportedChainIds.Base]: {
+    ETH: ['WETH'],
+  },
+  [SupportedChainIds.BSC]: {
+    ETH: ['WETH'],
+  },
 }
 
-export const getAggregateSymbol = (symbol: string) => {
-  let aggregateSymbol : keyof typeof mergeableTokens;
-  for (aggregateSymbol in mergeableTokens) {
-    if (mergeableTokens[aggregateSymbol].includes(symbol)) return aggregateSymbol
+export const getAggregateSymbol = (symbol: string, chainId: SupportedChainIds) => {
+  for (const aggregateSymbol in mergeableTokens[chainId]) {
+    if (mergeableTokens[chainId][aggregateSymbol].includes(symbol)) return aggregateSymbol
   }
   return symbol
 }
@@ -870,4 +891,4 @@ export const supportedTokens: SupportedToken[] = [
       blog: 'https://medium.com/the-ethereum-name-service',
     },
   },
-]
+  ]
