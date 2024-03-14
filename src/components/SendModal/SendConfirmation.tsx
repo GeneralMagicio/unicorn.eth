@@ -74,13 +74,13 @@ const SendConfirmation = ({
           <div className="flex flex-col justify-between rounded-2xl px-4 py-2 gap-8">
             <TokenItem
               reverse
-              amount={Number(amount)}
+              amount={Number(amount) || 1}
               token={selectedToken}
               showOnlyName
             />
             <div className="flex justify-between">
               <Typography weight="bold">
-                {truncateEthAddress(destination || 'destination')}
+                {truncateEthAddress(destination || '0x...0')}
               </Typography>
               <Image
                 src={

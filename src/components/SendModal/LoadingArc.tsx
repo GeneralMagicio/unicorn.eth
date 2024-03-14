@@ -11,23 +11,24 @@ const LoadingArc = ({ duration, txComplete }: any) => {
 
     const loadingInterval = setInterval(() => {
       setPercentLoaded((oldPercentLoaded) => {
-        if (oldPercentLoaded >= 80) {
-          // Once we hit 80%, slow down the progress
-          if (!slowProgress) {
-            clearInterval(loadingInterval)
-            slowProgress = true // Enable slow progress
-            // Start a new interval with slower progress
-            setInterval(() => {
-              setPercentLoaded((oldPercentLoaded) => {
-                if (oldPercentLoaded < 95) {
-                  return oldPercentLoaded + 0.1
-                }
-                return oldPercentLoaded
-              })
-            }, slowInterval)
-          }
-          return oldPercentLoaded
-        }
+        // TODO: Uncomment this when functionality is ready
+        // if (oldPercentLoaded >= 80) {
+        //   // Once we hit 80%, slow down the progress
+        //   if (!slowProgress) {
+        //     clearInterval(loadingInterval)
+        //     slowProgress = true // Enable slow progress
+        //     // Start a new interval with slower progress
+        //     setInterval(() => {
+        //       setPercentLoaded((oldPercentLoaded) => {
+        //         if (oldPercentLoaded < 95) {
+        //           return oldPercentLoaded + 0.1
+        //         }
+        //         return oldPercentLoaded
+        //       })
+        //     }, slowInterval)
+        //   }
+        //   return oldPercentLoaded
+        // }
         return oldPercentLoaded + 1
       })
     }, fastInterval)
@@ -57,14 +58,24 @@ const LoadingArc = ({ duration, txComplete }: any) => {
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
       />
-      {!txComplete && (
-        <Checkmark viewBox="0 0 48 48" enable-background="new 0 0 48 48">
-          <polygon
-            fill="rgba(56, 137, 255, 1)"
-            points="40.6,12.1 17,35.7 7.4,26.1 4.6,29 17,41.3 43.4,14.9"
-          />
-        </Checkmark>
-      )}
+      {txComplete ||
+        (percentLoaded >= 100 && (
+          <svg
+            x="11"
+            y="11"
+            width="14"
+            height="14"
+            viewBox="0 0 35 25"
+            fill="none">
+            <path
+              d="M2.91602 13.1327L12.6702 22.8786C17.3637 14.6735 23.8589 7.64116 31.666 2.31191L32.0869 2.02441"
+              stroke="#3889FF"
+              stroke-width="4"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        ))}
     </CircularChart>
   )
 }
@@ -88,7 +99,5 @@ const Circle = styled.path`
   animation: progress 1s ease-out forwards;
   stroke: rgba(56, 137, 255, 1);
 `
-
-const Checkmark = styled.svg``
 
 export default LoadingArc
