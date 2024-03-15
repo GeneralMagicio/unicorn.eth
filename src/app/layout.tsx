@@ -29,7 +29,7 @@ export default async function RootLayout({
       <SafeAuthProvider>
         <html lang="en">
           <body className={inter.className}>
-            <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white max-h-[932px]">
+            <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white">
               {!isMobile ? 'This app can only be viewed on mobile.' : children}
             </main>
           </body>
