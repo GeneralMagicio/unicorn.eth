@@ -13,6 +13,7 @@ import { useSafeAuth } from '@/hooks/useSafeAuth'
 import cn from 'classnames'
 import { UserNameInput } from '@/components/Styled'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
+import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
 
 export default function Login() {
   const router = useRouter()
@@ -68,6 +69,10 @@ export default function Login() {
         })) || null
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
+      localStorage.setItem(
+        USER_INFO_STORAGE_KEY,
+        JSON.stringify({ time: Date.now(), userInfo })
+      )
     } catch (err) {
     } finally {
       setIsSigning(false)
@@ -80,6 +85,7 @@ export default function Login() {
       setSafeAuthSignInInfo(null)
       setIsAuthenticated(false)
       setUserInfo(null)
+      localStorage.removeItem(USER_INFO_STORAGE_KEY)
     }
   }
 
