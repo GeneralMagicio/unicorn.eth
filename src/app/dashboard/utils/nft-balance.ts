@@ -1,5 +1,5 @@
 import { JsonRpcProvider, ethers } from 'ethers'
-import { SupportedNFT, supportedNFTs } from '../data/top100'
+import { SupportedNFT, supportedNFTs } from '../data/top100-nfts'
 import { getProviderUrl } from './balance'
 import { SupportedChainIds } from '../data/supported_tokens';
 

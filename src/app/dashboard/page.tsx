@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
@@ -17,7 +17,6 @@ import {
 import { MODAL_TYPE } from './layout'
 import { Collectible, ICryptoToken } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
-import { MOCK_COLLECTIBLES } from '@/utils/db'
 import {
   getAggregatedTotalBalance,
   getBalanceForTokenChainPairs,
@@ -28,10 +27,9 @@ import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
 import {
   OsNft,
-  OsNftResponse,
   findAllNFTsOsApi,
 } from './utils/nft-balance-opensea'
-import { trimString } from './utils'
+import { getMockFloorPrice, trimString } from './utils'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -43,7 +41,7 @@ const fetcher = async () => {
 }
 
 const calculateBalance = async () => {
-  const walletAddress = '0x839395e20bbB182fa440d08F850E6c7A8f6F0780'
+  const walletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
   const totalBalance = await getBalanceForTokenChainPairs(
     supportedTokens,
     walletAddress
@@ -52,10 +50,9 @@ const calculateBalance = async () => {
 }
 
 const fetchNFTs = async () => {
-  const walletAddress = '0x40D336b5e8fa5aceF13761c22de4a17B11D7121F'
+  const walletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
   const nfts = await findAllNFTsOsApi(walletAddress)
 
-  // return nfts
   return createCollectibleObject(nfts)
 }
 
@@ -66,7 +63,7 @@ const createCollectibleObject = (nfts: OsNft[]) => {
       id: `${nft.collection}-${nft.identifier}`,
       org: nft.collection,
       name: nft.name || '',
-      floorPrice: 0,
+      floorPrice: getMockFloorPrice(),
       description: trimString(nft.description || '', 100),
       about: trimString(nft.metadata?.description || '', 40),
       website: nft.metadata?.external_url || '',
@@ -220,7 +217,7 @@ export default function Dashboard() {
                 role="button">
                 <img
                   className="rounded-2xl w-[180px] h-[180px]"
-                  src={collectible.img}
+                  src={collectible.img || '/img/login-bg.png'}
                   alt={collectible.name}
                 />
               </div>
