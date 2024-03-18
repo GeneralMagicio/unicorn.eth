@@ -15,7 +15,7 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
-import { ICryptoToken } from '@/services/types'
+import { Collectible, ICryptoToken } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
 import { MOCK_COLLECTIBLES } from '@/utils/db'
 import {
@@ -26,8 +26,12 @@ import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
-import { findAllGoodNFTs, findAllNFTs, supportedNFTsWithFunctionSupport } from './utils/nft-balance'
-import { supportedNFTs } from './data/collections_temp'
+import {
+  OsNft,
+  OsNftResponse,
+  findAllNFTsOsApi,
+} from './utils/nft-balance-opensea'
+import { trimString } from './utils'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -36,6 +40,42 @@ const fetcher = async () => {
   const res = await axiosInstance.get<Record<string, number>>(url)
 
   return res.data
+}
+
+const calculateBalance = async () => {
+  const walletAddress = '0x839395e20bbB182fa440d08F850E6c7A8f6F0780'
+  const totalBalance = await getBalanceForTokenChainPairs(
+    supportedTokens,
+    walletAddress
+  )
+  return getAggregatedTotalBalance(totalBalance)
+}
+
+const fetchNFTs = async () => {
+  const walletAddress = '0x40D336b5e8fa5aceF13761c22de4a17B11D7121F'
+  const nfts = await findAllNFTsOsApi(walletAddress)
+
+  // return nfts
+  return createCollectibleObject(nfts)
+}
+
+const createCollectibleObject = (nfts: OsNft[]) => {
+  const result: Collectible[] = []
+  for (const nft of nfts) {
+    result.push({
+      id: `${nft.collection}-${nft.identifier}`,
+      org: nft.collection,
+      name: nft.name || '',
+      floorPrice: 0,
+      description: trimString(nft.description || '', 100),
+      about: trimString(nft.metadata?.description || '', 40),
+      website: nft.metadata?.external_url || '',
+      OsUrl: nft.opensea_url,
+      img: nft.image_url || '',
+    })
+  }
+
+  return result
 }
 
 const createCryptoTokenObject = (
@@ -88,28 +128,12 @@ export default function Dashboard() {
     calculateBalance
   )
 
-  useEffect(() => {
-    const func = async () => {
-      const walletAddress = '0x40D336b5e8fa5aceF13761c22de4a17B11D7121F'
-      const nfts = await findAllGoodNFTs(walletAddress)
-      // return nfts
-      // console.log("Here are all NFTs:", nfts)
-      console.log("Here are all Good NFT Collections:", supportedNFTsWithFunctionSupport)
-    }
-    func()
-    // console.log("Here are all NFTs:", func())
-  }, [])
-  // TODO: Better error handling
-  if (error || error2) return
-  // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !balance) return
+  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', fetchNFTs)
 
-  // const ethToken: ICryptoToken = {
-  //   name: 'xDAI', ///  TODO: check on current network
-  //   value: Number(ethBalance),
-  //   price: 3000,
-  //   icon: '/img/eth.png',
-  // }
+  // TODO: Better error handling
+  if (error || error2 || error3) return
+  // Probably use some spinner to indicate the loading time
+  if (!tokenPrices || !balance || !nfts) return
 
   const estimatedTotalValue = createCryptoTokenObject(
     balance,
@@ -186,7 +210,7 @@ export default function Dashboard() {
           ))}
         {activeTab === TABS[1] && (
           <div className="grid grid-cols-2 gap-4 gap-x-2 ">
-            {MOCK_COLLECTIBLES.map((collectible, id) => (
+            {nfts.map((collectible, id) => (
               <div
                 key={id}
                 onClick={() => {
@@ -194,11 +218,9 @@ export default function Dashboard() {
                   setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
                 }}
                 role="button">
-                <Image
-                  className="rounded-2xl"
+                <img
+                  className="rounded-2xl w-[180px] h-[180px]"
                   src={collectible.img}
-                  width={180}
-                  height={180}
                   alt={collectible.name}
                 />
               </div>
