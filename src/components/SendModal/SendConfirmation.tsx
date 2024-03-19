@@ -7,14 +7,22 @@ import { TokenItem } from '../TokenItem'
 import LoadingArc from './LoadingArc'
 import Image from 'next/image'
 import { truncateEthAddress } from '@/utils/strings'
+import { ICryptoToken } from '@/services/types'
 
 interface ISendConfirmation {
   destination: string | null
   amount: string | null
-  selectedToken: any
+  selectedToken: ICryptoToken
   onDismiss: () => void
   setConfirmTx: (value: boolean) => void
   setTxDone: (value: boolean) => void
+}
+
+enum TxState {
+  Initial,
+  Loading,
+  Complete,
+  Failed,
 }
 
 const SendConfirmation = ({
@@ -26,17 +34,13 @@ const SendConfirmation = ({
   amount,
 }: ISendConfirmation) => {
   const router = useRouter()
-  const [txLoading, setTxLoading] = useState<boolean>(false)
-  const [txComplete, setTxComplete] = useState(false)
-  const [txFailed, setTxFailed] = useState(false)
+  const [txState, setTxState] = useState<TxState>(TxState.Initial)
   const [gasCost, setGasCost] = useState<string | null>('')
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const { sendToken, estimateGasFee } = useSafeAuth()
 
   const sendTx = async () => {
-    setTxLoading(true)
-    setTxComplete(false)
+    setTxState(TxState.Loading)
     try {
       if (!destination || !amount) return
       const sendSuccess: any = await sendToken(
@@ -44,19 +48,16 @@ const SendConfirmation = ({
         amount,
         selectedToken?.address // if empty it assumes ETH
       )
-      setTxLoading(false)
-      setTxComplete(true)
+      setTxState(TxState.Complete)
       if (!!sendSuccess) {
-        setSuccessMessage(`Successful tx with hash ${sendSuccess}`)
         setTxDone(true)
       } else {
-        setTxFailed(true)
+        setTxState(TxState.Failed)
       }
     } catch (error) {
       // Handle the error here
       console.error(error)
-      setTxFailed(true)
-      setTxLoading(false)
+      setTxState(TxState.Failed)
     }
   }
 
@@ -73,23 +74,21 @@ const SendConfirmation = ({
     getGas()
   }, [])
 
-  if (txFailed) {
+  if (txState === TxState.Failed) {
     return (
       <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
         <Typography fontVariant="headingThree" weight="bold">
           Transaction Failed
         </Typography>
 
-        <Button
-          onClick={async () => {
-            await sendTx()
-          }}
-          className="btn-primary mt-8">
+        <Button onClick={sendTx} className="btn-primary mt-8">
           Try again
         </Button>
       </div>
     )
   }
+  const txLoading = txState === TxState.Loading
+  const txComplete = txState === TxState.Complete
 
   if (txLoading || txComplete) {
     return (
@@ -215,11 +214,7 @@ const SendConfirmation = ({
           className="btn-secondary">
           Cancel
         </CancelButton>
-        <Button
-          onClick={async () => {
-            await sendTx()
-          }}
-          className="btn-primary">
+        <Button onClick={sendTx} className="btn-primary">
           Confirm
         </Button>
       </FlexRow>

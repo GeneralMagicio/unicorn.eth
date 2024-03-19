@@ -143,7 +143,7 @@ export const SendModal: React.FC<{
                   </div>
                 }
                 value={destination || ''}
-                onChange={(e: any) => {
+                onChange={(e) => {
                   setDestinationError(null)
                   setDestination(e.target.value)
                 }}></Input>
@@ -169,7 +169,7 @@ export const SendModal: React.FC<{
                     label="Amount"
                     placeholder="0.0"
                     clearable
-                    onChange={(e: any) => {
+                    onChange={(e) => {
                       setAmount(e.target.value)
                     }}></Input>
                 </div>
@@ -218,11 +218,7 @@ export const SendModal: React.FC<{
               {amountError && (
                 <Typography color="red">{amountError}</Typography>
               )}
-              <Button
-                onClick={async () => {
-                  startTx()
-                }}
-                className="btn-primary">
+              <Button onClick={startTx} className="btn-primary">
                 Send
               </Button>
             </>

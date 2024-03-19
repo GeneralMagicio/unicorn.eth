@@ -5,6 +5,7 @@ export interface ICryptoToken {
   icon: string
   address?: string
   decimals?: number
+  symbol?: string
 }
 
 export type Collectible = {
