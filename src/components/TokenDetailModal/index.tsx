@@ -13,6 +13,17 @@ import { SendIcon } from '../Icons/Send'
 import { PlusIcon } from '../Icons/Plus'
 import { SwapIcon } from '../Icons/Swap'
 
+const createRandomHistoryArray = () => {
+  const allowedStrings = ['Buy', 'Swapped', 'Received']
+  const arrayLength = Math.floor(Math.random() * 5) + 1 // Random length between 1 and 5
+  const resultArray = Array.from({ length: arrayLength }, () => {
+    const randomIndex = Math.floor(Math.random() * allowedStrings.length)
+    return allowedStrings[randomIndex]
+  })
+
+  return resultArray
+}
+
 export const TokenDetailModal: React.FC = () => {
   const router = useRouter()
   const [token] = useAtom(selectedTokenAtom)
@@ -53,7 +64,7 @@ export const TokenDetailModal: React.FC = () => {
                 {numberFormatter.format(token.value)} {token.name}
               </Typography>
               <Typography color="inherit" fontVariant="small">
-                {priceFormatter.format(token.value)}
+                {priceFormatter.format(token.price * token.value)}
               </Typography>
             </BalanceBox>
 
@@ -67,7 +78,7 @@ export const TokenDetailModal: React.FC = () => {
                   <ChevronRight />
                 </div>
               </div>
-              {['Buy', 'Swapped', 'Received', 'Buy', 'Swapped'].map(
+              {createRandomHistoryArray().map(
                 (item, idx) => (
                   <div key={idx} className="flex justify-between">
                     <div className="flex flex-col">

@@ -57,27 +57,35 @@ export const CollectibleDetailModal: React.FC = () => {
               </Typography>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <Typography fontVariant="small" weight="light">
-                Description
-              </Typography>
-              <Typography>{collectible.description}</Typography>
-            </div>
+            {collectible.description && (
+              <div className="flex flex-col gap-1">
+                <Typography fontVariant="small" weight="light">
+                  Description
+                </Typography>
+                <Typography>{collectible.description}</Typography>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1">
-              <Typography fontVariant="small" weight="light">
-                {`About ${collectible.name}`}
-              </Typography>
-              <Typography> {collectible.about} </Typography>
-              <a target="_blank" href={collectible.website} rel="noreferrer">
-                <Typography
-                  className="flex items-center gap-1"
-                  weight="bold"
-                  color="bluePrimary">
-                  <LinkIcon color="currentColor" />{' '}
-                  {trimString(collectible.website, 20)}
-                </Typography>
-              </a>
+              {collectible.about && (
+                <>
+                  <Typography fontVariant="small" weight="light">
+                    {`About ${collectible.name}`}
+                  </Typography>
+                  <Typography> {collectible.about} </Typography>
+                </>
+              )}
+              {collectible.website && (
+                <a target="_blank" href={collectible.website} rel="noreferrer">
+                  <Typography
+                    className="flex items-center gap-1"
+                    weight="bold"
+                    color="bluePrimary">
+                    <LinkIcon color="currentColor" />{' '}
+                    {trimString(collectible.website, 20)}
+                  </Typography>
+                </a>
+              )}
             </div>
 
             <a target="_blank" href={collectible.OsUrl} rel="noreferrer">

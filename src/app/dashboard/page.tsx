@@ -29,19 +29,20 @@ import {
   OsNft,
   findAllNFTsOsApi,
 } from './utils/nft-balance-opensea'
-import { getMockFloorPrice, trimString } from './utils'
+import { trimString } from './utils'
 
 const TABS = ['Tokens', 'Collectibles']
 
-const fetcher = async () => {
+const TestWalletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
+
+const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
   const res = await axiosInstance.get<Record<string, number>>(url)
 
   return res.data
 }
 
-const calculateBalance = async () => {
-  const walletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
+const calculateBalance = async (walletAddress: string) => {
   const totalBalance = await getBalanceForTokenChainPairs(
     supportedTokens,
     walletAddress
@@ -49,8 +50,7 @@ const calculateBalance = async () => {
   return getAggregatedTotalBalance(totalBalance)
 }
 
-const fetchNFTs = async () => {
-  const walletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
+const fetchNFTs = async (walletAddress: string) => {
   const nfts = await findAllNFTsOsApi(walletAddress)
 
   return createCollectibleObject(nfts)
@@ -63,7 +63,7 @@ const createCollectibleObject = (nfts: OsNft[]) => {
       id: `${nft.collection}-${nft.identifier}`,
       org: nft.collection,
       name: nft.name || '',
-      floorPrice: getMockFloorPrice(),
+      floorPrice: nft.floorPrice,
       description: trimString(nft.description || '', 100),
       about: trimString(nft.metadata?.description || '', 40),
       website: nft.metadata?.external_url || '',
@@ -72,7 +72,7 @@ const createCollectibleObject = (nfts: OsNft[]) => {
     })
   }
 
-  return result
+  return result.sort((a, b) => b.floorPrice - a.floorPrice)
 }
 
 const createCryptoTokenObject = (
@@ -117,15 +117,15 @@ export default function Dashboard() {
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
-    fetcher
+    fetchTokenPrices
   )
 
   const { data: balance, error: error2 } = useSWR<Record<string, number>>(
     'balance',
-    calculateBalance
+    () => calculateBalance(TestWalletAddress)
   )
 
-  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', fetchNFTs)
+  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () => fetchNFTs(TestWalletAddress))
 
   // TODO: Better error handling
   if (error || error2 || error3) return
@@ -160,7 +160,6 @@ export default function Dashboard() {
       </header>
       <BalanceBox>
         <Typography
-          onClick={calculateBalance}
           color="inherit"
           fontVariant="small">
           Estimated Value
