@@ -1,7 +1,7 @@
 import { Button, Typography } from '@ensdomains/thorin'
 import { CancelButton, FlexRow, Summary } from './send.styles'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TokenItem } from '../TokenItem'
 import LoadingArc from './LoadingArc'
 import Image from 'next/image'
@@ -22,9 +22,10 @@ const SendConfirmation = ({
 }: ISendConfirmation) => {
   const [txLoading, setTxLoading] = useState<boolean>(false)
   const [txComplete, setTxComplete] = useState(false)
+  const [gasCost, setGasCost] = useState<string | null>('')
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
-  const { sendToken } = useSafeAuth()
+  const { sendToken, estimateGasFee } = useSafeAuth()
 
   const sendTx = async () => {
     // TODO: ADAPT THIS FOR ERC20, sendToken is already apt for it
@@ -44,6 +45,19 @@ const SendConfirmation = ({
       setTxLoading(false)
     }
   }
+
+  useEffect(() => {
+    const getGas = async () => {
+      if (!destination || !amount) return
+      const gas = await estimateGasFee(
+        destination,
+        amount,
+        selectedToken?.address
+      )
+      gas && setGasCost(gas)
+    }
+    getGas()
+  }, [])
 
   if (txLoading || txComplete) {
     return (
@@ -102,7 +116,7 @@ const SendConfirmation = ({
           <Typography color="text" weight="bold">
             Transaction Fee
           </Typography>
-          <Typography color="blue">$1.50 (0.000635 ETH)</Typography>
+          {gasCost && <Typography color="blue">{`${gasCost} ETH`}</Typography>}
         </div>
       </Summary>
       <FlexRow>

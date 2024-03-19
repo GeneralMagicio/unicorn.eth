@@ -73,6 +73,7 @@ export const useSafeAuth = () => {
           signer
         )
 
+        // TODO: ADAPT THIS FOR ERC20 UNITS
         const amountInWei = ethers.parseUnits(amount, 'ether') // Assuming token has 18 decimals
         const txResponse = await tokenContract.transfer(toAddress, amountInWei)
         await txResponse.wait()
@@ -84,6 +85,50 @@ export const useSafeAuth = () => {
     } catch (error) {
       console.error('Transaction failed:', error)
       return false
+    }
+  }
+
+  const estimateGasFee = async (
+    toAddress: string,
+    amount: string,
+    tokenAddress = ''
+  ) => {
+    try {
+      if (!signer) return
+      let estimatedGasLimit
+      let transaction
+
+      if (tokenAddress === '') {
+        transaction = {
+          to: toAddress,
+          value: ethers.parseEther(amount),
+        }
+        estimatedGasLimit = await signer.estimateGas(transaction)
+      } else {
+        const tokenContract = new ethers.Contract(
+          tokenAddress,
+          [
+            'function estimateTransferGas(address to, uint amount) returns (uint256)',
+          ],
+          signer
+        )
+        // TODO: ADAPT THIS FOR ERC20 UNITS
+        const amountInWei = ethers.parseUnits(amount, 'ether') // Assuming token has 18 decimals
+        estimatedGasLimit = await tokenContract.transfer.call(
+          toAddress,
+          amountInWei
+        )
+      }
+      const gasPrice = (await mainnetProvider?.getFeeData())?.gasPrice
+
+      const totalFee =
+        !!gasPrice && !!estimatedGasLimit
+          ? estimatedGasLimit * gasPrice
+          : BigInt(0)
+      return parseFloat(ethers.formatEther(totalFee)).toFixed(6)
+    } catch (error) {
+      console.error('Failed to estimate gas fee:', error)
+      return null
     }
   }
 
@@ -103,6 +148,7 @@ export const useSafeAuth = () => {
     authStatus,
     setAuthStatus,
     sendToken,
+    estimateGasFee,
     provider,
     mainnetProvider,
     setProvider,
