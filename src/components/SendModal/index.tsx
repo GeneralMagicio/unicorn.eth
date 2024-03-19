@@ -30,6 +30,7 @@ export const SendModal: React.FC<{
     const [destination, setDestination] = useState<string | null>(null)
     const [amount, setAmount] = useState<string | null>(null)
     const [confirmTx, setConfirmTx] = useState<boolean>(false)
+    const [txDone, setTxDone] = useState<boolean>(false)
 
     const [destinationWarning, setDestinationWarning] = useState<string | null>(
       null
@@ -100,10 +101,14 @@ export const SendModal: React.FC<{
     return (
       <Modal open={open} onDismiss={onDismiss} mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
-          <ModalHeader title={confirmTx ? 'Sending' : 'Send'} />
+          <ModalHeader
+            title={txDone ? 'Sent' : confirmTx ? 'Sending' : 'Send'}
+          />
           {confirmTx ? (
             <>
               <SendConfirmation
+                onDismiss={onDismiss}
+                setTxDone={(val) => setTxDone(val)}
                 setConfirmTx={(val) => setConfirmTx(val)}
                 destination={destination}
                 amount={amount}

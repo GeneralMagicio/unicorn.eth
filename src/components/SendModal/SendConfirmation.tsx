@@ -1,5 +1,6 @@
 import { Button, Typography } from '@ensdomains/thorin'
 import { CancelButton, FlexRow, Summary } from './send.styles'
+import { useRouter } from 'next/navigation'
 import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { useEffect, useState } from 'react'
 import { TokenItem } from '../TokenItem'
@@ -11,37 +12,50 @@ interface ISendConfirmation {
   destination: string | null
   amount: string | null
   selectedToken: any
+  onDismiss: () => void
   setConfirmTx: (value: boolean) => void
+  setTxDone: (value: boolean) => void
 }
 
 const SendConfirmation = ({
+  onDismiss,
   setConfirmTx,
+  setTxDone,
   destination,
   selectedToken,
   amount,
 }: ISendConfirmation) => {
+  const router = useRouter()
   const [txLoading, setTxLoading] = useState<boolean>(false)
   const [txComplete, setTxComplete] = useState(false)
+  const [txFailed, setTxFailed] = useState(false)
   const [gasCost, setGasCost] = useState<string | null>('')
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const { sendToken, estimateGasFee } = useSafeAuth()
 
   const sendTx = async () => {
-    // TODO: ADAPT THIS FOR ERC20, sendToken is already apt for it
     setTxLoading(true)
     setTxComplete(false)
     try {
       if (!destination || !amount) return
-      const sendSuccess: any = await sendToken(destination, amount) // third param can be ERC20 address
+      const sendSuccess: any = await sendToken(
+        destination,
+        amount,
+        selectedToken?.address // if empty it assumes ETH
+      )
       setTxLoading(false)
       setTxComplete(true)
       if (!!sendSuccess) {
         setSuccessMessage(`Successful tx with hash ${sendSuccess}`)
+        setTxDone(true)
+      } else {
+        setTxFailed(true)
       }
     } catch (error) {
       // Handle the error here
       console.error(error)
+      setTxFailed(true)
       setTxLoading(false)
     }
   }
@@ -59,23 +73,97 @@ const SendConfirmation = ({
     getGas()
   }, [])
 
+  if (txFailed) {
+    return (
+      <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
+        <Typography fontVariant="headingThree" weight="bold">
+          Transaction Failed
+        </Typography>
+
+        <Button
+          onClick={async () => {
+            await sendTx()
+          }}
+          className="btn-primary mt-8">
+          Try again
+        </Button>
+      </div>
+    )
+  }
+
   if (txLoading || txComplete) {
     return (
       <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
         <LoadingArc duration={5000} txComplete={txComplete} />
-        <Typography fontVariant="headingThree" weight="bold">
-          Sending Transaction
-        </Typography>
-        <Typography className="mt-8 ">
-          The transaction is still pending. <br /> You can check the status on
-          Transaction History.
+        {!txComplete && (
+          <Typography fontVariant="headingThree" weight="bold">
+            Sending Transaction
+          </Typography>
+        )}
+        {txComplete && (
+          <div className="flex flex-col w-[250px] items-center self-center mt-2 gap-2 align-center justify-center text-center">
+            <div className="flex flex-row gap-2 items-center content-center align-center text-center">
+              <Image
+                width={24}
+                height={24}
+                className="h-[24px] w-[24px] rounded-full"
+                src={selectedToken?.icon}
+                alt="token icon"
+              />
+              <Typography weight="bold">
+                {amount} {selectedToken?.symbol}
+              </Typography>
+            </div>
+            <Image
+              width={14}
+              height={14}
+              src="/img/double-arrow-down.svg"
+              alt="arrow"
+            />
+            <div className="flex flex-row gap-2 items-center content-center align-center text-center">
+              <Image
+                width={24}
+                height={24}
+                className="h-[24px] w-[24px] rounded-full"
+                src={
+                  destination
+                    ? `https://effigy.im/a/${destination}.svg`
+                    : '/img/ens.png'
+                }
+                alt="token icon"
+              />
+              <Typography weight="bold">
+                {truncateEthAddress(destination || '')} {selectedToken?.symbol}
+              </Typography>
+            </div>
+          </div>
+        )}
+        <Typography className="mt-4 w-[100%]">
+          <span className=" text-sm">
+            The transaction {txComplete ? 'completed' : 'is still pending'}.{' '}
+          </span>
+          <br />
+          <div className="flex flex-row mt-2 w-[100%] gap-1 text-sm text-center justify-center">
+            {' '}
+            You can check the status on
+            <p
+              className="text-blue-500 cursor-pointer"
+              onClick={() => {
+                router.push('/dashboard/history')
+                onDismiss()
+              }}>
+              {' '}
+              Transaction History.
+            </p>
+          </div>
         </Typography>
         <Button
           onClick={async () => {
-            sendTx()
+            router.push(txComplete ? '/dashboard' : '/dashboard/history')
+            onDismiss()
           }}
           className="btn-primary mt-8">
-          Go to Transaction History
+          {txComplete ? 'Done' : 'Go to Transaction History'}
         </Button>
       </div>
     )
@@ -129,7 +217,7 @@ const SendConfirmation = ({
         </CancelButton>
         <Button
           onClick={async () => {
-            sendTx()
+            await sendTx()
           }}
           className="btn-primary">
           Confirm

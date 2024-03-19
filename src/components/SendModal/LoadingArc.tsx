@@ -57,24 +57,23 @@ const LoadingArc = ({ duration, txComplete }: any) => {
           a 15.9155 15.9155 0 0 1 0 31.831
           a 15.9155 15.9155 0 0 1 0 -31.831"
       />
-      {txComplete ||
-        (percentLoaded >= 100 && (
-          <svg
-            x="11"
-            y="11"
-            width="14"
-            height="14"
-            viewBox="0 0 35 25"
-            fill="none">
-            <path
-              d="M2.91602 13.1327L12.6702 22.8786C17.3637 14.6735 23.8589 7.64116 31.666 2.31191L32.0869 2.02441"
-              stroke="#3889FF"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        ))}
+      {(txComplete || percentLoaded >= 100) && (
+        <svg
+          x="11"
+          y="11"
+          width="14"
+          height="14"
+          viewBox="0 0 35 25"
+          fill="none">
+          <path
+            d="M2.91602 13.1327L12.6702 22.8786C17.3637 14.6735 23.8589 7.64116 31.666 2.31191L32.0869 2.02441"
+            stroke="#3889FF"
+            strokeWidth="4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      )}
     </CircularChart>
   )
 }
