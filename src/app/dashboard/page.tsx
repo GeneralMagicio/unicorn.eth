@@ -88,6 +88,7 @@ const createCryptoTokenObject = (
       icon: tokenInfo.logo.src,
       price: prices[symbol],
       value: balance,
+      symbol,
     })
   }
 
