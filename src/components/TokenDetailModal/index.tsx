@@ -61,7 +61,7 @@ export const TokenDetailModal: React.FC = () => {
                 color="text"
                 fontVariant="extraLarge"
                 weight="extraBold">
-                {numberFormatter.format(token.value)} {token.name}
+                {numberFormatter.format(token.value)} {token.symbol}
               </Typography>
               <Typography color="inherit" fontVariant="small">
                 {priceFormatter.format(token.price * token.value)}
