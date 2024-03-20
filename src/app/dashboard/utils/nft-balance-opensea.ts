@@ -74,7 +74,10 @@ const getFloorPrice = async (collectionSlug: string) => {
 
 const addMetadataToNfts = (nfts: OsNftResponse[]) => {
   return nfts.map(async ({ metadata_url, ...item }) => {
-    if (!metadata_url) return { ...item, metadata: null, floorPrice: 0 }
+    if (!metadata_url) {
+      const floorPrice = await getFloorPrice(item.collection)
+      return { ...item, metadata: null, floorPrice }
+    } 
 
     try {
       const [res, floorPrice] = await Promise.all([

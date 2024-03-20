@@ -25,11 +25,9 @@ import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
-import {
-  OsNft,
-  findAllNFTsOsApi,
-} from './utils/nft-balance-opensea'
+import { OsNft, findAllNFTsOsApi } from './utils/nft-balance-opensea'
 import { trimString } from './utils'
+import { NftImage } from '@/components/Dashboard/NftImage'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -106,7 +104,10 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  const walletAddress = userAddress || TestWalletAddress
+  console.log("User Address:", userAddress)
+  // const walletAddress = userAddress || TestWalletAddress
+  // TODO: Remove this once the smart contract integration is through
+  const walletAddress = TestWalletAddress
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
@@ -118,7 +119,9 @@ export default function Dashboard() {
     () => calculateBalance(walletAddress)
   )
 
-  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () => fetchNFTs(walletAddress))
+  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
+    fetchNFTs(walletAddress)
+  )
 
   // TODO: Better error handling
   if (error || error2 || error3) return
@@ -144,7 +147,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName || 'griff'}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
@@ -152,9 +155,7 @@ export default function Dashboard() {
         </div>
       </header>
       <BalanceBox>
-        <Typography
-          color="inherit"
-          fontVariant="small">
+        <Typography color="inherit" fontVariant="small">
           Estimated Value
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
@@ -207,10 +208,10 @@ export default function Dashboard() {
                   setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
                 }}
                 role="button">
-                <img
-                  className="h-[180px] w-[180px] rounded-2xl"
+                <NftImage
                   src={collectible.img || '/img/login-bg.png'}
-                  alt={collectible.name}
+                  placeholder={'/img/login-bg.png'}
+                  name={collectible.name}
                 />
               </div>
             ))}
