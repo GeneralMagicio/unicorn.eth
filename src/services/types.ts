@@ -3,15 +3,18 @@ export interface ICryptoToken {
   price: number
   value: number
   icon: string
+  address?: string
+  decimals?: number
+  symbol?: string
 }
 
-export type Collectible =  {
-  id: number;
-  org: string;
-  name: string;
-  floorPrice: number;
-  description: string;
-  about: string;
-  website: string;
-  img: string;
+export type Collectible = {
+  id: number
+  org: string
+  name: string
+  floorPrice: number
+  description: string
+  about: string
+  website: string
+  img: string
 }
