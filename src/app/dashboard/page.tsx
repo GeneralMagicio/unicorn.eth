@@ -33,7 +33,8 @@ import { trimString } from './utils'
 
 const TABS = ['Tokens', 'Collectibles']
 
-const TestWalletAddress = '0xCeF4690B0976691E5e2ab92dd92A30D65E7733D8'
+// TODO: Remove this once the smart contract integration is through
+const TestWalletAddress = '0x839395e20bbb182fa440d08f850e6c7a8f6f0780' // griff.eth
 
 const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
@@ -105,15 +106,7 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  const calculateBalance = async () => {
-    const walletAddress =
-      userAddress || '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
-    const totalBalance = await getBalanceForTokenChainPairs(
-      supportedTokens,
-      walletAddress
-    )
-    return getAggregatedTotalBalance(totalBalance)
-  }
+  const walletAddress = userAddress || TestWalletAddress
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
@@ -122,10 +115,10 @@ export default function Dashboard() {
 
   const { data: balance, error: error2 } = useSWR<Record<string, number>>(
     'balance',
-    () => calculateBalance(TestWalletAddress)
+    () => calculateBalance(walletAddress)
   )
 
-  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () => fetchNFTs(TestWalletAddress))
+  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () => fetchNFTs(walletAddress))
 
   // TODO: Better error handling
   if (error || error2 || error3) return
@@ -151,7 +144,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName || ''}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {userName || 'griff'}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
@@ -215,7 +208,7 @@ export default function Dashboard() {
                 }}
                 role="button">
                 <img
-                  className="rounded-2xl w-[180px] h-[180px]"
+                  className="h-[180px] w-[180px] rounded-2xl"
                   src={collectible.img || '/img/login-bg.png'}
                   alt={collectible.name}
                 />

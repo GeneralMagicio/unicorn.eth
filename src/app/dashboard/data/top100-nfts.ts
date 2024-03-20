@@ -41,6 +41,7 @@ export type SupportedNFT = {
 //   website: item.website || '',
 // }))
 
+// TODO: Replace it with a dynamic top 100 collections (probably via an OpenSea endpoint) 
 export const supportedNFTs: SupportedNFT[] = [
   {
     symbol: 'CKITTY',
