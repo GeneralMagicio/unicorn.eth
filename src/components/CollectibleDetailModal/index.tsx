@@ -7,6 +7,7 @@ import { activeModalAtom, selectedCollectibleAtom } from '@/store'
 import { LinkIcon } from '../Icons/Link'
 import { ExportIcon } from '../Icons/Export'
 import { RightIcon } from '../Icons/Right'
+import { trimString } from '@/app/dashboard/utils'
 
 export const CollectibleDetailModal: React.FC = () => {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
@@ -20,17 +21,15 @@ export const CollectibleDetailModal: React.FC = () => {
         setSelectedCollectible(null)
       }}
       mobileOnly>
-      <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
+      <div className="flex max-h-[80%] min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
         <header className="flex justify-center text-center">
           <ModalHandlIcon />
         </header>
         {collectible && (
           <div className="flex flex-col gap-6">
-            <Image
-              className="self-start rounded-xl"
+            <img
+              className="self-center rounded-xl w-[350px] max-h-[300px]"
               src={collectible.img}
-              width={400}
-              height={300}
               alt={collectible.name}
             />
 
@@ -39,7 +38,12 @@ export const CollectibleDetailModal: React.FC = () => {
             </Typography>
 
             <div className="flex items-center gap-4">
-              <Image src={'/img/collectibleOrg.png'} width={18} height={18} alt='collectible org' />
+              <Image
+                src={'/img/collectibleOrg.png'}
+                width={18}
+                height={18}
+                alt="collectible org"
+              />
               <Typography weight="bold">{collectible.org}</Typography>
               <RightIcon />
             </div>
@@ -53,32 +57,45 @@ export const CollectibleDetailModal: React.FC = () => {
               </Typography>
             </div>
 
-            <div className="flex flex-col gap-1">
-              <Typography fontVariant="small" weight="light">
-                Description
-              </Typography>
-              <Typography>{collectible.description}</Typography>
-            </div>
+            {collectible.description && (
+              <div className="flex flex-col gap-1">
+                <Typography fontVariant="small" weight="light">
+                  Description
+                </Typography>
+                <Typography>{collectible.description}</Typography>
+              </div>
+            )}
 
             <div className="flex flex-col gap-1">
-              <Typography fontVariant="small" weight="light">
-                {`About ${collectible.name}`}
-              </Typography>
-              <Typography> {collectible.about} </Typography>
-              <Typography
-                className="flex items-center gap-1"
-                weight="bold"
-                color="bluePrimary">
-                <LinkIcon color="currentColor" /> {collectible.website}
-              </Typography>
+              {collectible.about && (
+                <>
+                  <Typography fontVariant="small" weight="light">
+                    {`About ${collectible.name}`}
+                  </Typography>
+                  <Typography> {collectible.about} </Typography>
+                </>
+              )}
+              {collectible.website && (
+                <a target="_blank" href={collectible.website} rel="noreferrer">
+                  <Typography
+                    className="flex items-center gap-1"
+                    weight="bold"
+                    color="bluePrimary">
+                    <LinkIcon color="currentColor" />{' '}
+                    {trimString(collectible.website, 20)}
+                  </Typography>
+                </a>
+              )}
             </div>
 
-            <Button
-              className="mt-4"
-              size="small"
-              prefix={<ExportIcon color="currentColor" />}>
-              Sell on OpenSea
-            </Button>
+            <a target="_blank" href={collectible.OsUrl} rel="noreferrer">
+              <Button
+                className="mt-4"
+                size="small"
+                prefix={<ExportIcon color="currentColor" />}>
+                Sell on OpenSea
+              </Button>
+            </a>
           </div>
         )}
       </div>

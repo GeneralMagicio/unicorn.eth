@@ -15,9 +15,8 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
-import { ICryptoToken } from '@/services/types'
+import { Collectible, ICryptoToken } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
-import { MOCK_COLLECTIBLES } from '@/utils/db'
 import {
   getAggregatedTotalBalance,
   getBalanceForTokenChainPairs,
@@ -26,14 +25,53 @@ import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { axiosInstance } from '@/services/axiosInstance'
+import { OsNft, findAllNFTsOsApi } from './utils/nft-balance-opensea'
+import { trimString } from './utils'
+import { NftImage } from '@/components/Dashboard/NftImage'
 
 const TABS = ['Tokens', 'Collectibles']
 
-const fetcher = async () => {
+// TODO: Remove this once the smart contract integration is through
+const TestWalletAddress = '0x839395e20bbb182fa440d08f850e6c7a8f6f0780' // griff.eth
+
+const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
   const res = await axiosInstance.get<Record<string, number>>(url)
 
   return res.data
+}
+
+const calculateBalance = async (walletAddress: string) => {
+  const totalBalance = await getBalanceForTokenChainPairs(
+    supportedTokens,
+    walletAddress
+  )
+  return getAggregatedTotalBalance(totalBalance)
+}
+
+const fetchNFTs = async (walletAddress: string) => {
+  const nfts = await findAllNFTsOsApi(walletAddress)
+
+  return createCollectibleObject(nfts)
+}
+
+const createCollectibleObject = (nfts: OsNft[]) => {
+  const result: Collectible[] = []
+  for (const nft of nfts) {
+    result.push({
+      id: `${nft.collection}-${nft.identifier}`,
+      org: nft.collection,
+      name: nft.name || '',
+      floorPrice: nft.floorPrice,
+      description: trimString(nft.description || '', 100),
+      about: trimString(nft.metadata?.description || '', 40),
+      website: nft.metadata?.external_url || '',
+      OsUrl: nft.opensea_url,
+      img: nft.image_url || '',
+    })
+  }
+
+  return result.sort((a, b) => b.floorPrice - a.floorPrice)
 }
 
 const createCryptoTokenObject = (
@@ -66,37 +104,29 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  const calculateBalance = async () => {
-    const walletAddress =
-      userAddress || '0x80C67432656d59144cEFf962E8fAF8926599bCF8'
-    const totalBalance = await getBalanceForTokenChainPairs(
-      supportedTokens,
-      walletAddress
-    )
-    return getAggregatedTotalBalance(totalBalance)
-  }
+  console.log("User Address:", userAddress)
+  // const walletAddress = userAddress || TestWalletAddress
+  // TODO: Remove this once the smart contract integration is through
+  const walletAddress = TestWalletAddress
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
-    fetcher
+    fetchTokenPrices
   )
 
   const { data: balance, error: error2 } = useSWR<Record<string, number>>(
     'balance',
-    calculateBalance
+    () => calculateBalance(walletAddress)
+  )
+
+  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
+    fetchNFTs(walletAddress)
   )
 
   // TODO: Better error handling
-  if (error || error2) return
+  if (error || error2 || error3) return
   // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !balance) return
-
-  // const ethToken: ICryptoToken = {
-  //   name: 'xDAI', ///  TODO: check on current network
-  //   value: Number(ethBalance),
-  //   price: 3000,
-  //   icon: '/img/eth.png',
-  // }
+  if (!tokenPrices || !balance || !nfts) return
 
   const estimatedTotalValue = createCryptoTokenObject(
     balance,
@@ -117,7 +147,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName || ''}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
@@ -125,10 +155,7 @@ export default function Dashboard() {
         </div>
       </header>
       <BalanceBox>
-        <Typography
-          onClick={calculateBalance}
-          color="inherit"
-          fontVariant="small">
+        <Typography color="inherit" fontVariant="small">
           Estimated Value
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
@@ -173,7 +200,7 @@ export default function Dashboard() {
           ))}
         {activeTab === TABS[1] && (
           <div className="grid grid-cols-2 gap-4 gap-x-2 ">
-            {MOCK_COLLECTIBLES.map((collectible, id) => (
+            {nfts.map((collectible, id) => (
               <div
                 key={id}
                 onClick={() => {
@@ -181,12 +208,10 @@ export default function Dashboard() {
                   setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
                 }}
                 role="button">
-                <Image
-                  className="rounded-2xl"
-                  src={collectible.img}
-                  width={180}
-                  height={180}
-                  alt={collectible.name}
+                <NftImage
+                  src={collectible.img || '/img/login-bg.png'}
+                  placeholder={'/img/login-bg.png'}
+                  name={collectible.name}
                 />
               </div>
             ))}

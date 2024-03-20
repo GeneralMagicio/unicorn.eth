@@ -8,13 +8,14 @@ export interface ICryptoToken {
   symbol?: string
 }
 
-export type Collectible = {
-  id: number
-  org: string
-  name: string
-  floorPrice: number
-  description: string
-  about: string
-  website: string
-  img: string
+export type Collectible =  {
+  id: string;
+  org: string;
+  name: string;
+  floorPrice: number;
+  description: string;
+  about: string;
+  website: string;
+  img: string;
+  OsUrl: string;
 }
