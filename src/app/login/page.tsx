@@ -63,10 +63,11 @@ export default function Login() {
   const login = async () => {
     setIsSigning(true)
     try {
-      const signInInfo =
-        (await safeAuthPack?.signIn({
-          loginProvider: 'google',
-        })) || null
+      // const signInInfo =
+      //   (await safeAuthPack?.signIn({
+      //     loginProvider: 'google',
+      //   })) || null
+      const signInInfo = (await safeAuthPack?.signIn()) || null
       setSafeAuthSignInInfo(signInInfo)
       setIsAuthenticated(true)
       localStorage.setItem(
