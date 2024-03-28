@@ -21,11 +21,11 @@ export const QRView: React.FC<{
   userName: string
 }> = ({ open, onDismiss, userAddress, userName }) => {
   const handleShare = async () => {
-    const text = `Check out this wallet address: ${userName}`
+    const text = `Check out this unicorn account: ${userName}`
     const shareData = {
-      title: 'Wallet Address',
+      title: 'Wallet Account',
       text,
-      url: window.location.href, // You might want to change this to something more relevant
+      url: `https://${userName}`,
     }
 
     try {
