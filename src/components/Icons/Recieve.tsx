@@ -1,6 +1,6 @@
 import { SVGProps } from 'react'
 
-export const RecieveIcon: React.FC<SVGProps<SVGSVGElement>> = ({
+export const ReceiveIcon: React.FC<SVGProps<SVGSVGElement>> = ({
   ...props
 }) => (
   <svg
