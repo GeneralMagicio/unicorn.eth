@@ -6,17 +6,7 @@ import { useSafeAuth } from '@/hooks/useSafeAuth'
 import { QRView } from './QRView'
 import { QRBlack } from '../Icons/QRBlack'
 import { CopyBlack } from '../Icons/CopyBlack'
-
-export const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text).then(
-    () => {
-      alert('Link copied to clipboard!')
-    },
-    (err) => {
-      console.error('Could not copy text: ', err)
-    }
-  )
-}
+import CopyWrapper from './CopyWrapper'
 
 export const ReceiveModal: React.FC<{
   open: boolean
@@ -24,7 +14,7 @@ export const ReceiveModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   {
     const [openQR, setOpenQR] = useState(false)
-    const { ethBalance, userName, userAddress } = useSafeAuth()
+    const { userName, userAddress } = useSafeAuth()
     const suffix = '.account.eth'
     const account = `${userName}${suffix}`
 
@@ -56,12 +46,14 @@ export const ReceiveModal: React.FC<{
               </div>
               <QRBlack />
             </div>
-            <div className="flex flex-row w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2 justify-between items-center">
-              <Typography color="text" weight="bold" fontVariant="body">
-                {account}
-              </Typography>
-              <CopyBlack />
-            </div>
+            <CopyWrapper textToCopy={account} absolute>
+              <div className="flex flex-row w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2 justify-between items-center">
+                <Typography color="text" weight="bold" fontVariant="body">
+                  {account}
+                </Typography>
+                <CopyBlack />
+              </div>
+            </CopyWrapper>
             <div className="flex flex-col w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2  justify-center">
               <Typography
                 weight="bold"
