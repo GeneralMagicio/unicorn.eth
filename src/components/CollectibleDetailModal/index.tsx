@@ -28,7 +28,7 @@ export const CollectibleDetailModal: React.FC = () => {
         {collectible && (
           <div className="flex flex-col gap-6">
             <img
-              className="self-center rounded-xl w-[350px] max-h-[300px]"
+              className="max-h-[300px] w-[350px] self-center rounded-xl"
               src={collectible.img}
               alt={collectible.name}
             />
