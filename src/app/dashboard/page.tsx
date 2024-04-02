@@ -32,7 +32,7 @@ import { NftImage } from '@/components/Dashboard/NftImage'
 const TABS = ['Tokens', 'Collectibles']
 
 // TODO: Remove this once the smart contract integration is through
-const TestWalletAddress = '0x839395e20bbb182fa440d08f850e6c7a8f6f0780' // griff.eth
+const TestWalletAddress = '0xA4D506434445Bb7303eA34A07bc38484cdC64a95' // moenick.eth
 
 const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
