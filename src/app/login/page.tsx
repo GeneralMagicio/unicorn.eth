@@ -14,6 +14,7 @@ import cn from 'classnames'
 import { UserNameInput } from '@/components/Styled'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
+import { ConnectWallet } from '@thirdweb-dev/react'
 
 export default function Login() {
   const router = useRouter()
@@ -125,9 +126,10 @@ export default function Login() {
                 <>
                   <SignUpButton onClick={login}>
                     <GoogleIcon />
-                    <Typography fontVariant="body">
+                    {/* <Typography fontVariant="body">
                       Sign in with Google
-                    </Typography>
+                    </Typography> */}
+                    <ConnectWallet btnTitle='Sign in with Google'/>
                   </SignUpButton>
                 </>
               )}

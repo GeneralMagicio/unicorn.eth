@@ -1,13 +1,12 @@
 'use client'
 
 import { useEffect } from 'react'
-import { BrowserProvider, Signer, ethers } from 'ethers'
+import { Signer, ethers, providers } from 'ethers'
 
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
 import { EnsRecordType } from '@/services/enService'
 
-import { SafeAuthInitOptions } from '@safe-global/auth-kit'
 import axios from 'axios'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
@@ -36,68 +35,68 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   } = useSafeAuth()
   const { getSubnameDataset } = useEnsResolver()
 
-  const fetchEthBalance = async (provider: BrowserProvider, signer: Signer) => {
+  const fetchEthBalance = async (provider: providers.Web3Provider, signer: Signer) => {
     if (!provider || !signer) return
     try {
       const signerAddress = await signer.getAddress()
       const balance = await provider.getBalance(signerAddress)
       console.log(
-        `ETH Balance for ${signerAddress}: ${ethers.formatEther(balance)} ETH`
+        `ETH Balance for ${signerAddress}: ${ethers.utils.formatEther(balance)} ETH`
       )
-      setEthBalance(ethers.formatEther(balance))
+      setEthBalance(ethers.utils.formatEther(balance))
     } catch (error) {
       console.error('Failed to fetch ETH balance:', error)
     }
   }
 
-  useEffect(() => {
-    ;(async () => {
-      const options: SafeAuthInitOptions = {
-        buildEnv: 'production',
-        enableLogging: true,
-        showWidgetButton: false,
-        chainConfig: {
-          chainId: '0x64',
-          // rpcTarget: 'https://gnosis.drpc.org',
-          rpcTarget:
-            'https://soft-blissful-friday.xdai.quiknode.pro/43484a3be76827b515d4fa460ea1bf08961ed9fb/',
-        },
-      }
+  // useEffect(() => {
+  //   ;(async () => {
+  //     const options: SafeAuthInitOptions = {
+  //       buildEnv: 'production',
+  //       enableLogging: true,
+  //       showWidgetButton: false,
+  //       chainConfig: {
+  //         chainId: '0x64',
+  //         // rpcTarget: 'https://gnosis.drpc.org',
+  //         rpcTarget:
+  //           'https://soft-blissful-friday.xdai.quiknode.pro/43484a3be76827b515d4fa460ea1bf08961ed9fb/',
+  //       },
+  //     }
 
-      import('@safe-global/auth-kit').then(async ({ SafeAuthPack }) => {
-        const authPack = new SafeAuthPack()
+  //     import('@safe-global/auth-kit').then(async ({ SafeAuthPack }) => {
+  //       const authPack = new SafeAuthPack()
 
-        await authPack.init(options)
+  //       await authPack.init(options)
 
-        setSafeAuthPack(authPack)
+  //       setSafeAuthPack(authPack)
 
-        const mainnetProvider = new ethers.JsonRpcProvider(
-          'https://eth.llamarpc.com'
-        )
-        setMainnetProvider(mainnetProvider)
+  //       const mainnetProvider = new providers.JsonRpcProvider(
+  //         'https://eth.llamarpc.com'
+  //       )
+  //       setMainnetProvider(mainnetProvider)
 
-        authPack.subscribe('accountsChanged', async (accounts) => {
-          if (authPack.isAuthenticated) {
-            const signInInfo = await authPack?.signIn({})
-            setSafeAuthSignInInfo(signInInfo)
-            setIsAuthenticated(true)
-          }
-          setAuthStatus(AUTH_STATUS.RESOLVED)
-        })
-      })
-    })()
-  }, [
-    setAuthStatus,
-    setIsAuthenticated,
-    setSafeAuthPack,
-    setSafeAuthSignInInfo,
-  ])
+  //       authPack.subscribe('accountsChanged', async (accounts) => {
+  //         if (authPack.isAuthenticated) {
+  //           const signInInfo = await authPack?.signIn({})
+  //           setSafeAuthSignInInfo(signInInfo)
+  //           setIsAuthenticated(true)
+  //         }
+  //         setAuthStatus(AUTH_STATUS.RESOLVED)
+  //       })
+  //     })
+  //   })()
+  // }, [
+  //   setAuthStatus,
+  //   setIsAuthenticated,
+  //   setSafeAuthPack,
+  //   setSafeAuthSignInInfo,
+  // ])
 
   const authSetup = async () => {
     console.log({ provider, signer, isAuthenticated, safeAuthPack })
     if (provider && signer) return
     if (!isAuthenticated || !safeAuthPack) return
-    const safeProvider: any = await new ethers.BrowserProvider(
+    const safeProvider: any = await new providers.Web3Provider(
       safeAuthPack?.getProvider()!
     )
     console.log('getting signer')
