@@ -28,11 +28,13 @@ import { axiosInstance } from '@/services/axiosInstance'
 import { OsNft, findAllNFTsOsApi } from './utils/nft-balance-opensea'
 import { trimString } from './utils'
 import { NftImage } from '@/components/Dashboard/NftImage'
+import axios from 'axios'
+import { usePOAP } from '@/hooks/usePOAP'
 
 const TABS = ['Tokens', 'Collectibles']
 
 // TODO: Remove this once the smart contract integration is through
-const TestWalletAddress = '0x839395e20bbb182fa440d08f850e6c7a8f6f0780' // griff.eth
+const TestWalletAddress = '0xA4D506434445Bb7303eA34A07bc38484cdC64a95' // moenick.eth
 
 const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
@@ -99,13 +101,14 @@ export default function Dashboard() {
   const theme = useTheme()
   const { userInfo, userName, profileImage, ethBalance, userAddress } =
     useSafeAuth()
+  const { canMintPOAP } = usePOAP()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  console.log("User Address:", userAddress)
+  console.log('User Address:', userAddress)
   // const walletAddress = userAddress || TestWalletAddress
   // TODO: Remove this once the smart contract integration is through
   const walletAddress = TestWalletAddress
@@ -163,7 +166,7 @@ export default function Dashboard() {
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-      {showPromotionBox && (
+      {showPromotionBox && canMintPOAP && (
         <PromotionBox
           title="Claim your digital collectible"
           subtitle="Welcome to your web3 wallet."
