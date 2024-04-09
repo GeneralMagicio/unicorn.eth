@@ -155,7 +155,10 @@ export default function Dashboard() {
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
-          <ScanIcon color={theme.colors.grey} />
+          <ScanIcon
+            onClick={() => setActiveModal(MODAL_TYPE.SCAN)}
+            color={theme.colors.grey}
+          />
         </div>
       </header>
       <BalanceBox>

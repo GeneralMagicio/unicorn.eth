@@ -4,6 +4,7 @@ import { AuthGuard } from '@/components/AuthGuard'
 import { BottomNav } from '@/components/BottomNav'
 import { CollectibleDetailModal } from '@/components/CollectibleDetailModal'
 import { ClaimDigitalStickerModal } from '@/components/Poap/ClaimDigitalStickerModal'
+import { ScanModal } from '@/components/ScanModal'
 import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
@@ -23,6 +24,7 @@ export const enum MODAL_TYPE {
   SETTINGS_BUY_ENS = 'SETTINGS_BUY_ENS',
   COLLECTIBLE_DETAIL = 'COLLECTIBLE_DETAIL',
   CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
+  SCAN = 'SCAN',
 }
 
 export default function DashboardLayout({
@@ -50,6 +52,10 @@ export default function DashboardLayout({
         <CollectibleDetailModal />
         <ClaimDigitalStickerModal
           open={activeModal === MODAL_TYPE.CLAIM_DIGITAL_STICKER}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <ScanModal
+          open={activeModal === MODAL_TYPE.SCAN}
           onDismiss={() => setActiveModal(null)}
         />
       </div>
