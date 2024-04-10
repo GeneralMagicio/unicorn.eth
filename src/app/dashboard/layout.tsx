@@ -3,6 +3,7 @@
 import { AuthGuard } from '@/components/AuthGuard'
 import { BottomNav } from '@/components/BottomNav'
 import { CollectibleDetailModal } from '@/components/CollectibleDetailModal'
+import { ReceiveModal } from '@/components/ReceiveModal'
 import { ClaimDigitalStickerModal } from '@/components/Poap/ClaimDigitalStickerModal'
 import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
@@ -15,6 +16,7 @@ export const enum MODAL_TYPE {
   SETTINGS = 'SETTINGS',
   TRANSACTION = 'TRANSACTION',
   SEND = 'SEND',
+  RECEIVE = 'RECEIVE',
   TOKEN_DETAIL = 'TOKEN_DETAIL',
   SETTINGS_GENERAL = 'SETTINGS_GENERAL',
   SETTINGS_CHANGE_CURRENCY = 'SECURITY_CHANGE_CURRENCY',
@@ -43,6 +45,10 @@ export default function DashboardLayout({
         />
         <SendModal
           open={activeModal === MODAL_TYPE.SEND}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <ReceiveModal
+          open={activeModal === MODAL_TYPE.RECEIVE}
           onDismiss={() => setActiveModal(null)}
         />
         <TokenDetailModal />
