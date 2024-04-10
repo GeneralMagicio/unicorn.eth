@@ -113,29 +113,29 @@ export default function Dashboard() {
   // TODO: Remove this once the smart contract integration is through
   const walletAddress = TestWalletAddress
 
-  const { data: tokenPrices, error } = useSWR<Record<string, number>>(
-    'token-prices',
-    fetchTokenPrices
-  )
+  // const { data: tokenPrices, error } = useSWR<Record<string, number>>(
+  //   'token-prices',
+  //   fetchTokenPrices
+  // )
 
-  const { data: balance, error: error2 } = useSWR<Record<string, number>>(
-    'balance',
-    () => calculateBalance(walletAddress)
-  )
+  // const { data: balance, error: error2 } = useSWR<Record<string, number>>(
+  //   'balance',
+  //   () => calculateBalance(walletAddress)
+  // )
 
-  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
-    fetchNFTs(walletAddress)
-  )
+  // const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
+  //   fetchNFTs(walletAddress)
+  // )
 
   // TODO: Better error handling
-  if (error || error2 || error3) return
-  // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !balance || !nfts) return
+  // if (error || error2 || error3) return
+  // // Probably use some spinner to indicate the loading time
+  // if (!tokenPrices || !balance || !nfts) return
 
-  const estimatedTotalValue = createCryptoTokenObject(
-    balance,
-    tokenPrices
-  ).reduce((acc, curr) => (acc += curr.price * curr.value), 0)
+  // const estimatedTotalValue = createCryptoTokenObject(
+  //   balance,
+  //   tokenPrices
+  // ).reduce((acc, curr) => (acc += curr.price * curr.value), 0)
 
   return (
     <>
@@ -161,7 +161,7 @@ export default function Dashboard() {
           />
         </div>
       </header>
-      <BalanceBox>
+      {/* <BalanceBox>
         <Typography color="inherit" fontVariant="small">
           Estimated Value
         </Typography>
@@ -177,7 +177,7 @@ export default function Dashboard() {
             setShowPromotionBox(false)
           }}
         />
-      )}
+      )} */}
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography
@@ -193,7 +193,7 @@ export default function Dashboard() {
         ))}
       </nav>
       <div className="flex flex-col gap-4">
-        {activeTab === 'Tokens' &&
+        {/* {activeTab === 'Tokens' &&
           createCryptoTokenObject(balance, tokenPrices).map((token, idx) => (
             <div
               key={idx}
@@ -223,7 +223,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        )}
+        )} */}
       </div>
     </>
   )

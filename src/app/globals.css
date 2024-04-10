@@ -13,3 +13,8 @@
     stroke-dasharray: 0 100;
   }
 }
+
+/* hiding border and default QR tracker */
+.qr-scanner-container svg {
+  display: none;
+}
