@@ -5,13 +5,17 @@ import { debounce } from '@/utils/debounce'
 import { resolveAddress } from 'ethers'
 import axios from 'axios'
 import { SubnameResolutionResponse } from '@/services/types/ens'
+import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
 
 export function useEnsResolver() {
-  const { signInInfo, mainnetProvider } = useSafeAuth()
+  const { mainnetProvider } = useSafeAuth()
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
+  const account = useActiveAccount()
+
   const checkUserName = async (input: string) => {
+    console.log("Here,", input)
     if (/[A-Z]/.test(input)) {
       return setIsNameAvailable(false)
     }
@@ -24,8 +28,10 @@ export function useEnsResolver() {
       //     },
       //   }
       // )
-      const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: false}}), 200))
+      // const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: false}}), 200))
+      const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: true}}), 200))
 
+      console.log("Here,", res.data)
       setIsNameAvailable(res.data.isAvailable || null)
     } catch (err) {
       setIsNameAvailable(false)
@@ -34,9 +40,11 @@ export function useEnsResolver() {
   const handleCreateSubname = (label: string) => {
     setIsNameAvailable(true)
 
+    if (!account) throw new Error("Account is not available")
+
     return axios
       .post('/api/subname/mint', {
-        address: signInInfo?.eoa!,
+        address: account.address,
         label,
       })
       .finally(() => {

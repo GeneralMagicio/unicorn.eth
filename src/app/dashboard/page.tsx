@@ -30,6 +30,7 @@ import { trimString } from './utils'
 import { NftImage } from '@/components/Dashboard/NftImage'
 import axios from 'axios'
 import { usePOAP } from '@/hooks/usePOAP'
+import { useActiveAccount } from 'thirdweb/react'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -108,10 +109,11 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  // console.log("User Address:", userAddress)
-  // const walletAddress = userAddress || TestWalletAddress
-  // TODO: Remove this once the smart contract integration is through
-  const walletAddress = TestWalletAddress
+  
+  const account = useActiveAccount()
+
+  // User shouldn't be in the dashboard if they don't have an account 
+  const walletAddress = account?.address!
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',

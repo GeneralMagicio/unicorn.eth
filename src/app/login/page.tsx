@@ -45,12 +45,12 @@ export default function Login() {
 
 
   const {
-    safeAuthPack,
+    // safeAuthPack,
     isAuthenticated,
     setIsAuthenticated,
     setUserInfo,
     userInfo,
-    setSafeAuthSignInInfo,
+    // setSafeAuthSignInInfo,
     userName,
     setUserName,
   } = useSafeAuth()
@@ -209,7 +209,7 @@ export default function Login() {
                       onChange={(e) => {
                         setUserName(e.target.value)
                         setIsNameAvailable(null)
-                        debouncedCheckUserName(e)
+                        debouncedCheckUserName(e.target.value)
                       }}
                       label=""
                       name="username"
@@ -224,7 +224,7 @@ export default function Login() {
 
                   <Button
                     loading={isRegistering}
-                    // disabled={!userName || !Boolean(isNameAvailable)}
+                    disabled={!userName || !Boolean(isNameAvailable)}
                     onClick={() => {
                       createEnsSubname(userName).then(() => {
                         setStep(2)

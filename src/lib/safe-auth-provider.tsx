@@ -97,24 +97,24 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   //   setSafeAuthSignInInfo,
   // ])
 
-  const authSetup = async () => {
-    console.log({ provider, signer, isAuthenticated, safeAuthPack })
-    if (provider && signer) return
-    if (!isAuthenticated || !safeAuthPack) return
-    const safeProvider: any = await new BrowserProvider(
-      safeAuthPack?.getProvider()!
-    )
-    console.log('getting signer')
-    const safeSigner = await safeProvider.getSigner()
-    setUserInfo(userInfo)
-    setUserAddress(await safeSigner.getAddress())
+  // const authSetup = async () => {
+  //   console.log({ provider, signer, isAuthenticated, safeAuthPack })
+  //   if (provider && signer) return
+  //   if (!isAuthenticated || !safeAuthPack) return
+  //   const safeProvider: any = await new BrowserProvider(
+  //     safeAuthPack?.getProvider()!
+  //   )
+  //   console.log('getting signer')
+  //   const safeSigner = await safeProvider.getSigner()
+  //   setUserInfo(userInfo)
+  //   setUserAddress(await safeSigner.getAddress())
 
-    setProvider(provider)
-    setSigner(safeSigner)
+  //   setProvider(provider)
+  //   setSigner(safeSigner)
 
-    // Fetch ETH balance
-    await fetchEthBalance(safeProvider, safeSigner)
-  }
+  //   // Fetch ETH balance
+  //   await fetchEthBalance(safeProvider, safeSigner)
+  // }
 
   // useEffect(() => {
   //   authSetup()
