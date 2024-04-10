@@ -87,13 +87,13 @@ const CircularChart = styled.svg`
 const CircleBg = styled.path`
   fill: none;
   stroke: #eee;
-  stroke-width: 2;
+  strokewidth: 2;
 `
 
 const Circle = styled.path`
   fill: none;
-  stroke-width: 1.4;
-  stroke-linecap: round;
+  strokewidth: 1.4;
+  strokelinecap: round;
   animation: progress 1s ease-out forwards;
   stroke: rgba(56, 137, 255, 1);
 `

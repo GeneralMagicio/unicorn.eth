@@ -2,7 +2,7 @@ import styled, { useTheme } from 'styled-components'
 import { Button, Modal, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/navigation'
 import { SendIcon } from '../Icons/Send'
-import { RecieveIcon } from '../Icons/Recieve'
+import { ReceiveIcon } from '../Icons/Recieve'
 import { SwapIcon } from '../Icons/Swap'
 import { PlusIcon } from '../Icons/Plus'
 import { WithdrawIcon } from '../Icons/Withdraw'
@@ -23,7 +23,7 @@ const TransactionItemButton = styled(Button)({
 
 export const enum TRANSACTION_ACTION_TYPE {
   SEND = 'SEND',
-  RECIEVE = 'RECIEVE ',
+  RECEIVE = 'RECEIVE',
   SWAP = 'SWAP',
   BUY = 'BUY',
   WITHDRAW = 'WITHDRAW',
@@ -45,9 +45,9 @@ export const TransactionModal: React.FC<{
       type: TRANSACTION_ACTION_TYPE.SEND,
     },
     {
-      icon: <RecieveIcon />,
-      label: 'Recieve',
-      type: TRANSACTION_ACTION_TYPE.RECIEVE,
+      icon: <ReceiveIcon />,
+      label: 'Receive',
+      type: TRANSACTION_ACTION_TYPE.RECEIVE,
     },
     {
       icon: <SwapIcon color={theme.colors.textPrimary} />,
