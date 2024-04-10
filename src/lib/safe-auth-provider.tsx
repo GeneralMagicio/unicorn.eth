@@ -1,25 +1,26 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Signer, ethers, providers } from 'ethers'
+import { BrowserProvider, Signer, ethers } from 'ethers'
 
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { AUTH_STATUS, useSafeAuth } from '@/hooks/useSafeAuth'
 import { EnsRecordType } from '@/services/enService'
 
 import axios from 'axios'
+import { useActiveAccount, useActiveWallet, useDisconnect } from 'thirdweb/react'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
 export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   const {
-    safeAuthPack,
-    setSafeAuthPack,
+    // safeAuthPack,
+    // setSafeAuthPack,
     isAuthenticated,
     setIsAuthenticated,
-    setSafeAuthSignInInfo,
+    // setSafeAuthSignInInfo,
     setUserInfo,
-    signInInfo,
+    // signInInfo,
     setUserName,
     setAuthStatus,
     setMainnetProvider,
@@ -35,15 +36,19 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   } = useSafeAuth()
   const { getSubnameDataset } = useEnsResolver()
 
-  const fetchEthBalance = async (provider: providers.Web3Provider, signer: Signer) => {
+  const wallet = useActiveWallet()
+  const account = useActiveAccount()
+  const {disconnect} = useDisconnect()
+
+  const fetchEthBalance = async (provider: BrowserProvider, signer: Signer) => {
     if (!provider || !signer) return
     try {
       const signerAddress = await signer.getAddress()
       const balance = await provider.getBalance(signerAddress)
       console.log(
-        `ETH Balance for ${signerAddress}: ${ethers.utils.formatEther(balance)} ETH`
+        `ETH Balance for ${signerAddress}: ${ethers.formatEther(balance)} ETH`
       )
-      setEthBalance(ethers.utils.formatEther(balance))
+      setEthBalance(ethers.formatEther(balance))
     } catch (error) {
       console.error('Failed to fetch ETH balance:', error)
     }
@@ -96,7 +101,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     console.log({ provider, signer, isAuthenticated, safeAuthPack })
     if (provider && signer) return
     if (!isAuthenticated || !safeAuthPack) return
-    const safeProvider: any = await new providers.Web3Provider(
+    const safeProvider: any = await new BrowserProvider(
       safeAuthPack?.getProvider()!
     )
     console.log('getting signer')
@@ -111,29 +116,30 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     await fetchEthBalance(safeProvider, safeSigner)
   }
 
-  useEffect(() => {
-    authSetup()
-  }, [JSON.stringify(userInfo)])
+  // useEffect(() => {
+  //   authSetup()
+  // }, [JSON.stringify(userInfo)])
 
   useEffect(() => {
-    if (!safeAuthPack || !isAuthenticated) return
+    if (!wallet || !account) return
     ;(async () => {
-      const userInfo = await safeAuthPack.getUserInfo()
-      setUserInfo(userInfo)
+      // const userInfo = await safeAuthPack.getUserInfo()
+      // setUserInfo(userInfo)
 
       try {
-        const res = await getSubnameDataset()
+        const res = await getSubnameDataset(account.address)
         const userName = res.data[res.data.length - 1].label
         setUserName(userName)
 
-        const { data } = await axios.get('/api/subname/data', {
-          params: {
-            label: userName,
-            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
-          },
-        })
+        // const { data } = await axios.get('/api/subname/data', {
+        //   params: {
+        //     label: userName,
+        //     key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+        //   },
+        // })
 
-        setProfileImage(data.data)
+        // setProfileImage(data.data)
+        setProfileImage('')
       } catch (err) {
         console.error(err)
       }
@@ -148,9 +154,10 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
         const time = new Date(parsedStorageInfo.time)
         if (Date.now() - time.valueOf() >= 86400 * 1000 /* 1 day */) {
           localStorage.removeItem(USER_INFO_STORAGE_KEY)
-          safeAuthPack.signOut()
+          // safeAuthPack.signOut()
+          disconnect(wallet)
           setUserInfo(null)
-          setSafeAuthSignInInfo(null)
+          // setSafeAuthSignInInfo(null)
           setIsAuthenticated(false)
         }
       } else {
@@ -163,13 +170,14 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
   }, [
     getSubnameDataset,
     isAuthenticated,
-    safeAuthPack,
     setIsAuthenticated,
     setProfileImage,
-    setSafeAuthSignInInfo,
     setUserInfo,
     setUserName,
-    signInInfo,
+    account,
+    userInfo,
+    disconnect,
+    wallet
   ])
 
   return <>{children}</>

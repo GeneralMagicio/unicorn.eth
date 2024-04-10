@@ -14,13 +14,35 @@ import cn from 'classnames'
 import { UserNameInput } from '@/components/Styled'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
-import { ConnectWallet } from '@thirdweb-dev/react'
+// import { ConnectWallet } from '@thirdweb-dev/react'
+import { activeChain, factoryAddress } from '@/lib/third-web/constants'
+import { connect } from 'http2'
+import { inAppWallet, smartWallet } from 'thirdweb/wallets'
+import { client, smartWalletConfig } from '@/lib/third-web/provider'
+// import { get } from "thirdweb/wallets/embedded";
+import { useActiveAccount, useActiveWallet, useConnect, useDisconnect } from 'thirdweb/react'
 
 export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [isSigning, setIsSigning] = useState(false)
   const [error, setError] = useState('')
+
+  const {connect} = useConnect()
+  // const {} = use
+  const {disconnect} = useDisconnect()
+  // const {} = useUser()
+  const wallet = useActiveWallet()
+  const account = useActiveAccount()
+  // const wallet = useActiveWallet()
+
+  useEffect(() => {
+    console.log("wallet:", wallet)
+    console.log("acc:", wallet?.getAccount())
+  }, [wallet])
+
+  // const userInfo = useUser
+
 
   const {
     safeAuthPack,
@@ -42,53 +64,84 @@ export default function Login() {
     getSubnameDataset,
   } = useEnsResolver()
 
-  useEffect(() => {
-    if (!safeAuthPack || !isAuthenticated) return
-    ;(async () => {
-      const userInfo = await safeAuthPack.getUserInfo()
-      setUserInfo(userInfo)
-      setStep(1)
-    })()
-  }, [isAuthenticated, safeAuthPack, setUserInfo])
+  // useEffect(() => {
+  //   if (!safeAuthPack || !isAuthenticated) return
+  //   ;(async () => {
+  //     const userInfo = await safeAuthPack.getUserInfo()
+  //     setUserInfo(userInfo)
+  //     setStep(1)
+  //   })()
+  // }, [isAuthenticated, safeAuthPack, setUserInfo])
 
   useEffect(() => {
-    if (step === 1) {
-      getSubnameDataset().then((res) => {
+    if (step === 1 && account?.address) {
+      getSubnameDataset(account.address).then((res) => {
         if (res.data.length) {
           router.replace('/dashboard')
         }
       })
     }
-  }, [getSubnameDataset, router, step, userInfo])
+  }, [getSubnameDataset, router, step, account?.address])
+
+  const createSmartWallet = async () => {
+    const socialEOA = inAppWallet();
+    await socialEOA.connect({
+      client,
+      strategy: "google",
+    });
+    console.log("EOA", socialEOA.getAccount())
+    const wallet = smartWallet(smartWalletConfig);
+    const EoaAccount = socialEOA.getAccount()
+    await wallet.connect({
+      personalAccount: EoaAccount!,
+      client,
+    })
+
+    return wallet
+}
 
   const login = async () => {
-    setIsSigning(true)
+    setIsSigning(true);
     try {
-      const signInInfo =
-        (await safeAuthPack?.signIn({
-          loginProvider: 'google',
-        })) || null
-      setSafeAuthSignInInfo(signInInfo)
-      setIsAuthenticated(true)
-      localStorage.setItem(
-        USER_INFO_STORAGE_KEY,
-        JSON.stringify({ time: Date.now(), userInfo })
-      )
-    } catch (err) {
+      const wallet = await connect(createSmartWallet)
+      setStep(1)
     } finally {
-      setIsSigning(false)
+      setIsSigning(false);
     }
   }
 
   const logout = async () => {
-    if (isAuthenticated) {
-      await safeAuthPack?.signOut({ reset: true })
-      setSafeAuthSignInInfo(null)
-      setIsAuthenticated(false)
-      setUserInfo(null)
-      localStorage.removeItem(USER_INFO_STORAGE_KEY)
-    }
+    if (wallet) disconnect(wallet)
   }
+
+  // const login = async () => {
+  //   setIsSigning(true)
+  //   try {
+  //     const signInInfo =
+  //       (await safeAuthPack?.signIn({
+  //         loginProvider: 'google',
+  //       })) || null
+  //     setSafeAuthSignInInfo(signInInfo)
+  //     setIsAuthenticated(true)
+  //     localStorage.setItem(
+  //       USER_INFO_STORAGE_KEY,
+  //       JSON.stringify({ time: Date.now(), userInfo })
+  //     )
+  //   } catch (err) {
+  //   } finally {
+  //     setIsSigning(false)
+  //   }
+  // }
+
+  // const logout = async () => {
+  //   if (isAuthenticated) {
+  //     await safeAuthPack?.signOut({ reset: true })
+  //     setSafeAuthSignInInfo(null)
+  //     setIsAuthenticated(false)
+  //     setUserInfo(null)
+  //     localStorage.removeItem(USER_INFO_STORAGE_KEY)
+  //   }
+  // }
 
   const handleBack = () => {
     if (step === 1) {
@@ -126,10 +179,10 @@ export default function Login() {
                 <>
                   <SignUpButton onClick={login}>
                     <GoogleIcon />
-                    {/* <Typography fontVariant="body">
+                    <Typography fontVariant="body">
                       Sign in with Google
-                    </Typography> */}
-                    <ConnectWallet btnTitle='Sign in with Google'/>
+                    </Typography>
+                    {/* <ConnectWallet btnTitle='Sign in with Google'/> */}
                   </SignUpButton>
                 </>
               )}

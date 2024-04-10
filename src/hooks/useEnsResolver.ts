@@ -11,20 +11,22 @@ export function useEnsResolver() {
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
-  const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (/[A-Z]/.test(e.target.value)) {
+  const checkUserName = async (input: string) => {
+    if (/[A-Z]/.test(input)) {
       return setIsNameAvailable(false)
     }
     try {
-      const res = await axios.get<{ isAvailable: boolean }>(
-        '/api/subname/availability',
-        {
-          params: {
-            label: e.target.value,
-          },
-        }
-      )
-      setIsNameAvailable(e.target.value ? res.data.isAvailable : null)
+      // const res = await axios.get<{ isAvailable: boolean }>(
+      //   '/api/subname/availability',
+      //   {
+      //     params: {
+      //       label: input,
+      //     },
+      //   }
+      // )
+      const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: false}}), 200))
+
+      setIsNameAvailable(res.data.isAvailable || null)
     } catch (err) {
       setIsNameAvailable(false)
     }
@@ -43,13 +45,37 @@ export function useEnsResolver() {
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
+  // const getSubnameDataset = useCallback(
+  //   (walletAddress: string) =>
+  //     new Promise<{data: Array<SubnameResolutionResponse>}>((res, rej) =>
+  //       setTimeout(
+  //         () =>
+  //           res({data: [
+  //             {
+  //               domain: 'account.eth',
+  //               fullName: 'Mahdi',
+  //               label: 'Mahdi Label',
+  //             },
+  //           ]}),
+  //         200
+  //       )
+  //     ),
+  //   []
+  // )
   const getSubnameDataset = useCallback(
-    () =>
-      axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
-        params: { address: signInInfo?.eoa! },
-      }),
-    [signInInfo?.eoa]
+    (walletAddress: string) =>
+      new Promise<{ data: Array<SubnameResolutionResponse> }>((res, rej) =>
+        setTimeout(() => res({ data: [] }), 200)
+      ),
+    []
   )
+  // const getSubnameDataset = useCallback(
+  //   (walletAddress: string) =>
+  //     axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
+  //       params: { address: walletAddress },
+  //     }),
+  //   []
+  // )
 
   const getENSAddress = async (ens: string) => {
     try {

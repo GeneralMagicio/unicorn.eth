@@ -24,8 +24,8 @@ export const useSafeAuth = () => {
   const [userAddress, setUserAddress] = useAtom(userAddressAtom)
   const [userInfo, setUserInfo] = useAtom(userInfoAtom)
   const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom)
-  const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
-  const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
+  // const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
+  // const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
   const [authStatus, setAuthStatus] = useAtom(authStatusAtom)
   const [mainnetProvider, setMainnetProvider] = useAtom(mainnetProviderAtom)
   const [provider, setProvider] = useAtom(providerAtom)
@@ -133,10 +133,10 @@ export const useSafeAuth = () => {
   }
 
   return {
-    safeAuthPack,
-    setSafeAuthPack,
-    signInInfo,
-    setSafeAuthSignInInfo,
+    // safeAuthPack,
+    // setSafeAuthPack,
+    // signInInfo,
+    // setSafeAuthSignInInfo,
     isAuthenticated,
     setIsAuthenticated,
     userInfo,

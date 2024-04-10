@@ -108,7 +108,7 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  console.log('User Address:', userAddress)
+  // console.log("User Address:", userAddress)
   // const walletAddress = userAddress || TestWalletAddress
   // TODO: Remove this once the smart contract integration is through
   const walletAddress = TestWalletAddress
