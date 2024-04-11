@@ -32,7 +32,7 @@ export function useEnsResolver() {
       // const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: true}}), 200))
 
       // console.log("Here,", res.data)
-      setIsNameAvailable(res.data.isAvailable || null)
+      setIsNameAvailable(res.data.isAvailable === undefined || null ? null : res.data.isAvailable)
     } catch (err) {
       setIsNameAvailable(false)
     }

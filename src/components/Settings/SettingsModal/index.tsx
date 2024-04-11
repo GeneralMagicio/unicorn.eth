@@ -35,7 +35,7 @@ export const SettingsModal: React.FC<{
     // safeAuthPack,
     // isAuthenticated,
     setIsAuthenticated,
-    setUserInfo,
+    // setUserInfo,
     // setSafeAuthSignInInfo,
   } = useSafeAuth()
 
@@ -64,7 +64,7 @@ export const SettingsModal: React.FC<{
       // setSafeAuthSignInInfo(null)
       disconnect(wallet)
       setIsAuthenticated(false)
-      setUserInfo(null)
+      // setUserInfo(null)
       setActiveModal(null)
       localStorage.removeItem(USER_INFO_STORAGE_KEY)
     }

@@ -98,9 +98,19 @@ const createCryptoTokenObject = (
   return result.sort((a, b) => b.price * b.value - a.price * a.value)
 }
 
+function shortenEthereumAddress(address: string) {
+  if (address.length < 10) {
+      return address; // Return the address as is if it's too short
+  }
+  const start = address.slice(0, 4); // Get the first 4 characters
+  const end = address.slice(-6); // Get the last 6 characters
+  return `${start}...${end}`; // Combine and return the shortened address
+}
+
+
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName, profileImage, ethBalance, userAddress } =
+  const { userName, profileImage, ethBalance, userAddress } =
     useSafeAuth()
   const { canMintPOAP } = usePOAP()
   const [activeTab, setActiveTab] = useState('Tokens')
@@ -146,9 +156,9 @@ export default function Dashboard() {
           <Image
             className="rounded-full"
             src={
-              profileImage || userInfo?.profileImage || '/img/validator.eth.png'
+              profileImage /* || userInfo?.profileImage */ || '/img/validator.eth.png'
             }
-            alt={userInfo?.name || ''}
+            alt={/* userInfo?.name || */ ''}
             width={40}
             height={40}
           />
@@ -162,7 +172,7 @@ export default function Dashboard() {
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
-          Estimated Value
+          {`Estimated Value for: ${account?.address ? shortenEthereumAddress(account.address) : ''}`}
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
           {priceFormatter.format(estimatedTotalValue)}

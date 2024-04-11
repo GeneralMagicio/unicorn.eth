@@ -53,7 +53,7 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { userInfo, userName, setProfileImage, profileImage } = useSafeAuth()
+  const { /* userInfo, */ userName, setProfileImage, profileImage } = useSafeAuth()
 
   const [, setActiveModal] = useAtom(activeModalAtom)
 
@@ -135,8 +135,8 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="rounded-full"
-                src={profileImage || userInfo?.profileImage || ''}
-                alt={userInfo?.name || ''}
+                src={profileImage /* || userInfo?.profileImage */ || ''}
+                alt={/* userInfo?.name || */ '' }
                 width={60}
                 height={60}
               />
@@ -148,7 +148,7 @@ export const AccountDetailsModal: React.FC<{
               <Typography fontVariant="bodyBold">
                 {userName}.unicorn.eth
               </Typography>
-              <Typography color="textSecondary">{userInfo?.email}</Typography>
+              <Typography color="textSecondary">{/* userInfo?.email */}</Typography>
             </div>
           </div>
           <IconButton

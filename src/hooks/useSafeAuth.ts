@@ -3,9 +3,9 @@ import { useAtom } from 'jotai'
 import {
   authStatusAtom,
   isAuthenticatedAtom,
-  safeAuthPackAtom,
-  safeAuthSignInInfoAtom,
-  userInfoAtom,
+  // safeAuthPackAtom,
+  // safeAuthSignInInfoAtom,
+  // userInfoAtom,
   userNameAtom,
   userAddressAtom,
   providerAtom,
@@ -22,7 +22,7 @@ export const enum AUTH_STATUS {
 export const useSafeAuth = () => {
   const [userName, setUserName] = useAtom(userNameAtom)
   const [userAddress, setUserAddress] = useAtom(userAddressAtom)
-  const [userInfo, setUserInfo] = useAtom(userInfoAtom)
+  // const [userInfo, setUserInfo] = useAtom(userInfoAtom)
   const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom)
   // const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
   // const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
@@ -139,8 +139,8 @@ export const useSafeAuth = () => {
     // setSafeAuthSignInInfo,
     isAuthenticated,
     setIsAuthenticated,
-    userInfo,
-    setUserInfo,
+    // userInfo,
+    // setUserInfo,
     userName,
     setUserName,
     profileImage,

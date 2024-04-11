@@ -19,7 +19,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated,
     setIsAuthenticated,
     // setSafeAuthSignInInfo,
-    setUserInfo,
+    // setUserInfo,
     // signInInfo,
     setUserName,
     setAuthStatus,
@@ -30,7 +30,7 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     setSigner,
     setEthBalance,
     setProfileImage,
-    userInfo,
+    // userInfo,
     userAddress,
     setUserAddress,
   } = useSafeAuth()
@@ -156,14 +156,15 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem(USER_INFO_STORAGE_KEY)
           // safeAuthPack.signOut()
           disconnect(wallet)
-          setUserInfo(null)
+          // setUserInfo(null)
           // setSafeAuthSignInInfo(null)
           setIsAuthenticated(false)
         }
       } else {
         localStorage.setItem(
           USER_INFO_STORAGE_KEY,
-          JSON.stringify({ time: Date.now(), userInfo })
+          // JSON.stringify({ time: Date.now(), userInfo })
+          JSON.stringify({ time: Date.now(), userInfo: {} })
         )
       }
     })()
@@ -172,10 +173,10 @@ export function SafeAuthProvider({ children }: { children: React.ReactNode }) {
     isAuthenticated,
     setIsAuthenticated,
     setProfileImage,
-    setUserInfo,
+    // setUserInfo,
     setUserName,
     account,
-    userInfo,
+    // userInfo,
     disconnect,
     wallet
   ])

@@ -48,8 +48,8 @@ export default function Login() {
     // safeAuthPack,
     isAuthenticated,
     setIsAuthenticated,
-    setUserInfo,
-    userInfo,
+    // setUserInfo,
+    // userInfo,
     // setSafeAuthSignInInfo,
     userName,
     setUserName,
@@ -155,7 +155,7 @@ export default function Login() {
       {isSigning && <SigningInPage />}
       <div className="relative h-full w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
-          {isAuthenticated && userInfo && (
+          {isAuthenticated && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
               onClick={handleBack}
@@ -240,7 +240,7 @@ export default function Login() {
                     Welcome to the web3
                   </Typography>
                   <div className="flex flex-col items-center justify-center gap-2 rounded-[40px] bg-background-secondary p-2">
-                    {userInfo && (
+                    {/* {userInfo && (
                       <Image
                         className="rounded-full"
                         src={userInfo.profileImage}
@@ -248,13 +248,13 @@ export default function Login() {
                         width={72}
                         height={72}
                       />
-                    )}
+                    )} */}
                     <Typography className="flex items-center gap-1 lowercase ">
                       {userName}.unicorn.eth <Copy />
                     </Typography>
-                    <Typography className="text-text-secondary">
+                    {/* <Typography className="text-text-secondary">
                       {userInfo?.email}
-                    </Typography>
+                    </Typography> */}
                   </div>
                   <Button onClick={() => router.push('/dashboard')}>
                     Go to wallet
