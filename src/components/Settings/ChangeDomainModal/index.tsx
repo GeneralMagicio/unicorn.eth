@@ -84,7 +84,7 @@ export const ChangeDomainModal: React.FC<{
                 onChange={(e) => {
                   setNewUserName(e.target.value)
                   setIsNameAvailable(null)
-                  debouncedCheckUserName(e)
+                  debouncedCheckUserName(e.target.value)
                 }}
                 label=""
                 name="username"

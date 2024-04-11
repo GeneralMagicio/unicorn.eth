@@ -14,6 +14,7 @@ import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { ModalHeader } from '@/components/ModalHeader'
 import { IconButton } from '@/components/Styled'
 import { USER_INFO_STORAGE_KEY } from '@/lib/safe-auth-provider'
+import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -31,12 +32,15 @@ export const SettingsModal: React.FC<{
   const theme = useTheme()
   const router = useRouter()
   const {
-    safeAuthPack,
-    isAuthenticated,
+    // safeAuthPack,
+    // isAuthenticated,
     setIsAuthenticated,
     setUserInfo,
-    setSafeAuthSignInInfo,
+    // setSafeAuthSignInInfo,
   } = useSafeAuth()
+
+  const {disconnect} = useDisconnect()
+  const wallet = useActiveWallet()
 
   const [, setActiveModal] = useAtom(activeModalAtom)
 
@@ -55,9 +59,10 @@ export const SettingsModal: React.FC<{
     }
   }
   const logout = async () => {
-    if (isAuthenticated) {
-      await safeAuthPack?.signOut()
-      setSafeAuthSignInInfo(null)
+    if (wallet) {
+      // await safeAuthPack?.signOut()
+      // setSafeAuthSignInInfo(null)
+      disconnect(wallet)
       setIsAuthenticated(false)
       setUserInfo(null)
       setActiveModal(null)
