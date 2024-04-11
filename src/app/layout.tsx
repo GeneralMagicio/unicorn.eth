@@ -2,9 +2,9 @@ import { ClientProviders } from '@/lib/client-providers'
 import './globals.css'
 import { Inter } from 'next/font/google'
 import { SafeAuthProvider } from '@/lib/safe-auth-provider'
-import { GetServerSideProps } from 'next'
 import { headers } from 'next/headers'
-import { activeChain, factoryAddress } from '@/lib/third-web/constants'
+import { Thirdweb5Provider } from '@/lib/third-web/provider'
+import { ThirdwebAutoConnect } from '@/lib/third-web/AutoConnect'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -27,9 +27,11 @@ export default async function RootLayout({
   )
   return (
     <ClientProviders>
-      <SafeAuthProvider>
+      <Thirdweb5Provider>
+        <SafeAuthProvider>
           <html lang="en">
             <body className={inter.className}>
+              <ThirdwebAutoConnect/>
               <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white">
                 {!isMobile
                   ? 'This app can only be viewed on mobile.'
@@ -37,7 +39,8 @@ export default async function RootLayout({
               </main>
             </body>
           </html>
-      </SafeAuthProvider>
+        </SafeAuthProvider>
+      </Thirdweb5Provider>
     </ClientProviders>
   )
 }

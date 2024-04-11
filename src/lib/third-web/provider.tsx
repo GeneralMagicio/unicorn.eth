@@ -13,19 +13,12 @@ export const smartWalletConfig = {
   gasless: true,
 }
 
-export const wallets = [inAppWallet({auth: {options: ["google"]}})]
+export const wallets = [inAppWallet()]
 export const client = createThirdwebClient({ clientId })
 
 export const Thirdweb5Provider = ({ children }: { children: ReactNode }) => {
   return (
     <ThirdwebProvider>
-      <AutoConnect
-        client={client}
-        wallets={wallets}
-        accountAbstraction={smartWalletConfig}
-        // autoConnect={{ timeout: 10000 }}
-        // appMetadata={appMetadata}
-      />
       {children}
     </ThirdwebProvider>
   )
