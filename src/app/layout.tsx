@@ -1,7 +1,7 @@
 import { ClientProviders } from '@/lib/client-providers'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { SafeAuthProvider } from '@/lib/safe-auth-provider'
+// import { SafeAuthProvider } from '@/lib/auth-provider'
 import { headers } from 'next/headers'
 import { Thirdweb5Provider } from '@/lib/third-web/provider'
 import { ThirdwebAutoConnect } from '@/lib/third-web/AutoConnect'
@@ -28,7 +28,7 @@ export default async function RootLayout({
   return (
     <ClientProviders>
       <Thirdweb5Provider>
-        <SafeAuthProvider>
+        {/* <SafeAuthProvider> */}
           <html lang="en">
             <body className={inter.className}>
               <ThirdwebAutoConnect/>
@@ -39,7 +39,7 @@ export default async function RootLayout({
               </main>
             </body>
           </html>
-        </SafeAuthProvider>
+        {/* </SafeAuthProvider> */}
       </Thirdweb5Provider>
     </ClientProviders>
   )
