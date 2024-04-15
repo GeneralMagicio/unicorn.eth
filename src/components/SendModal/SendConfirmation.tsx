@@ -1,7 +1,7 @@
 import { Button, Typography } from '@ensdomains/thorin'
 import { CancelButton, FlexRow, Summary } from './send.styles'
 import { useRouter } from 'next/navigation'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { TokenItem } from '../TokenItem'
 import LoadingArc from './LoadingArc'
@@ -37,7 +37,7 @@ const SendConfirmation = ({
   const [txState, setTxState] = useState<TxState>(TxState.Initial)
   const [gasCost, setGasCost] = useState<string | null>('')
 
-  const { sendToken, estimateGasFee } = useSafeAuth()
+  const { sendToken, estimateGasFee } = useAuth()
 
   const sendTx = async () => {
     setTxState(TxState.Loading)

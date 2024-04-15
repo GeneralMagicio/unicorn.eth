@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
 import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { useAtom } from 'jotai'
 import {
@@ -110,9 +110,9 @@ function shortenEthereumAddress(address: string) {
 
 export default function Dashboard() {
   const theme = useTheme()
-  const { userName, profileImage, ethBalance, userAddress } =
-    useSafeAuth()
   const { canMintPOAP } = usePOAP()
+  // const { userName, profileImage, ethBalance, userAddress } =
+  //   useAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
@@ -156,14 +156,14 @@ export default function Dashboard() {
           <Image
             className="rounded-full"
             src={
-              profileImage /* || userInfo?.profileImage */ || '/img/validator.eth.png'
+              /* profileImage */ /* || userInfo?.profileImage */ '/img/validator.eth.png'
             }
             alt={/* userInfo?.name || */ ''}
             width={40}
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {/* {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN} */}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">

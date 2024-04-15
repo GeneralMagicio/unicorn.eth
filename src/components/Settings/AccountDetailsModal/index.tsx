@@ -6,7 +6,7 @@ import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Image from 'next/image'
 import styled from 'styled-components'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { IconButton } from '@/components/Styled'
 import { PenIcon } from '@/components/Icons/Pen'
 import { ArrowRightIcon } from '@/components/Icons/ArrowRight'
@@ -53,9 +53,12 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { /* userInfo, */ userName, setProfileImage, profileImage } = useSafeAuth()
-
+  const { userInfo, setUserInfo } = useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
+
+  // only logged in users have access to this screen
+  const userName = userInfo!.userName
+
 
   const {
     handleSubmit,
@@ -102,7 +105,7 @@ export const AccountDetailsModal: React.FC<{
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       convertImageToBase64(e.target.files[0], (base64) => {
-        setProfileImage(base64)
+        setUserInfo({profilePicture: base64})
 
         axios.put(
           '/api/subname/data',
@@ -135,8 +138,8 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="rounded-full"
-                src={profileImage /* || userInfo?.profileImage */ || ''}
-                alt={/* userInfo?.name || */ '' }
+                src={userInfo?.profilePicture || ''}
+                alt={userInfo?.name ||  '' }
                 width={60}
                 height={60}
               />

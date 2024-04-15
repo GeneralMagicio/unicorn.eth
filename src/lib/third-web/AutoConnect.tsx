@@ -6,6 +6,7 @@ import { WalletId, createWallet } from 'thirdweb/wallets'
 import { useAtom } from 'jotai'
 import { isAutoConnectingAtom } from '@/store'
 import { useConnect } from 'thirdweb/react'
+import { LAST_CONNECT_PERSONAL_WALLET_ID } from './constants'
 
 export const useIsAutoConnecting = () => {
   const [isAutoConnecting, setIsAutoConnecting] = useAtom(isAutoConnectingAtom)
@@ -14,45 +15,35 @@ export const useIsAutoConnecting = () => {
     console.log('is auto connecting?', isAutoConnecting)
   }, [isAutoConnecting])
 
-
-  return {isAutoConnecting, setIsAutoConnecting}
-  
+  return { isAutoConnecting, setIsAutoConnecting }
 }
 
 export const ThirdwebAutoConnect = () => {
-  const {setIsAutoConnecting} = useIsAutoConnecting()
-  const {connect} = useConnect()
+  const { setIsAutoConnecting } = useIsAutoConnecting()
+  const { connect } = useConnect()
 
   useEffect(() => {
     const main = async () => {
-      console.log("setting autoconnect to true")
       setIsAutoConnecting(true)
       try {
         const personalWalletId = localStorage.getItem(
-          'last-connect-personal-wallet-id'
+          LAST_CONNECT_PERSONAL_WALLET_ID
         )
-        if (!personalWalletId) {
-          console.log("No pw id")
-          return
-        }
-        console.log("pwid", personalWalletId)
+        if (!personalWalletId) return
         const personalWallet = createWallet(personalWalletId as WalletId)
-        console.log("pw", personalWallet)
-        const personalAccount = await personalWallet.autoConnect({ client: client })
-        console.log("pa:", personalAccount)
+        const personalAccount = await personalWallet.autoConnect({
+          client: client,
+        })
         const smartWallet = createWallet('smart', smartWalletConfig)
         await smartWallet.connect({ personalAccount, client: client })
         await connect(smartWallet)
-        // console.log("sw:", personalAccount)
       } finally {
-        console.log("setting autoconnect to false")
         setIsAutoConnecting(false)
       }
     }
 
     main()
   }, [setIsAutoConnecting, connect])
-
 
   return <></>
 }

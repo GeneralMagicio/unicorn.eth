@@ -1,5 +1,5 @@
 import { getSubnameMetadata } from '@/services/enService'
-import { useSafeAuth } from './useSafeAuth'
+import { useAuth } from './useAuth'
 import { useCallback, useState } from 'react'
 import { debounce } from '@/utils/debounce'
 import { resolveAddress } from 'ethers'
@@ -8,7 +8,7 @@ import { SubnameResolutionResponse } from '@/services/types/ens'
 import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
 
 export function useEnsResolver() {
-  const { mainnetProvider } = useSafeAuth()
+  const { mainnetProvider } = useAuth()
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
@@ -32,7 +32,7 @@ export function useEnsResolver() {
       // const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: true}}), 200))
 
       // console.log("Here,", res.data)
-      setIsNameAvailable(res.data.isAvailable === undefined || null ? null : res.data.isAvailable)
+      setIsNameAvailable(res.data.isAvailable ?? null)
     } catch (err) {
       setIsNameAvailable(false)
     }
@@ -53,23 +53,23 @@ export function useEnsResolver() {
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
-  // const getSubnameDataset = useCallback(
-  //   (walletAddress: string) =>
-  //     new Promise<{data: Array<SubnameResolutionResponse>}>((res, rej) =>
-  //       setTimeout(
-  //         () =>
-  //           res({data: [
-  //             {
-  //               domain: 'account.eth',
-  //               fullName: 'Mahdi',
-  //               label: 'mahdi',
-  //             },
-  //           ]}),
-  //         200
-  //       )
-  //     ),
-  //   []
-  // )
+  const getSubnameDataset = useCallback(
+    (walletAddress: string) =>
+      new Promise<{data: Array<SubnameResolutionResponse>}>((res, rej) =>
+        setTimeout(
+          () =>
+            res({data: [
+              {
+                domain: 'account.eth',
+                fullName: 'Mahdi',
+                label: 'mahdi',
+              },
+            ]}),
+          200
+        )
+      ),
+    []
+  )
   // const getSubnameDataset = useCallback(
   //   (walletAddress: string) =>
   //     new Promise<{ data: Array<SubnameResolutionResponse> }>((res, rej) =>
@@ -77,13 +77,13 @@ export function useEnsResolver() {
   //     ),
   //   []
   // )
-  const getSubnameDataset = useCallback(
-    (walletAddress: string) =>
-      axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
-        params: { address: walletAddress },
-      }),
-    []
-  )
+  // const getSubnameDataset = useCallback(
+  //   (walletAddress: string) =>
+  //     axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
+  //       params: { address: walletAddress },
+  //     }),
+  //   []
+  // )
 
   const getENSAddress = async (ens: string) => {
     try {

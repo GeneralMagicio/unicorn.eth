@@ -2,7 +2,7 @@ import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ModalHeader } from '@/components/ModalHeader'
 import { UserNameInput } from '@/components/Styled'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect, useState } from 'react'
 import { TickCircleIcon } from '@/components/Icons/TickCircle'
@@ -12,7 +12,7 @@ export const ChangeDomainModal: React.FC<{
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
   const theme = useTheme()
-  const { userName, setUserName, setProfileImage } = useSafeAuth()
+  const { userInfo, setUserInfo } = useAuth()
   const [newUserName, setNewUserName] = useState('')
   const [changed, setChanged] = useState(false)
   const {
@@ -32,10 +32,10 @@ export const ChangeDomainModal: React.FC<{
     createEnsSubname(newUserName)
       .then(() => {
         setChanged(true)
-        setUserName(newUserName)
+        setUserInfo({userName: newUserName})
       })
       .then(() => {
-        setProfileImage('')
+        setUserInfo({profilePicture: ''})
       })
   }
 
@@ -97,7 +97,7 @@ export const ChangeDomainModal: React.FC<{
 
             <Button
               loading={isRegistering}
-              disabled={!userName || !Boolean(isNameAvailable)}
+              disabled={!userInfo!.userName || !Boolean(isNameAvailable)}
               onClick={updateUserName}>
               Update Username
             </Button>
