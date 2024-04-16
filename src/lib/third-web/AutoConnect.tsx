@@ -11,10 +11,6 @@ import { LAST_CONNECT_PERSONAL_WALLET_ID } from './constants'
 export const useIsAutoConnecting = () => {
   const [isAutoConnecting, setIsAutoConnecting] = useAtom(isAutoConnectingAtom)
 
-  useEffect(() => {
-    console.log('is auto connecting?', isAutoConnecting)
-  }, [isAutoConnecting])
-
   return { isAutoConnecting, setIsAutoConnecting }
 }
 

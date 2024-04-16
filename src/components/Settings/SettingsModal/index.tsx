@@ -1,4 +1,3 @@
-import { useAuth } from '@/hooks/useAuth'
 import { AccountIcon } from '@/components/Icons/Account'
 import { AlertIcon } from '@/components/Icons/Alert'
 import { ChatIcon } from '@/components/Icons/Chat'
@@ -13,7 +12,6 @@ import { activeModalAtom } from '@/store'
 import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { ModalHeader } from '@/components/ModalHeader'
 import { IconButton } from '@/components/Styled'
-import { USER_INFO_STORAGE_KEY } from '@/lib/auth-provider'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 
 export const enum SETTINGS_ACTION_TYPE {
@@ -31,14 +29,6 @@ export const SettingsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const theme = useTheme()
   const router = useRouter()
-  const {
-    // safeAuthPack,
-    // isAuthenticated,
-    // setIsAuthenticated,
-    // setUserInfo,
-    // setSafeAuthSignInInfo,
-  } = useAuth()
-
   const {disconnect} = useDisconnect()
   const wallet = useActiveWallet()
 
@@ -60,13 +50,8 @@ export const SettingsModal: React.FC<{
   }
   const logout = async () => {
     if (wallet) {
-      // await safeAuthPack?.signOut()
-      // setSafeAuthSignInInfo(null)
       disconnect(wallet)
-      // setIsAuthenticated(false)
-      // setUserInfo(null)
       setActiveModal(null)
-      localStorage.removeItem(USER_INFO_STORAGE_KEY)
     }
   }
 

@@ -2,10 +2,8 @@
 
 import { ReactNode } from 'react'
 import { createThirdwebClient } from 'thirdweb'
-import { AutoConnect, ThirdwebProvider } from 'thirdweb/react'
-// import { inAppWallet } from "thirdweb/wallets";
+import { ThirdwebProvider } from 'thirdweb/react'
 import { activeChain, clientId, factoryAddress } from './constants'
-import { inAppWallet, smartWallet } from 'thirdweb/wallets'
 
 export const smartWalletConfig = {
   factoryAddress: factoryAddress,
@@ -13,7 +11,6 @@ export const smartWalletConfig = {
   gasless: true,
 }
 
-export const wallets = [inAppWallet()]
 export const client = createThirdwebClient({ clientId })
 
 export const Thirdweb5Provider = ({ children }: { children: ReactNode }) => {

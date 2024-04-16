@@ -53,10 +53,8 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { username, userProfilePicture, setUserProfilePicture } = useAuth()
+  const { username, userEmail, userProfilePicture, setUserProfilePicture } = useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
-
-
 
   const {
     handleSubmit,
@@ -149,7 +147,7 @@ export const AccountDetailsModal: React.FC<{
               <Typography fontVariant="bodyBold">
                 {username}.unicorn.eth
               </Typography>
-              <Typography color="textSecondary">{/* userInfo?.email */}</Typography>
+              <Typography color="textSecondary">{userEmail}</Typography>
             </div>
           </div>
           <IconButton

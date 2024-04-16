@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // const {disconnect} = useDisconnect()
 
   const fetchEthBalance = useCallback(async (/* provider: BrowserProvider, signer: Signer */) => {
+    // TODO: Rewrite the below logic with the third web methods
     setEthBalance("1")
     // try {
     //   const signerAddress = await signer.getAddress()
@@ -66,7 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let goToDashboard = false
     const ensSetup = async () => {
       if (!wallet || !account) return
-      // console.log()
       setUserAddress(account.address)
       const email = await getUserEmail({client})
       if (email) setUserEmail(email)
@@ -88,7 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error(err)
       } finally {
-        // Fetch ETH balance
         await fetchEthBalance()
         if (goToDashboard) router.push('/dashboard')
       }

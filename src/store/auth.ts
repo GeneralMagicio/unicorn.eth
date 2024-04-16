@@ -1,19 +1,6 @@
-import { AUTH_STATUS } from '@/hooks/useAuth'
-// import {
-//   AuthKitSignInData,
-//   SafeAuthPack,
-//   SafeAuthUserInfo,
-// } from '@safe-global/auth-kit'
-import { BrowserProvider, Provider, Signer } from 'ethers'
+import { Provider } from 'ethers'
 import { atom } from 'jotai'
 
-// interface UserInfo {
-//   username: string;
-//   address: string;
-//   email: string;
-//   profilePicture?: string;
-//   name?: string;
-// }
 
 // export const userInfoAtom = atom<UserInfo | null>(null)
 export const usernameAtom = atom<string>('')
@@ -29,4 +16,3 @@ export const isAutoConnectingAtom = atom<boolean | undefined>(undefined)
 export const mainnetProviderAtom = atom<Provider | null>(null)
 // export const signerAtom = atom<Signer | null>(null)
 export const ethBalanceAtom = atom<string>('')
-// export const userAddressAtom = atom<string>('')

@@ -92,7 +92,6 @@ export default function Login() {
                     <Typography fontVariant="body">
                       {isAutoConnecting ? `Welcome back...` : `Sign in with Google`}
                     </Typography>
-                    {/* <ConnectWallet btnTitle='Sign in with Google'/> */}
                   </SignUpButton>
                 </>
               )}
