@@ -6,7 +6,7 @@ import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
 import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { useAtom } from 'jotai'
 import {
@@ -30,11 +30,9 @@ import { trimString } from './utils'
 import { NftImage } from '@/components/Dashboard/NftImage'
 import axios from 'axios'
 import { usePOAP } from '@/hooks/usePOAP'
+import { useActiveAccount } from 'thirdweb/react'
 
 const TABS = ['Tokens', 'Collectibles']
-
-// TODO: Remove this once the smart contract integration is through
-const TestWalletAddress = '0xA4D506434445Bb7303eA34A07bc38484cdC64a95' // moenick.eth
 
 const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
@@ -97,21 +95,32 @@ const createCryptoTokenObject = (
   return result.sort((a, b) => b.price * b.value - a.price * a.value)
 }
 
+function shortenEthereumAddress(address: string) {
+  if (address.length < 10) {
+      return address; // Return the address as is if it's too short
+  }
+  const start = address.slice(0, 4); // Get the first 4 characters
+  const end = address.slice(-6); // Get the last 6 characters
+  return `${start}...${end}`; // Combine and return the shortened address
+}
+
+
 export default function Dashboard() {
   const theme = useTheme()
-  const { userInfo, userName, profileImage, ethBalance, userAddress } =
-    useSafeAuth()
   const { canMintPOAP } = usePOAP()
+  const { username, userProfilePicture, ethBalance, userAddress } =
+    useAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
 
-  console.log('User Address:', userAddress)
-  // const walletAddress = userAddress || TestWalletAddress
-  // TODO: Remove this once the smart contract integration is through
-  const walletAddress = TestWalletAddress
+  
+  const account = useActiveAccount()
+
+  // User shouldn't be in the dashboard if they don't have an account 
+  const walletAddress = account?.address!
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
@@ -144,14 +153,14 @@ export default function Dashboard() {
           <Image
             className="rounded-full"
             src={
-              profileImage || userInfo?.profileImage || '/img/validator.eth.png'
+              userProfilePicture || '/img/validator.eth.png'
             }
-            alt={userInfo?.name || ''}
+            alt={ username || ''}
             width={40}
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">
@@ -160,7 +169,7 @@ export default function Dashboard() {
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
-          Estimated Value
+          {`Estimated Value for: ${account?.address ? shortenEthereumAddress(account.address) : ''}`}
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
           {priceFormatter.format(estimatedTotalValue)}

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Modal, Typography } from '@ensdomains/thorin'
 
 import { ModalHeader } from '../ModalHeader'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { QRView } from './QRView'
 import { QRBlack } from '../Icons/QRBlack'
 import { CopyBlack } from '../Icons/CopyBlack'
@@ -14,9 +14,9 @@ export const ReceiveModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   {
     const [openQR, setOpenQR] = useState(false)
-    const { userName, userAddress } = useSafeAuth()
+    const { username, userAddress } = useAuth()
     const suffix = '.account.eth'
-    const account = `${userName}${suffix}`
+    const account = `${username}${suffix}`
 
     return (
       <Modal open={open} onDismiss={onDismiss} mobileOnly>

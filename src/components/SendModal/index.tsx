@@ -9,7 +9,7 @@ import { ChevronRight } from '../Icons/ChevronRight'
 import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
+import { useAuth } from '@/hooks/useAuth'
 import { ICryptoToken } from '@/services/types'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import SendConfirmation from './SendConfirmation'
@@ -36,7 +36,7 @@ export const SendModal: React.FC<{
       null
     )
     const { getENSAddress } = useEnsResolver()
-    const { ethBalance } = useSafeAuth()
+    const { ethBalance } = useAuth()
 
     const getInputParentStyles = () => {
       if (!!destinationError) {

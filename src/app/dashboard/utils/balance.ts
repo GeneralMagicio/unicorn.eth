@@ -14,6 +14,7 @@ export function getProviderUrl(chainId: number) {
 
   const urls: Record<number, string> = {
     [SupportedChainIds.Mainnet]: `https://mainnet.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.Sepolia]: `https://sepolia.infura.io/v3/${infuraApiKey}`,
     [SupportedChainIds.OP]: `https://optimism-mainnet.infura.io/v3/${infuraApiKey}`,
     [SupportedChainIds.Gnosis]: `https://gnosis-rpc.publicnode.com`,
     [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,

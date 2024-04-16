@@ -1,12 +1,12 @@
 import useSWRMutation from 'swr/mutation'
-import { useSafeAuth } from './useSafeAuth'
+import { useAuth } from './useAuth'
 import axios from 'axios'
 import { poapService } from '@/services/poap'
 import useSWR from 'swr'
 import { useMemo } from 'react'
 
 export function usePOAP() {
-  const { userAddress } = useSafeAuth()
+  const { userAddress } = useAuth()
   const { data: tokenData, isLoading: isGettingToken } = useSWR<{
     access_token: string
   }>(
