@@ -53,11 +53,9 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { userInfo, setUserInfo } = useAuth()
+  const { username, userProfilePicture, setUserProfilePicture } = useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
 
-  // only logged in users have access to this screen
-  const userName = userInfo!.userName
 
 
   const {
@@ -74,7 +72,7 @@ export const AccountDetailsModal: React.FC<{
   })
   const onSubmit = (data: FormData) => {
     return axios.put('/api/subname/record', {
-      label: userName,
+      label: username,
       key: EnsRecordType.ACCOUNT_INFO,
       text: encodeURIComponent(JSON.stringify(data)),
     })
@@ -85,7 +83,7 @@ export const AccountDetailsModal: React.FC<{
       axios
         .get<{ record: string }>('/api/subname/record', {
           params: {
-            label: userName,
+            label: username,
             key: EnsRecordType.ACCOUNT_INFO,
           },
         })
@@ -96,7 +94,7 @@ export const AccountDetailsModal: React.FC<{
           return {}
         })
     }
-  }, [open, userName])
+  }, [open, username])
 
   useEffect(() => {
     if (accountDetails) reset(accountDetails)
@@ -105,7 +103,7 @@ export const AccountDetailsModal: React.FC<{
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       convertImageToBase64(e.target.files[0], (base64) => {
-        setUserInfo({profilePicture: base64})
+        setUserProfilePicture(base64)
 
         axios.put(
           '/api/subname/data',
@@ -114,7 +112,7 @@ export const AccountDetailsModal: React.FC<{
           },
           {
             params: {
-              label: userName,
+              label: username,
               key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
             },
           }
@@ -138,8 +136,8 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="rounded-full"
-                src={userInfo?.profilePicture || ''}
-                alt={userInfo?.name ||  '' }
+                src={userProfilePicture || ''}
+                alt={username ||  '' }
                 width={60}
                 height={60}
               />
@@ -149,7 +147,7 @@ export const AccountDetailsModal: React.FC<{
             </div>
             <div className="flex flex-col justify-center gap-2">
               <Typography fontVariant="bodyBold">
-                {userName}.unicorn.eth
+                {username}.unicorn.eth
               </Typography>
               <Typography color="textSecondary">{/* userInfo?.email */}</Typography>
             </div>

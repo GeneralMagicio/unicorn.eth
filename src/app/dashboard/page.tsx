@@ -34,9 +34,6 @@ import { useActiveAccount } from 'thirdweb/react'
 
 const TABS = ['Tokens', 'Collectibles']
 
-// TODO: Remove this once the smart contract integration is through
-const TestWalletAddress = '0xA4D506434445Bb7303eA34A07bc38484cdC64a95' // moenick.eth
-
 const fetchTokenPrices = async () => {
   const url = 'https://unicorn.melodicdays.shop/pricing/all'
   const res = await axiosInstance.get<Record<string, number>>(url)
@@ -111,8 +108,8 @@ function shortenEthereumAddress(address: string) {
 export default function Dashboard() {
   const theme = useTheme()
   const { canMintPOAP } = usePOAP()
-  // const { userName, profileImage, ethBalance, userAddress } =
-  //   useAuth()
+  const { username, userProfilePicture, ethBalance, userAddress } =
+    useAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
@@ -156,14 +153,14 @@ export default function Dashboard() {
           <Image
             className="rounded-full"
             src={
-              /* profileImage */ /* || userInfo?.profileImage */ '/img/validator.eth.png'
+              userProfilePicture || '/img/validator.eth.png'
             }
-            alt={/* userInfo?.name || */ ''}
+            alt={ username || ''}
             width={40}
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {/* {userName}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN} */}
+            {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
         <div className="flex  items-center gap-2">

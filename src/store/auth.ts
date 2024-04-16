@@ -7,16 +7,19 @@ import { AUTH_STATUS } from '@/hooks/useAuth'
 import { BrowserProvider, Provider, Signer } from 'ethers'
 import { atom } from 'jotai'
 
-interface UserInfo {
-  userName: string;
-  address: string;
-  email: string;
-  profilePicture?: string;
-  name?: string;
-}
+// interface UserInfo {
+//   username: string;
+//   address: string;
+//   email: string;
+//   profilePicture?: string;
+//   name?: string;
+// }
 
-export const userInfoAtom = atom<UserInfo | null>(null)
-// export const userNameAtom = atom<string>('')
+// export const userInfoAtom = atom<UserInfo | null>(null)
+export const usernameAtom = atom<string>('')
+export const userAddressAtom = atom<string>('')
+export const userEmailAtom = atom<string>('')
+export const userProfilePictureAtom = atom<string>('')
 export const isAutoConnectingAtom = atom<boolean | undefined>(undefined)
 // export const safeAuthPackAtom = atom<SafeAuthPack | null>(null)
 // export const safeAuthSignInInfoAtom = atom<AuthKitSignInData | null>(null)

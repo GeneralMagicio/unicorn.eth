@@ -9,6 +9,7 @@ export const AuthGuard: React.FC<PropsWithChildren> = ({ children }) => {
   const { replace } = useRouter()
   // const { safeAuthPack, isAuthenticated, authStatus } = useAuth()
   const wallet = useActiveWallet()
+  const {username} = useAuth()
   const {isAutoConnecting} = useIsAutoConnecting()
 
   useEffect(() => {
@@ -16,6 +17,8 @@ export const AuthGuard: React.FC<PropsWithChildren> = ({ children }) => {
       replace('/login')
     }
   }, [replace, wallet, isAutoConnecting])
+
+  if (!wallet || !username) return <></>
 
   return <>{children}</>
 }

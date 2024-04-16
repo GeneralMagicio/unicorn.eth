@@ -12,7 +12,7 @@ export const ChangeDomainModal: React.FC<{
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
   const theme = useTheme()
-  const { userInfo, setUserInfo } = useAuth()
+  const { setUsername, username, setUserProfilePicture } = useAuth()
   const [newUserName, setNewUserName] = useState('')
   const [changed, setChanged] = useState(false)
   const {
@@ -32,10 +32,10 @@ export const ChangeDomainModal: React.FC<{
     createEnsSubname(newUserName)
       .then(() => {
         setChanged(true)
-        setUserInfo({userName: newUserName})
+        setUsername(newUserName)
       })
       .then(() => {
-        setUserInfo({profilePicture: ''})
+        setUserProfilePicture('')
       })
   }
 
@@ -97,7 +97,7 @@ export const ChangeDomainModal: React.FC<{
 
             <Button
               loading={isRegistering}
-              disabled={!userInfo!.userName || !Boolean(isNameAvailable)}
+              disabled={!username || !Boolean(isNameAvailable)}
               onClick={updateUserName}>
               Update Username
             </Button>

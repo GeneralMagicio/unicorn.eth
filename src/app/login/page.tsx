@@ -1,6 +1,5 @@
 'use client'
-
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import { Button, Input, Typography } from '@ensdomains/thorin'
 import { GoogleIcon } from '@/components/Icons/Google'
@@ -13,39 +12,23 @@ import { useAuth } from '@/hooks/useAuth'
 import cn from 'classnames'
 import { UserNameInput } from '@/components/Styled'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
-import { USER_INFO_STORAGE_KEY } from '@/lib/auth-provider'
-// import { ConnectWallet } from '@thirdweb-dev/react'
-import { activeChain, factoryAddress } from '@/lib/third-web/constants'
-import { connect } from 'http2'
-import { inAppWallet, smartWallet } from 'thirdweb/wallets'
-import { client, smartWalletConfig } from '@/lib/third-web/provider'
-// import { get } from "thirdweb/wallets/embedded";
-import { useActiveAccount, useActiveWallet, useConnect, useDisconnect } from 'thirdweb/react'
+import { useActiveWallet, useConnect, useDisconnect } from 'thirdweb/react'
 import { createSmartWallet } from '@/lib/third-web/methods'
+import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
 
 export default function Login() {
   const router = useRouter()
   const [step, setStep] = useState(0)
   const [isSigning, setIsSigning] = useState(false)
+  const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
+  const {isAutoConnecting} = useIsAutoConnecting()
 
   const {connect} = useConnect()
   const {disconnect} = useDisconnect()
   const wallet = useActiveWallet()
-  const account = useActiveAccount()
-
-  useEffect(() => {
-    console.log("wallet:", wallet)
-    console.log("acc:", wallet?.getAccount())
-  }, [wallet])
-
-  const {
-    setUserInfo,
-    userInfo,
-  } = useAuth()
-
-  const userName = userInfo?.userName
-
+  
+  const {username, userProfilePicture, userEmail, setUsername} = useAuth()
 
   const {
     isRegistering,
@@ -53,24 +36,13 @@ export default function Login() {
     setIsNameAvailable,
     debouncedCheckUserName,
     createEnsSubname,
-    getSubnameDataset,
   } = useEnsResolver()
-
-
-  useEffect(() => {
-    if (step === 1 && account?.address) {
-      getSubnameDataset(account.address).then((res) => {
-        if (res.data.length) {
-          router.replace('/dashboard')
-        }
-      })
-    }
-  }, [getSubnameDataset, router, step, account?.address])
+  
 
   const login = async () => {
     setIsSigning(true);
     try {
-      const wallet = await connect(createSmartWallet)
+      await connect(createSmartWallet)
       setStep(1)
     } finally {
       setIsSigning(false);
@@ -80,35 +52,6 @@ export default function Login() {
   const logout = async () => {
     if (wallet) disconnect(wallet)
   }
-
-  // const login = async () => {
-  //   setIsSigning(true)
-  //   try {
-  //     const signInInfo =
-  //       (await safeAuthPack?.signIn({
-  //         loginProvider: 'google',
-  //       })) || null
-  //     setSafeAuthSignInInfo(signInInfo)
-  //     setIsAuthenticated(true)
-  //     localStorage.setItem(
-  //       USER_INFO_STORAGE_KEY,
-  //       JSON.stringify({ time: Date.now(), userInfo })
-  //     )
-  //   } catch (err) {
-  //   } finally {
-  //     setIsSigning(false)
-  //   }
-  // }
-
-  // const logout = async () => {
-  //   if (isAuthenticated) {
-  //     await safeAuthPack?.signOut({ reset: true })
-  //     setSafeAuthSignInInfo(null)
-  //     setIsAuthenticated(false)
-  //     setUserInfo(null)
-  //     localStorage.removeItem(USER_INFO_STORAGE_KEY)
-  //   }
-  // }
 
   const handleBack = () => {
     if (step === 1) {
@@ -144,10 +87,10 @@ export default function Login() {
             <div className="flex flex-col gap-6">
               {step === 0 && (
                 <>
-                  <SignUpButton onClick={login}>
+                  <SignUpButton disabled={isAutoConnecting} onClick={login}>
                     <GoogleIcon />
                     <Typography fontVariant="body">
-                      Sign in with Google
+                      {isAutoConnecting ? `Welcome back...` : `Sign in with Google`}
                     </Typography>
                     {/* <ConnectWallet btnTitle='Sign in with Google'/> */}
                   </SignUpButton>
@@ -168,13 +111,13 @@ export default function Login() {
                     }>
                     <Input
                       description={
-                        userName && isNameAvailable
+                        chosenUsername && isNameAvailable
                           ? 'Great choice! That’s available.'
                           : 'Hide'
                       }
-                      value={userName}
+                      value={chosenUsername}
                       onChange={(e) => {
-                        setUserInfo({userName: e.target.value})
+                        setChosenUsername(e.target.value)
                         setIsNameAvailable(null)
                         debouncedCheckUserName(e.target.value)
                       }}
@@ -191,9 +134,9 @@ export default function Login() {
 
                   <Button
                     loading={isRegistering}
-                    disabled={!userName || !Boolean(isNameAvailable)}
+                    disabled={!chosenUsername || !Boolean(isNameAvailable)}
                     onClick={() => {
-                      createEnsSubname(userName!).then(() => {
+                      createEnsSubname(chosenUsername).then(() => {
                         setStep(2)
                       })
                     }}>
@@ -207,23 +150,23 @@ export default function Login() {
                     Welcome to the web3
                   </Typography>
                   <div className="flex flex-col items-center justify-center gap-2 rounded-[40px] bg-background-secondary p-2">
-                    {userInfo && userInfo.profilePicture && (
+                    {userProfilePicture && (
                       <Image
                         className="rounded-full"
-                        src={userInfo.profilePicture}
-                        alt={userInfo.userName!}
+                        src={userProfilePicture}
+                        alt={username!}
                         width={72}
                         height={72}
                       />
                     )}
                     <Typography className="flex items-center gap-1 lowercase ">
-                      {userInfo!.userName}.unicorn.eth <Copy />
+                      {chosenUsername}.unicorn.eth <Copy />
                     </Typography>
                     <Typography className="text-text-secondary">
-                      {userInfo?.email}
+                      {userEmail}
                     </Typography>
                   </div>
-                  <Button onClick={() => router.push('/dashboard')}>
+                  <Button onClick={() => {setUsername(chosenUsername); router.push('/dashboard')}}>
                     Go to wallet
                   </Button>
                 </>

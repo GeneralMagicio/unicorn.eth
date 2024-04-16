@@ -3,18 +3,24 @@ import { useAtom } from 'jotai'
 import {
   mainnetProviderAtom,
   ethBalanceAtom,
-  userInfoAtom,
+  userAddressAtom,
+  usernameAtom,
+  userEmailAtom,
+  userProfilePictureAtom,
 } from '@/store'
 import { userProfileImg } from '@/store/settings'
+import { userInfo } from 'os'
 
 export const enum AUTH_STATUS {
   PENDING,
   RESOLVED,
 }
 export const useAuth = () => {
-  // const [userName, setUserName] = useAtom(userNameAtom)
-  // const [userAddress, setUserAddress] = useAtom(userAddressAtom)
-  const [userInfo, setUserInfo] = useAtom(userInfoAtom)
+  const [username, setUsername] = useAtom(usernameAtom)
+  const [userAddress, setUserAddress] = useAtom(userAddressAtom)
+  const [userEmail, setUserEmail] = useAtom(userEmailAtom)
+  const [userProfilePicture, setUserProfilePicture] = useAtom(userProfilePictureAtom)
+  // const [userInfo, setUserInfo] = useAtom(userInfoAtom)
   // const [isAuthenticated, setIsAuthenticated] = useAtom(isAuthenticatedAtom)
   // const [signInInfo, setSafeAuthSignInInfo] = useAtom(safeAuthSignInInfoAtom)
   // const [safeAuthPack, setSafeAuthPack] = useAtom(safeAuthPackAtom)
@@ -25,13 +31,6 @@ export const useAuth = () => {
   const [ethBalance, setEthBalance] = useAtom(ethBalanceAtom)
   // const [profileImage, setProfileImage] = useAtom(userProfileImg)
 
-  type UserInfo = typeof userInfo
-
-  const sendUserInfoCustom = (obj: Partial<UserInfo>) => {
-    const initialObject : UserInfo = {address: '', email: '', userName: ''}
-    if (userInfo === null) return setUserInfo({...initialObject, ...obj})
-    setUserInfo({...userInfo, ...obj})
-  }
 
 
   const sendToken = async (
@@ -145,10 +144,14 @@ export const useAuth = () => {
     // setSafeAuthSignInInfo,
     // isAuthenticated,
     // setIsAuthenticated,
-    userInfo,
-    setUserInfo: sendUserInfoCustom,
-    // profileImage,
-    // setProfileImage,
+    userProfilePicture,
+    setUserProfilePicture,
+    setUserAddress,
+    userAddress,
+    setUserEmail,
+    userEmail,
+    setUsername,
+    username,
     // authStatus,
     // setAuthStatus,
     sendToken,

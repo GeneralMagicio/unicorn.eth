@@ -10,6 +10,7 @@ import { EnsRecordType } from '@/services/enService'
 import axios from 'axios'
 import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
 import { client } from './third-web/provider'
+import { useRouter } from 'next/navigation';
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
@@ -22,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // setSafeAuthSignInInfo,
     // setUserInfo,
     // signInInfo,
-    // setUserName,
+    // setUsername,
     // setAuthStatus,
     // setMainnetProvider,
     // provider,
@@ -32,7 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setEthBalance,
     // setProfileImage,
     // userInfo,
-    setUserInfo
+    setUsername,
+    setUserProfilePicture,
+    setUserEmail,
+    setUserAddress,
     // userAddress,
     // setUserAddress,
   } = useAuth()
@@ -40,6 +44,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const wallet = useActiveWallet()
   const account = useActiveAccount()
+  const router = useRouter()
+
   // const {disconnect} = useDisconnect()
 
   const fetchEthBalance = useCallback(async (/* provider: BrowserProvider, signer: Signer */) => {
@@ -57,33 +63,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [setEthBalance])
 
   useEffect(() => {
-    const authSetup = async () => {
+    let goToDashboard = false
+    const ensSetup = async () => {
       if (!wallet || !account) return
-      setUserInfo({address: account.address})
+      // console.log()
+      setUserAddress(account.address)
       const email = await getUserEmail({client})
-      setUserInfo({email})
+      if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const userName = res.data[res.data.length - 1].label
-        setUserInfo({userName})
-  
+        const username = res.data[res.data.length - 1].label
+        setUsername(username)
+        
+        goToDashboard = true
+        
         const { data } = await axios.get('/api/subname/data', {
           params: {
-            label: userName,
+            label: username,
             key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
           },
         })
-  
-        setUserInfo({profilePicture: data.data})
+        
+        setUserProfilePicture(data.data)
       } catch (err) {
         console.error(err)
+      } finally {
+        // Fetch ETH balance
+        await fetchEthBalance()
+        if (goToDashboard) router.push('/dashboard')
       }
   
-      // Fetch ETH balance
-      await fetchEthBalance()
     }
-    authSetup()
-  }, [account, setUserInfo, wallet, getSubnameDataset, fetchEthBalance])
+    ensSetup()
+  }, [account, wallet, getSubnameDataset, fetchEthBalance, router, setUserAddress, setUserEmail, setUserProfilePicture, setUsername])
 
   return <>{children}</>
 }

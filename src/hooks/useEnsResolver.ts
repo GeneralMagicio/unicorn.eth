@@ -5,7 +5,7 @@ import { debounce } from '@/utils/debounce'
 import { resolveAddress } from 'ethers'
 import axios from 'axios'
 import { SubnameResolutionResponse } from '@/services/types/ens'
-import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
+import { useActiveAccount } from 'thirdweb/react'
 
 export function useEnsResolver() {
   const { mainnetProvider } = useAuth()
@@ -28,10 +28,6 @@ export function useEnsResolver() {
           },
         }
       )
-      // const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: false}}), 200))
-      // const res = await new Promise<{data: {isAvailable: boolean}}>((res) => setTimeout(() => res({data: {isAvailable: true}}), 200))
-
-      // console.log("Here,", res.data)
       setIsNameAvailable(res.data.isAvailable ?? null)
     } catch (err) {
       setIsNameAvailable(false)
@@ -53,37 +49,14 @@ export function useEnsResolver() {
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
+
   const getSubnameDataset = useCallback(
     (walletAddress: string) =>
-      new Promise<{data: Array<SubnameResolutionResponse>}>((res, rej) =>
-        setTimeout(
-          () =>
-            res({data: [
-              {
-                domain: 'account.eth',
-                fullName: 'Mahdi',
-                label: 'mahdi',
-              },
-            ]}),
-          200
-        )
-      ),
+      axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
+        params: { address: walletAddress },
+      }),
     []
   )
-  // const getSubnameDataset = useCallback(
-  //   (walletAddress: string) =>
-  //     new Promise<{ data: Array<SubnameResolutionResponse> }>((res, rej) =>
-  //       setTimeout(() => res({ data: [] }), 200)
-  //     ),
-  //   []
-  // )
-  // const getSubnameDataset = useCallback(
-  //   (walletAddress: string) =>
-  //     axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
-  //       params: { address: walletAddress },
-  //     }),
-  //   []
-  // )
 
   const getENSAddress = async (ens: string) => {
     try {
