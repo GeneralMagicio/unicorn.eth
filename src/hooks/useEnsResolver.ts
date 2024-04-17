@@ -1,18 +1,22 @@
 import { getSubnameMetadata } from '@/services/enService'
-import { useSafeAuth } from './useSafeAuth'
+import { useAuth } from './useAuth'
 import { useCallback, useState } from 'react'
 import { debounce } from '@/utils/debounce'
 import { resolveAddress } from 'ethers'
 import axios from 'axios'
 import { SubnameResolutionResponse } from '@/services/types/ens'
+import { useActiveAccount } from 'thirdweb/react'
 
 export function useEnsResolver() {
-  const { signInInfo, mainnetProvider } = useSafeAuth()
+  const { mainnetProvider } = useAuth()
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
-  const checkUserName = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (/[A-Z]/.test(e.target.value)) {
+  const account = useActiveAccount()
+
+  const checkUserName = async (input: string) => {
+    console.log("Here,", input)
+    if (/[A-Z]/.test(input)) {
       return setIsNameAvailable(false)
     }
     try {
@@ -20,11 +24,11 @@ export function useEnsResolver() {
         '/api/subname/availability',
         {
           params: {
-            label: e.target.value,
+            label: input,
           },
         }
       )
-      setIsNameAvailable(e.target.value ? res.data.isAvailable : null)
+      setIsNameAvailable(res.data.isAvailable ?? null)
     } catch (err) {
       setIsNameAvailable(false)
     }
@@ -32,9 +36,11 @@ export function useEnsResolver() {
   const handleCreateSubname = (label: string) => {
     setIsNameAvailable(true)
 
+    if (!account) throw new Error("Account is not available")
+
     return axios
       .post('/api/subname/mint', {
-        address: signInInfo?.eoa!,
+        address: account.address,
         label,
       })
       .finally(() => {
@@ -43,12 +49,13 @@ export function useEnsResolver() {
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
+
   const getSubnameDataset = useCallback(
-    () =>
+    (walletAddress: string) =>
       axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
-        params: { address: signInInfo?.eoa! },
+        params: { address: walletAddress },
       }),
-    [signInInfo?.eoa]
+    []
   )
 
   const getENSAddress = async (ens: string) => {

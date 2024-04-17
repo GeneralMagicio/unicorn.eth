@@ -6,6 +6,7 @@ export enum SupportedChainIds {
   BSC = 56,
   Polygon = 137,
   Base = 8453,
+  Sepolia = 11155111,
 }
 
 export const getChainIds = () => {
@@ -70,6 +71,9 @@ const mergeableTokens : Record<SupportedChainIds, Record<string, string[]>> = {
   [SupportedChainIds.Mainnet]: {
     ETH: ['stETH', 'WETH'],
   },
+  [SupportedChainIds.Sepolia]: {
+    ETH: ['stETH', 'WETH'],
+  },
   [SupportedChainIds.Arbitrum]: {
     ETH: ['WETH'],
     USDC: ['USDC.e'],
@@ -107,6 +111,10 @@ export const supportedTokens: SupportedToken[] = [
     addresses: [
       {
         chainId: SupportedChainIds.Mainnet,
+        address: '',
+      },
+      {
+        chainId: SupportedChainIds.Sepolia,
         address: '',
       },
       {
