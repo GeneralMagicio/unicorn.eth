@@ -1,18 +1,33 @@
 import { Button, Typography } from '@ensdomains/thorin'
 import { CancelButton, FlexRow, Summary } from './send.styles'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { TokenItem } from '../TokenItem'
 import LoadingArc from './LoadingArc'
 import Image from 'next/image'
 import { truncateEthAddress } from '@/utils/strings'
 import { ICryptoToken } from '@/services/types'
+import {
+  getContract,
+  prepareContractCall,
+  sendAndConfirmTransaction,
+  simulateTransaction,
+  toWei,
+} from 'thirdweb'
+import { client } from '@/lib/third-web/provider'
+import { erc20Abi } from 'viem'
+import {
+  SupportedChains,
+  SupportedToken,
+  supportedTokens,
+} from '@/app/dashboard/data/supported_tokens'
+import { useActiveAccount, useEstimateGasCost } from 'thirdweb/react'
+import { activeChainId } from '@/lib/third-web/constants'
 
 interface ISendConfirmation {
   destination: string | null
   amount: string | null
-  selectedToken: ICryptoToken
+  selectedToken: ICryptoToken | null
   onDismiss: () => void
   setConfirmTx: (value: boolean) => void
   setTxDone: (value: boolean) => void
@@ -34,20 +49,60 @@ const SendConfirmation = ({
   amount,
 }: ISendConfirmation) => {
   const router = useRouter()
+  const account = useActiveAccount()
+  const { mutate: estimateGasCost, data: gasEstimate } = useEstimateGasCost()
   const [txState, setTxState] = useState<TxState>(TxState.Initial)
-  const [gasCost, setGasCost] = useState<string | null>('')
+  // TODO: right now sepolia, please make it dynamic according to the token
+  const chainId = activeChainId
+  const supportedToken = supportedTokens.find(
+    (token: SupportedToken) => token.symbol === selectedToken?.symbol
+  )
 
-  const { sendToken, estimateGasFee } = useAuth()
+  const _selectedToken = supportedToken?.addresses.find(
+    (i) => i.chainId === chainId
+  ) as any
+  const selectedTokenAddress = _selectedToken?.address
+  const selectedTokenABI = _selectedToken?.abi
+
+  const contract = getContract({
+    client,
+    chain: chainId && SupportedChains[chainId],
+    address: selectedTokenAddress,
+    abi: selectedTokenABI || erc20Abi,
+  })
+
+  const tx =
+    destination &&
+    amount &&
+    contract &&
+    prepareContractCall({
+      contract,
+      method: 'transfer',
+      params: [destination, toWei(amount)],
+      value: BigInt(0),
+    })
 
   const sendTx = async () => {
+    console.log({
+      contract,
+      destination,
+      amount,
+      tx,
+      account,
+    })
+    if (!destination || !amount || !tx || !account) {
+      return setTxState(TxState.Failed)
+    }
     setTxState(TxState.Loading)
     try {
-      if (!destination || !amount) return
-      const sendSuccess: any = await sendToken(
-        destination,
-        amount,
-        selectedToken?.address // if empty it assumes ETH
-      )
+      const simulation = await simulateTransaction({ transaction: tx, account })
+      if (!simulation) {
+        return setTxState(TxState.Failed)
+      }
+      const sendSuccess = await sendAndConfirmTransaction({
+        transaction: tx,
+        account,
+      })
       setTxState(TxState.Complete)
       if (!!sendSuccess) {
         setTxDone(true)
@@ -63,13 +118,13 @@ const SendConfirmation = ({
 
   useEffect(() => {
     const getGas = async () => {
-      if (!destination || !amount) return
-      const gas = await estimateGasFee(
-        destination,
-        amount,
-        selectedToken?.address
-      )
-      gas && setGasCost(gas)
+      try {
+        if (!tx) return
+        if (!account) return
+        estimateGasCost(tx)
+      } catch (error) {
+        console.error(error)
+      }
     }
     getGas()
   }, [])
@@ -106,7 +161,7 @@ const SendConfirmation = ({
                 width={24}
                 height={24}
                 className="h-[24px] w-[24px] rounded-full"
-                src={selectedToken?.icon}
+                src={selectedToken?.icon!}
                 alt="token icon"
               />
               <Typography weight="bold">
@@ -203,7 +258,11 @@ const SendConfirmation = ({
           <Typography color="text" weight="bold">
             Transaction Fee
           </Typography>
-          {gasCost && <Typography color="blue">{`${gasCost} ETH`}</Typography>}
+          {gasEstimate && (
+            <Typography color="blue">{`${Number(gasEstimate?.ether).toFixed(
+              6
+            )} ETH`}</Typography>
+          )}
         </div>
       </Summary>
       <FlexRow>

@@ -7,8 +7,8 @@ import { useActiveWallet } from 'thirdweb/react'
 export const AuthGuard: React.FC<PropsWithChildren> = ({ children }) => {
   const { replace } = useRouter()
   const wallet = useActiveWallet()
-  const {username} = useAuth()
-  const {isAutoConnecting} = useIsAutoConnecting()
+  const { username } = useAuth()
+  const { isAutoConnecting } = useIsAutoConnecting()
 
   useEffect(() => {
     if (!wallet && isAutoConnecting === false) {

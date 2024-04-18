@@ -1,6 +1,5 @@
 import { Button, Modal, Typography } from '@ensdomains/thorin'
 import { Scanner } from '@yudiel/react-qr-scanner'
-import { useSafeAuth } from '@/hooks/useSafeAuth'
 import CopyWrapper from '../ReceiveModal/CopyWrapper'
 import { CopyWhite } from '../Icons/CopyWhite'
 import { Exit } from '../Icons/Exit'
@@ -14,7 +13,7 @@ export const ScanModal: React.FC<{
   open: boolean
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
-  const { userName } = useSafeAuth()
+  const userName = 'cy'
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   const handleScan = (result: string) => {
