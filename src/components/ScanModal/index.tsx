@@ -8,20 +8,38 @@ import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
 import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { QR } from '../Icons/QR'
+import { isAddress } from 'thirdweb'
+import { useEnsResolver } from '@/hooks/useEnsResolver'
+import { useEffect } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 export const ScanModal: React.FC<{
   open: boolean
   onDismiss: () => void
-}> = ({ open, onDismiss }) => {
-  const userName = 'cy'
+  setCurrentScan: (value: string) => void
+}> = ({ open, onDismiss, setCurrentScan }) => {
+  const { username } = useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
+  const { getENSAddress } = useEnsResolver()
 
-  const handleScan = (result: string) => {
+  const handleScan = async (result: string) => {
     //TODO: HANDLE SCAN TO REDIRECT PROPERLY
     // Cases: eth.limo, regular addresses, ens names and dapps
-    console.log({ result })
-    setActiveModal(MODAL_TYPE.SEND)
+    let address = result
+    const isEns = await getENSAddress(result)
+    isEns && (address = isEns)
+    if (isAddress(address)) {
+      console.log('Address Detected')
+      await onDismiss()
+      setCurrentScan(address)
+      setActiveModal(MODAL_TYPE.SEND)
+    }
   }
+
+  useEffect(() => {
+    onDismiss()
+  }, [])
+
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
       <div className="flex relative justify-between min-h-[80vh] h-full w-full flex-col gap-2 rounded-t-[32px] border-b bg-black pt-6">
@@ -30,8 +48,8 @@ export const ScanModal: React.FC<{
             <div onClick={() => onDismiss()}>
               <Exit />
             </div>
-            {userName && (
-              <CopyWrapper textToCopy={userName + '.account.eth.limo'} absolute>
+            {username && (
+              <CopyWrapper textToCopy={username + '.account.eth.limo'} absolute>
                 <CopyWhite />
               </CopyWrapper>
             )}
@@ -39,6 +57,9 @@ export const ScanModal: React.FC<{
         </div>
         <div className="qr-scanner-container">
           <Scanner
+            components={{
+              tracker: false,
+            }}
             styles={{
               video: {
                 width: '100%',
@@ -54,7 +75,7 @@ export const ScanModal: React.FC<{
                 top: 0,
               },
             }}
-            onResult={(result: any) => handleScan(result)}
+            onResult={(text: string) => handleScan(text)}
           />
         </div>
 

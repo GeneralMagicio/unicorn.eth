@@ -96,7 +96,7 @@ export default function Dashboard() {
   const estimatedTotalValue = createCryptoTokenObject(
     balance,
     tokenPrices
-  ).reduce((acc, curr) => (acc += curr.price * curr.value), 0)
+  ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
   return (
     <>

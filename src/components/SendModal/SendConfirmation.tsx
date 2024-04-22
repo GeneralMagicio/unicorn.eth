@@ -10,6 +10,7 @@ import { ICryptoToken } from '@/services/types'
 import {
   getContract,
   prepareContractCall,
+  prepareTransaction,
   sendAndConfirmTransaction,
   simulateTransaction,
   toWei,
@@ -61,35 +62,34 @@ const SendConfirmation = ({
   const _selectedToken = supportedToken?.addresses.find(
     (i) => i.chainId === chainId
   ) as any
+
   const selectedTokenAddress = _selectedToken?.address
   const selectedTokenABI = _selectedToken?.abi
-
+  const isNativeToken = _selectedToken?.address === ''
   const contract = getContract({
     client,
     chain: chainId && SupportedChains[chainId],
     address: selectedTokenAddress,
     abi: selectedTokenABI || erc20Abi,
   })
-
-  const tx =
-    destination &&
-    amount &&
-    contract &&
-    prepareContractCall({
-      contract,
-      method: 'transfer',
-      params: [destination, toWei(amount)],
-      value: BigInt(0),
-    })
+  const isValidTx = !!destination && !!amount && !!contract
+  const tx = isValidTx
+    ? isNativeToken
+      ? prepareTransaction({
+          to: destination,
+          chain: chainId && SupportedChains[chainId],
+          client: client,
+          value: toWei(amount),
+        })
+      : prepareContractCall({
+          contract,
+          method: 'transfer',
+          params: [destination, toWei(amount)],
+          value: BigInt(0),
+        })
+    : null
 
   const sendTx = async () => {
-    console.log({
-      contract,
-      destination,
-      amount,
-      tx,
-      account,
-    })
     if (!destination || !amount || !tx || !account) {
       return setTxState(TxState.Failed)
     }
@@ -115,7 +115,7 @@ const SendConfirmation = ({
       setTxState(TxState.Failed)
     }
   }
-
+  console.log({ tx })
   useEffect(() => {
     const getGas = async () => {
       try {
@@ -234,7 +234,7 @@ const SendConfirmation = ({
               token={selectedToken}
               showOnlyName
             />
-            <div className="flex justify-between">
+            <div className="flex flex-row items-center text-center justify-between">
               <Typography weight="bold">
                 {truncateEthAddress(destination || '')}
               </Typography>

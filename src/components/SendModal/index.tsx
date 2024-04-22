@@ -1,6 +1,6 @@
 import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
 import { css } from 'styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isAddress } from 'ethers'
 import useSWR from 'swr'
 
@@ -32,7 +32,8 @@ const TABS = ['Tokens', 'Collectibles']
 export const SendModal: React.FC<{
   open: boolean
   onDismiss: () => void
-}> = ({ open, onDismiss }) => {
+  currentScan: string | null
+}> = ({ open, onDismiss, currentScan }) => {
   {
     const [activeTab, setActiveTab] = useState('Tokens')
     const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
@@ -40,9 +41,7 @@ export const SendModal: React.FC<{
       null
     )
     const [amountError, setAmountError] = useState<string | null>(null)
-    const [destination, setDestination] = useState<string | null>(
-      'mateodaza.eth'
-    )
+    const [destination, setDestination] = useState<string | null>(null)
     const [amount, setAmount] = useState<string | null>(null)
     const [confirmTx, setConfirmTx] = useState<boolean>(false)
     const [txDone, setTxDone] = useState<boolean>(false)
@@ -134,11 +133,22 @@ export const SendModal: React.FC<{
       }
     }
 
+    const dismiss = () => {
+      setConfirmTx(false)
+      setDestination(null)
+      setAmount(null)
+      onDismiss()
+    }
+
+    useEffect(() => {
+      setDestination(currentScan)
+    }, [currentScan])
+
     if (error || error2 || error3) return
     if (!tokenPrices || !balance) return
 
     return (
-      <Modal open={open} onDismiss={onDismiss} mobileOnly>
+      <Modal open={open} onDismiss={dismiss} mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
           <ModalHeader
             title={txDone ? 'Sent' : confirmTx ? 'Sending' : 'Send'}
@@ -146,8 +156,10 @@ export const SendModal: React.FC<{
           {confirmTx ? (
             <>
               <SendConfirmation
-                onDismiss={onDismiss}
-                setTxDone={(val) => setTxDone(val)}
+                onDismiss={dismiss}
+                setTxDone={(val) => {
+                  setTxDone(val)
+                }}
                 setConfirmTx={(val) => setConfirmTx(val)}
                 destination={destination}
                 amount={amount}

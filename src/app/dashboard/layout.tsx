@@ -10,7 +10,7 @@ import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { TransactionModal } from '@/components/TransactionModal'
-import { activeModalAtom } from '@/store'
+import { activeModalAtom, currentScanAtom } from '@/store'
 import { useAtom } from 'jotai'
 
 export const enum MODAL_TYPE {
@@ -35,6 +35,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
+  const [currentScan, setCurrentScan] = useAtom(currentScanAtom)
 
   return (
     <AuthGuard>
@@ -47,6 +48,7 @@ export default function DashboardLayout({
         />
         <SendModal
           open={activeModal === MODAL_TYPE.SEND}
+          currentScan={currentScan}
           onDismiss={() => setActiveModal(null)}
         />
         <ReceiveModal
@@ -62,6 +64,7 @@ export default function DashboardLayout({
         />
         <ScanModal
           open={activeModal === MODAL_TYPE.SCAN}
+          setCurrentScan={(val: string) => setCurrentScan(val)}
           onDismiss={() => setActiveModal(null)}
         />
       </div>
