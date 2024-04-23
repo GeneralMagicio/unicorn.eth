@@ -18,12 +18,12 @@ import {
 import { client } from '@/lib/third-web/provider'
 import { erc20Abi } from 'viem'
 import {
-  SupportedChains,
   SupportedToken,
   supportedTokens,
 } from '@/app/dashboard/data/supported_tokens'
 import { useActiveAccount, useEstimateGasCost } from 'thirdweb/react'
 import { activeChainId } from '@/lib/third-web/constants'
+import { getSupportedChain } from '@/utils/web3'
 
 interface ISendConfirmation {
   destination: string | null
@@ -68,7 +68,7 @@ const SendConfirmation = ({
   const isNativeToken = _selectedToken?.address === ''
   const contract = getContract({
     client,
-    chain: chainId && SupportedChains[chainId],
+    chain: getSupportedChain(chainId),
     address: selectedTokenAddress,
     abi: selectedTokenABI || erc20Abi,
   })
@@ -77,7 +77,7 @@ const SendConfirmation = ({
     ? isNativeToken
       ? prepareTransaction({
           to: destination,
-          chain: chainId && SupportedChains[chainId],
+          chain: getSupportedChain(chainId),
           client: client,
           value: toWei(amount),
         })

@@ -34,6 +34,7 @@ import {
 import { NftImage } from '@/components/Dashboard/NftImage'
 import { usePOAP } from '@/hooks/usePOAP'
 import { useActiveAccount } from 'thirdweb/react'
+import { shortenEthereumAddress } from '@/utils/strings'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -49,15 +50,6 @@ const fetchNFTs = async (walletAddress: string) => {
   const nfts = await findAllNFTsOsApi(walletAddress)
 
   return createCollectibleObject(nfts)
-}
-
-function shortenEthereumAddress(address: string) {
-  if (address.length < 10) {
-    return address // Return the address as is if it's too short
-  }
-  const start = address.slice(0, 4) // Get the first 4 characters
-  const end = address.slice(-6) // Get the last 6 characters
-  return `${start}...${end}` // Combine and return the shortened address
 }
 
 export default function Dashboard() {
