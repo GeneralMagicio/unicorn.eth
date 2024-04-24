@@ -14,6 +14,7 @@
     "@types/node": "20.10.1",
     "@types/react": "18.2.39",
     "@types/react-dom": "18.2.17",
+    "@yudiel/react-qr-scanner": "^2.0.0-beta.3",
     "autoprefixer": "10.4.16",
     "axios": "^1.6.5",
     "classnames": "^2.5.1",

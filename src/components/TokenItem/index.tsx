@@ -47,7 +47,9 @@ export const TokenItem: React.FC<TokenItemProps> = ({
         </div>
       </div>
       <Typography weight="bold">
-        {!showOnlyName && priceFormatter.format(token.price * token.value)}
+        {!showOnlyName &&
+          token.price &&
+          priceFormatter.format(token.price * token.value)}
       </Typography>
     </div>
   )

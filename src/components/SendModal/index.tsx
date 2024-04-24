@@ -1,7 +1,9 @@
 import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
 import { css } from 'styled-components'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { isAddress } from 'ethers'
+import useSWR from 'swr'
+
 import { TokenItem } from '../TokenItem'
 import { ScanIcon } from '../Icons/Scan'
 import { IconButton } from '../Styled'
@@ -10,16 +12,28 @@ import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
 import { useAuth } from '@/hooks/useAuth'
-import { ICryptoToken } from '@/services/types'
+import { Collectible } from '@/services/types'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import SendConfirmation from './SendConfirmation'
+import {
+  createCollectibleObject,
+  createCryptoTokenObject,
+  fetchTokenPrices,
+} from '@/app/dashboard/utils/tokens'
+import { supportedTokens } from '@/app/dashboard/data/supported_tokens'
+import {
+  getAggregatedTotalBalance,
+  getBalanceForTokenChainPairs,
+} from '@/app/dashboard/utils/balance'
+import { findAllNFTsOsApi } from '@/app/dashboard/utils/nft-balance-opensea'
 
 const TABS = ['Tokens', 'Collectibles']
 
 export const SendModal: React.FC<{
   open: boolean
   onDismiss: () => void
-}> = ({ open, onDismiss }) => {
+  currentScan: string | null
+}> = ({ open, onDismiss, currentScan }) => {
   {
     const [activeTab, setActiveTab] = useState('Tokens')
     const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
@@ -36,7 +50,35 @@ export const SendModal: React.FC<{
       null
     )
     const { getENSAddress } = useEnsResolver()
-    const { ethBalance } = useAuth()
+    const { userAddress } = useAuth()
+
+    const { data: tokenPrices, error } = useSWR<Record<string, number>>(
+      'token-prices',
+      fetchTokenPrices
+    )
+
+    const calculateBalance = async (walletAddress: string) => {
+      const totalBalance = await getBalanceForTokenChainPairs(
+        supportedTokens,
+        walletAddress
+      )
+      return getAggregatedTotalBalance(totalBalance)
+    }
+
+    const fetchNFTs = async (walletAddress: string) => {
+      const nfts = await findAllNFTsOsApi(walletAddress)
+
+      return createCollectibleObject(nfts)
+    }
+
+    const { data: balance, error: error2 } = useSWR<Record<string, number>>(
+      'balance',
+      () => calculateBalance(userAddress)
+    )
+
+    const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
+      fetchNFTs(userAddress)
+    )
 
     const getInputParentStyles = () => {
       if (!!destinationError) {
@@ -91,15 +133,22 @@ export const SendModal: React.FC<{
       }
     }
 
-    const ethToken: ICryptoToken = {
-      name: 'xDAI', /// TODO: check on current network
-      value: Number(ethBalance),
-      price: 3000,
-      icon: '/img/eth.png',
+    const dismiss = () => {
+      setConfirmTx(false)
+      setDestination(null)
+      setAmount(null)
+      onDismiss()
     }
 
+    useEffect(() => {
+      setDestination(currentScan)
+    }, [currentScan])
+
+    if (error || error2 || error3) return
+    if (!tokenPrices || !balance) return
+
     return (
-      <Modal open={open} onDismiss={onDismiss} mobileOnly>
+      <Modal open={open} onDismiss={dismiss} mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
           <ModalHeader
             title={txDone ? 'Sent' : confirmTx ? 'Sending' : 'Send'}
@@ -107,13 +156,14 @@ export const SendModal: React.FC<{
           {confirmTx ? (
             <>
               <SendConfirmation
-                onDismiss={onDismiss}
-                setTxDone={(val) => setTxDone(val)}
+                onDismiss={dismiss}
+                setTxDone={(val) => {
+                  setTxDone(val)
+                }}
                 setConfirmTx={(val) => setConfirmTx(val)}
                 destination={destination}
                 amount={amount}
-                selectedToken={ethToken}
-                // selectedToken={selectedToken}
+                selectedToken={selectedToken}
               />
             </>
           ) : (
@@ -192,26 +242,18 @@ export const SendModal: React.FC<{
                   </nav>
                   <div className="flex flex-col gap-4">
                     {activeTab === 'Tokens' &&
-                      [ethToken].map((token, idx) => (
-                        <div
-                          key={idx}
-                          className="cursor-pointer"
-                          role="button"
-                          onClick={() => {
-                            // if (!destination) {
-                            //   return setDestinationError(
-                            //     'Please enter a destination address'
-                            //   )
-                            // }
-                            // if (!isAddress(destination)) {
-                            //   return setDestinationError('Not a valid address')
-                            // }
-                            setDestinationError(null)
-                            setSelectedToken(token)
-                          }}>
-                          <TokenItem key={idx} token={token} />
-                        </div>
-                      ))}
+                      createCryptoTokenObject(balance, tokenPrices).map(
+                        (token, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              setSelectedToken(token)
+                            }}
+                            role="button">
+                            <TokenItem token={token} />
+                          </div>
+                        )
+                      )}
                   </div>
                 </>
               )}
