@@ -1,21 +1,20 @@
 import { getSubnameMetadata } from '@/services/enService'
-import { useAuth } from './useAuth'
 import { useCallback, useState } from 'react'
 import { debounce } from '@/utils/debounce'
-import { resolveAddress } from 'ethers'
 import axios from 'axios'
 import { SubnameResolutionResponse } from '@/services/types/ens'
 import { useActiveAccount } from 'thirdweb/react'
+import { resolveAddress } from 'thirdweb/extensions/ens'
+import { client } from '@/lib/third-web/provider'
 
 export function useEnsResolver() {
-  const { mainnetProvider } = useAuth()
   const [isNameAvailable, setIsNameAvailable] = useState<boolean | null>(null)
   const [isRegistering, setISRegistering] = useState<boolean>(false)
 
   const account = useActiveAccount()
 
   const checkUserName = async (input: string) => {
-    console.log("Here,", input)
+    console.log('Here,', input)
     if (/[A-Z]/.test(input)) {
       return setIsNameAvailable(false)
     }
@@ -36,7 +35,7 @@ export function useEnsResolver() {
   const handleCreateSubname = (label: string) => {
     setIsNameAvailable(true)
 
-    if (!account) throw new Error("Account is not available")
+    if (!account) throw new Error('Account is not available')
 
     return axios
       .post('/api/subname/mint', {
@@ -60,7 +59,7 @@ export function useEnsResolver() {
 
   const getENSAddress = async (ens: string) => {
     try {
-      return await resolveAddress(ens, mainnetProvider)
+      return await resolveAddress({ client, name: ens })
     } catch (err) {
       console.log({ err })
       return false

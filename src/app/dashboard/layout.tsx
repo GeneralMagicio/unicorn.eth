@@ -5,11 +5,12 @@ import { BottomNav } from '@/components/BottomNav'
 import { CollectibleDetailModal } from '@/components/CollectibleDetailModal'
 import { ReceiveModal } from '@/components/ReceiveModal'
 import { ClaimDigitalStickerModal } from '@/components/Poap/ClaimDigitalStickerModal'
+import { ScanModal } from '@/components/ScanModal'
 import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { TransactionModal } from '@/components/TransactionModal'
-import { activeModalAtom } from '@/store'
+import { activeModalAtom, currentScanAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { WithdrawModal } from '@/components/WithdrawModal'
 
@@ -27,6 +28,7 @@ export const enum MODAL_TYPE {
   COLLECTIBLE_DETAIL = 'COLLECTIBLE_DETAIL',
   CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
   WITHDRAW = 'WITHDRAW',
+  SCAN = 'SCAN',
 }
 
 export default function DashboardLayout({
@@ -35,6 +37,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
+  const [currentScan, setCurrentScan] = useAtom(currentScanAtom)
 
   return (
     <AuthGuard>
@@ -47,6 +50,7 @@ export default function DashboardLayout({
         />
         <SendModal
           open={activeModal === MODAL_TYPE.SEND}
+          currentScan={currentScan}
           onDismiss={() => setActiveModal(null)}
         />
         <ReceiveModal
@@ -62,6 +66,11 @@ export default function DashboardLayout({
         <CollectibleDetailModal />
         <ClaimDigitalStickerModal
           open={activeModal === MODAL_TYPE.CLAIM_DIGITAL_STICKER}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <ScanModal
+          open={activeModal === MODAL_TYPE.SCAN}
+          setCurrentScan={(val: string) => setCurrentScan(val)}
           onDismiss={() => setActiveModal(null)}
         />
       </div>

@@ -15,7 +15,7 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
-import { Collectible, ICryptoToken } from '@/services/types'
+import { Collectible } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
 import {
   getAggregatedTotalBalance,
@@ -24,22 +24,19 @@ import {
 import useSWR from 'swr'
 import { supportedTokens } from './data/supported_tokens'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
-import { axiosInstance } from '@/services/axiosInstance'
-import { OsNft, findAllNFTsOsApi } from './utils/nft-balance-opensea'
-import { trimString } from './utils'
+import { findAllNFTsOsApi } from './utils/nft-balance-opensea'
+import {
+  createCollectibleObject,
+  createCryptoTokenObject,
+  fetchTokenPrices,
+} from './utils/tokens'
+
 import { NftImage } from '@/components/Dashboard/NftImage'
-import axios from 'axios'
 import { usePOAP } from '@/hooks/usePOAP'
 import { useActiveAccount } from 'thirdweb/react'
+import { shortenEthereumAddress } from '@/utils/strings'
 
 const TABS = ['Tokens', 'Collectibles']
-
-const fetchTokenPrices = async () => {
-  const url = 'https://unicorn.melodicdays.shop/pricing/all'
-  const res = await axiosInstance.get<Record<string, number>>(url)
-
-  return res.data
-}
 
 const calculateBalance = async (walletAddress: string) => {
   const totalBalance = await getBalanceForTokenChainPairs(
@@ -55,71 +52,18 @@ const fetchNFTs = async (walletAddress: string) => {
   return createCollectibleObject(nfts)
 }
 
-const createCollectibleObject = (nfts: OsNft[]) => {
-  const result: Collectible[] = []
-  for (const nft of nfts) {
-    result.push({
-      id: `${nft.collection}-${nft.identifier}`,
-      org: nft.collection,
-      name: nft.name || '',
-      floorPrice: nft.floorPrice,
-      description: trimString(nft.description || '', 100),
-      about: trimString(nft.metadata?.description || '', 40),
-      website: nft.metadata?.external_url || '',
-      OsUrl: nft.opensea_url,
-      img: nft.image_url || '',
-    })
-  }
-
-  return result.sort((a, b) => b.floorPrice - a.floorPrice)
-}
-
-const createCryptoTokenObject = (
-  balances: Record<string, number>,
-  prices: Record<string, number>
-) => {
-  const result: ICryptoToken[] = []
-  for (const symbol in balances) {
-    const balance = balances[symbol]
-    const tokenInfo = supportedTokens.find((item) => item.symbol === symbol)
-    if (!tokenInfo || balance <= 0) continue
-    result.push({
-      name: tokenInfo.name,
-      icon: tokenInfo.logo.src,
-      price: prices[symbol],
-      value: balance,
-      symbol,
-    })
-  }
-
-  return result.sort((a, b) => b.price * b.value - a.price * a.value)
-}
-
-function shortenEthereumAddress(address: string) {
-  if (address.length < 10) {
-      return address; // Return the address as is if it's too short
-  }
-  const start = address.slice(0, 4); // Get the first 4 characters
-  const end = address.slice(-6); // Get the last 6 characters
-  return `${start}...${end}`; // Combine and return the shortened address
-}
-
-
 export default function Dashboard() {
   const theme = useTheme()
   const { canMintPOAP } = usePOAP()
-  const { username, userProfilePicture, ethBalance, userAddress } =
-    useAuth()
+  const { username, userProfilePicture, ethBalance, userAddress } = useAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
-
-  
   const account = useActiveAccount()
 
-  // User shouldn't be in the dashboard if they don't have an account 
+  // User shouldn't be in the dashboard if they don't have an account
   const walletAddress = account?.address!
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
@@ -144,7 +88,7 @@ export default function Dashboard() {
   const estimatedTotalValue = createCryptoTokenObject(
     balance,
     tokenPrices
-  ).reduce((acc, curr) => (acc += curr.price * curr.value), 0)
+  ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
   return (
     <>
@@ -152,10 +96,8 @@ export default function Dashboard() {
         <UserInfo>
           <Image
             className="rounded-full"
-            src={
-              userProfilePicture || '/img/validator.eth.png'
-            }
-            alt={ username || ''}
+            src={userProfilePicture || '/img/validator.eth.png'}
+            alt={username || ''}
             width={40}
             height={40}
           />
@@ -163,13 +105,17 @@ export default function Dashboard() {
             {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
-        <div className="flex  items-center gap-2">
+        <div
+          onClick={() => setActiveModal(MODAL_TYPE.SCAN)}
+          className="flex  items-center gap-2">
           <ScanIcon color={theme.colors.grey} />
         </div>
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
-          {`Estimated Value for: ${account?.address ? shortenEthereumAddress(account.address) : ''}`}
+          {`Estimated Value for: ${
+            account?.address ? shortenEthereumAddress(account.address) : ''
+          }`}
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
           {priceFormatter.format(estimatedTotalValue)}

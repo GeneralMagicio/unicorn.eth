@@ -11,3 +11,5 @@ export const activeModalAtom = atom<
 export const selectedTokenAtom = atom<ICryptoToken | null>(null)
 
 export const selectedCollectibleAtom = atom<Collectible | null>(null)
+
+export const currentScanAtom = atom<string | null>(null)

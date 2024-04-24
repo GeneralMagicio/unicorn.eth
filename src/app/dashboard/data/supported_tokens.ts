@@ -1,3 +1,13 @@
+import {
+  arbitrum,
+  base,
+  ethereum,
+  optimism,
+  polygon,
+  sepolia,
+} from 'thirdweb/chains'
+import IPermittableToken from '@/lib/abi/IPermittableToken.json'
+
 export enum SupportedChainIds {
   Mainnet = 1,
   Arbitrum = 42161,
@@ -7,6 +17,53 @@ export enum SupportedChainIds {
   Polygon = 137,
   Base = 8453,
   Sepolia = 11155111,
+}
+
+export const SupportedChains = {
+  1: {
+    ...ethereum,
+  },
+  42161: {
+    ...arbitrum,
+  },
+  10: {
+    ...optimism,
+  },
+  100: {
+    id: 100,
+    name: 'Gnosis Chain',
+    rpc: 'https://gnosis-rpc.publicnode.com',
+    nativeCurrency: { name: 'xDAI', symbol: 'XDAI', decimals: 18 },
+    blockExplorers: [
+      {
+        name: 'Gnosis Blockscout',
+        url: 'https://gnosis.blockscout.com',
+        apiUrl: 'https://api-gnosis.blockscout.com',
+      },
+    ],
+  },
+  56: {
+    id: 56,
+    name: 'Binance Smart Chain',
+    rpc: 'wss://bsc-rpc.publicnode.com',
+    nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
+    blockExplorers: [
+      {
+        name: 'Binance Scan',
+        url: 'https://bscscan.com/',
+        apiUrl: 'https://api-bscscan.com',
+      },
+    ],
+  },
+  137: {
+    ...polygon,
+  },
+  8453: {
+    ...base,
+  },
+  11155111: {
+    ...sepolia,
+  },
 }
 
 export const getChainIds = () => {
@@ -29,12 +86,12 @@ export const getChainNames = () => {
   return result
 }
 
-
 export type SupportedToken = {
   symbol: string
   addresses: {
     chainId: SupportedChainIds
     address: string
+    abi?: any // TODO: Change this to ABI type
   }[]
   decimals: number
   name: string
@@ -67,7 +124,7 @@ export type SupportedToken = {
   }
 }
 
-const mergeableTokens : Record<SupportedChainIds, Record<string, string[]>> = {
+const mergeableTokens: Record<SupportedChainIds, Record<string, string[]>> = {
   [SupportedChainIds.Mainnet]: {
     ETH: ['stETH', 'WETH'],
   },
@@ -98,9 +155,13 @@ const mergeableTokens : Record<SupportedChainIds, Record<string, string[]>> = {
   },
 }
 
-export const getAggregateSymbol = (symbol: string, chainId: SupportedChainIds) => {
+export const getAggregateSymbol = (
+  symbol: string,
+  chainId: SupportedChainIds
+) => {
   for (const aggregateSymbol in mergeableTokens[chainId]) {
-    if (mergeableTokens[chainId][aggregateSymbol].includes(symbol)) return aggregateSymbol
+    if (mergeableTokens[chainId][aggregateSymbol].includes(symbol))
+      return aggregateSymbol
   }
   return symbol
 }
@@ -565,6 +626,7 @@ export const supportedTokens: SupportedToken[] = [
       {
         chainId: SupportedChainIds.Gnosis,
         address: '0x4f4f9b8d5b4d0dc10506e5551b0513b61fd59e75',
+        abi: IPermittableToken.abi,
       },
     ],
     decimals: 18,
@@ -698,7 +760,12 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'Solana',
     website: '',
-    logo: { src: 'https://assets.coingecko.com/coins/images/4128/large/solana.png', width: 64, height: 64, ipfs_hash: '' },
+    logo: {
+      src: 'https://assets.coingecko.com/coins/images/4128/large/solana.png',
+      width: 64,
+      height: 64,
+      ipfs_hash: '',
+    },
     support: { email: '', url: '' },
     social: {},
   },
@@ -714,7 +781,12 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     decimals: 8,
     website: '',
-    logo: { src: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png', width: 64, height: 64, ipfs_hash: '' },
+    logo: {
+      src: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png',
+      width: 64,
+      height: 64,
+      ipfs_hash: '',
+    },
     support: { email: '', url: '' },
     social: {},
   },
@@ -733,7 +805,12 @@ export const supportedTokens: SupportedToken[] = [
     name: 'TRON',
     decimals: 6,
     website: 'https://tron.network/',
-    logo: { src: 'https://assets.coingecko.com/coins/images/1094/large/tron-logo.png', width: 64, height: 64, ipfs_hash: '' },
+    logo: {
+      src: 'https://assets.coingecko.com/coins/images/1094/large/tron-logo.png',
+      width: 64,
+      height: 64,
+      ipfs_hash: '',
+    },
     social: {
       twitter: 'https://twitter.com/Tronfoundation',
       telegram: 'https://t.me/tronnetworkEN',
@@ -750,7 +827,12 @@ export const supportedTokens: SupportedToken[] = [
     name: 'BNB pegged Polkadot Token',
     decimals: 18,
     website: 'https://polkadot.network',
-    logo: { src: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png', width: 64, height: 64, ipfs_hash: '' },
+    logo: {
+      src: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
+      width: 64,
+      height: 64,
+      ipfs_hash: '',
+    },
     social: {},
   },
   {
@@ -899,4 +981,27 @@ export const supportedTokens: SupportedToken[] = [
       blog: 'https://medium.com/the-ethereum-name-service',
     },
   },
-  ]
+  {
+    name: 'UnicornTestToken',
+    symbol: 'MT',
+    addresses: [
+      {
+        chainId: SupportedChainIds.Sepolia,
+        address: '0x87e42ef3f93e764ecc4f6179be71b667d2f35ac2',
+      },
+    ],
+    decimals: 18,
+    website: '',
+    logo: {
+      src: 'https://assets.coingecko.com/coins/images/279/large/ethereum.png',
+      width: 28,
+      height: 28,
+      ipfs_hash: '',
+    },
+    support: {
+      email: '',
+      url: '',
+    },
+    social: {},
+  },
+]
