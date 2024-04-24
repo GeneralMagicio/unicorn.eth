@@ -13,13 +13,18 @@ export function getProviderUrl(chainId: number) {
   const infuraApiKey = '75268e971ab6449981ac429cf62c5fb7'
 
   const urls: Record<number, string> = {
-    [SupportedChainIds.Mainnet]: `https://mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Sepolia]: `https://sepolia.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.OP]: `https://optimism-mainnet.infura.io/v3/${infuraApiKey}`,
+    // [SupportedChainIds.Mainnet]: `https://mainnet.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.Mainnet]: `https://eth.llamarpc.com`,
+    // [SupportedChainIds.Sepolia]: `https://sepolia.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.Sepolia]: `https://sepolia.drpc.org`,
+    // [SupportedChainIds.OP]: `https://optimism-mainnet.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.OP]: `https://optimism.llamarpc.com	`,
     [SupportedChainIds.Gnosis]: `https://gnosis-rpc.publicnode.com`,
-    [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
+    // [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.Arbitrum]: `https://1rpc.io/arb`,
     [SupportedChainIds.Base]: `https://mainnet.base.org`,
-    [SupportedChainIds.Polygon]: `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
+    // [SupportedChainIds.Polygon]: `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
+    [SupportedChainIds.Polygon]: `https://rpc.ankr.com/polygon`,
     [SupportedChainIds.BSC]: `https://bsc-dataseed3.binance.org`,
   }
 
