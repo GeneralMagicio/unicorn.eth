@@ -12,20 +12,13 @@ import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
 import { selectedTokenAtom } from '@/store'
 import { useAuth } from '@/hooks/useAuth'
-import { Collectible } from '@/services/types'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import SendConfirmation from './SendConfirmation'
 import {
-  createCollectibleObject,
   createCryptoTokenObject,
   fetchTokenPrices,
 } from '@/app/dashboard/utils/tokens'
-import { supportedTokens } from '@/app/dashboard/data/supported_tokens'
-import {
-  getAggregatedTotalBalance,
-  getBalanceForTokenChainPairs,
-} from '@/app/dashboard/utils/balance'
-import { findAllNFTsOsApi } from '@/app/dashboard/utils/nft-balance-opensea'
+import { useBalance } from '@/hooks/useBalance'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -51,33 +44,11 @@ export const SendModal: React.FC<{
     )
     const { getENSAddress } = useEnsResolver()
     const { userAddress } = useAuth()
+    const { tokenBalance, errors } = useBalance(userAddress)
 
     const { data: tokenPrices, error } = useSWR<Record<string, number>>(
       'token-prices',
       fetchTokenPrices
-    )
-
-    const calculateBalance = async (walletAddress: string) => {
-      const totalBalance = await getBalanceForTokenChainPairs(
-        supportedTokens,
-        walletAddress
-      )
-      return getAggregatedTotalBalance(totalBalance)
-    }
-
-    const fetchNFTs = async (walletAddress: string) => {
-      const nfts = await findAllNFTsOsApi(walletAddress)
-
-      return createCollectibleObject(nfts)
-    }
-
-    const { data: balance, error: error2 } = useSWR<Record<string, number>>(
-      'balance',
-      () => calculateBalance(userAddress)
-    )
-
-    const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
-      fetchNFTs(userAddress)
     )
 
     const getInputParentStyles = () => {
@@ -144,8 +115,8 @@ export const SendModal: React.FC<{
       setDestination(currentScan)
     }, [currentScan])
 
-    if (error || error2 || error3) return
-    if (!tokenPrices || !balance) return
+    if (errors.tokensError || errors.nftsError) return
+    if (!tokenPrices || !tokenBalance) return
 
     return (
       <Modal open={open} onDismiss={dismiss} mobileOnly>
@@ -242,7 +213,7 @@ export const SendModal: React.FC<{
                   </nav>
                   <div className="flex flex-col gap-4">
                     {activeTab === 'Tokens' &&
-                      createCryptoTokenObject(balance, tokenPrices).map(
+                      createCryptoTokenObject(tokenBalance, tokenPrices).map(
                         (token, idx) => (
                           <div
                             key={idx}

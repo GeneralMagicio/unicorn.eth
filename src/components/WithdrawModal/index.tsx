@@ -7,6 +7,14 @@ import { ModalHeader } from '../ModalHeader'
 
 import { useAuth } from '@/hooks/useAuth'
 import { ICryptoToken } from '@/services/types'
+import useSWR from 'swr'
+import { calculateBalance } from '@/utils/web3'
+import {
+  createCryptoTokenObject,
+  fetchTokenPrices,
+} from '@/app/dashboard/utils/tokens'
+import { TokenItem } from '../TokenItem'
+import { useBalance } from '@/hooks/useBalance'
 
 enum WithdrawStep {
   ConnectToExchange,
@@ -21,12 +29,19 @@ export const WithdrawModal: React.FC<{
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
   {
+    const { userAddress } = useAuth()
+    const { tokenBalance, errors } = useBalance(userAddress)
     const [step, setStep] = useState<WithdrawStep>(
       WithdrawStep.ConnectToExchange
     )
     const { ethBalance } = useAuth()
     const [inputError, setInputError] = useState<string | null>(null)
     const [input, setInput] = useState<string | null>(null)
+
+    const { data: tokenPrices, error } = useSWR<Record<string, number>>(
+      'token-prices',
+      fetchTokenPrices
+    )
 
     const handlePaste = async () => {
       try {
@@ -48,8 +63,18 @@ export const WithdrawModal: React.FC<{
     const isConnectToExchange = step === WithdrawStep.ConnectToExchange
     const isPickToken = step === WithdrawStep.PickToken
 
+    if (errors.tokensError || errors.nftsError) return
+    if (!tokenPrices || !tokenBalance) return
+
     return (
-      <Modal open={open} onDismiss={onDismiss} mobileOnly>
+      <Modal
+        open={open}
+        onDismiss={() => {
+          setInput(null)
+          setStep(WithdrawStep.ConnectToExchange)
+          onDismiss()
+        }}
+        mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
           <ModalHeader
             title={
@@ -105,7 +130,15 @@ export const WithdrawModal: React.FC<{
                   setInput(e.target.value)
                 }}
               />
-              <div className="w-full mt-8"></div>
+              <div className="w-full mt-8">
+                {createCryptoTokenObject(tokenBalance, tokenPrices).map(
+                  (token, idx) => (
+                    <div key={idx} onClick={() => {}} role="button">
+                      <TokenItem token={token} />
+                    </div>
+                  )
+                )}
+              </div>
             </div>
           )}
         </div>
