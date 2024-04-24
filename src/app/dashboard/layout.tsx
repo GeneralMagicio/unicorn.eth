@@ -11,6 +11,7 @@ import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { TransactionModal } from '@/components/TransactionModal'
 import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
+import { WithdrawModal } from '@/components/WithdrawModal'
 
 export const enum MODAL_TYPE {
   SETTINGS = 'SETTINGS',
@@ -25,6 +26,7 @@ export const enum MODAL_TYPE {
   SETTINGS_BUY_ENS = 'SETTINGS_BUY_ENS',
   COLLECTIBLE_DETAIL = 'COLLECTIBLE_DETAIL',
   CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
+  WITHDRAW = 'WITHDRAW',
 }
 
 export default function DashboardLayout({
@@ -49,6 +51,10 @@ export default function DashboardLayout({
         />
         <ReceiveModal
           open={activeModal === MODAL_TYPE.RECEIVE}
+          onDismiss={() => setActiveModal(null)}
+        />
+        <WithdrawModal
+          open={activeModal === MODAL_TYPE.WITHDRAW}
           onDismiss={() => setActiveModal(null)}
         />
         <TokenDetailModal />
