@@ -13,6 +13,7 @@ import { TransactionModal } from '@/components/TransactionModal'
 import { activeModalAtom, currentScanAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { WithdrawModal } from '@/components/WithdrawModal'
+import { Swap } from '@/components/Swap'
 
 export const enum MODAL_TYPE {
   SETTINGS = 'SETTINGS',
@@ -29,6 +30,8 @@ export const enum MODAL_TYPE {
   CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
   WITHDRAW = 'WITHDRAW',
   SCAN = 'SCAN',
+  SWAP = 'SWAP',
+  SWAP_SELECT_TOKENS = 'SWAP_SELECT_TOKENS',
 }
 
 export default function DashboardLayout({
@@ -53,6 +56,8 @@ export default function DashboardLayout({
           currentScan={currentScan}
           onDismiss={() => setActiveModal(null)}
         />
+        <Swap />
+
         <ReceiveModal
           open={activeModal === MODAL_TYPE.RECEIVE}
           onDismiss={() => setActiveModal(null)}
