@@ -8,6 +8,7 @@ interface TokenItemProps {
   label?: string
   showOnlyName?: boolean
   showOnlyValue?: boolean
+  showOnlyNameAndAmount?: boolean
   reverse?: boolean
 }
 
@@ -16,6 +17,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
   amount,
   label = '',
   showOnlyName,
+  showOnlyNameAndAmount,
   showOnlyValue,
   reverse = false,
 }) => {
@@ -39,7 +41,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
           <Typography weight="bold">{` ${amount ? amount : ''} ${
             token.name
           }`}</Typography>
-          {(!showOnlyName || showOnlyValue) && (
+          {(showOnlyNameAndAmount || !showOnlyName || showOnlyValue) && (
             <Typography fontVariant="small" color="grey">
               {label} {numberFormatter.format(amount || token.value)}
             </Typography>
@@ -47,7 +49,8 @@ export const TokenItem: React.FC<TokenItemProps> = ({
         </div>
       </div>
       <Typography weight="bold">
-        {!showOnlyName &&
+        {!showOnlyNameAndAmount &&
+          !showOnlyName &&
           token.price &&
           priceFormatter.format(token.price * token.value)}
       </Typography>

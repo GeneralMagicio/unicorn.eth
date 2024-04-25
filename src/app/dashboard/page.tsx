@@ -15,7 +15,6 @@ import {
   selectedTokenAtom,
 } from '@/store'
 import { MODAL_TYPE } from './layout'
-import { Collectible } from '@/services/types'
 import { priceFormatter } from '@/utils/price'
 import {
   getAggregatedTotalBalance,
@@ -35,22 +34,9 @@ import { NftImage } from '@/components/Dashboard/NftImage'
 import { usePOAP } from '@/hooks/usePOAP'
 import { useActiveAccount } from 'thirdweb/react'
 import { shortenEthereumAddress } from '@/utils/strings'
+import { useBalance } from '@/hooks/useBalance'
 
 const TABS = ['Tokens', 'Collectibles']
-
-const calculateBalance = async (walletAddress: string) => {
-  const totalBalance = await getBalanceForTokenChainPairs(
-    supportedTokens,
-    walletAddress
-  )
-  return getAggregatedTotalBalance(totalBalance)
-}
-
-const fetchNFTs = async (walletAddress: string) => {
-  const nfts = await findAllNFTsOsApi(walletAddress)
-
-  return createCollectibleObject(nfts)
-}
 
 export default function Dashboard() {
   const theme = useTheme()
@@ -66,27 +52,20 @@ export default function Dashboard() {
   // User shouldn't be in the dashboard if they don't have an account
   const walletAddress = account?.address!
 
+  const { tokenBalance, nfts, errors } = useBalance(userAddress)
+
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
     fetchTokenPrices
   )
 
-  const { data: balance, error: error2 } = useSWR<Record<string, number>>(
-    'balance',
-    () => calculateBalance(walletAddress)
-  )
-
-  const { data: nfts, error: error3 } = useSWR<Collectible[]>('nfts', () =>
-    fetchNFTs(walletAddress)
-  )
-
   // TODO: Better error handling
-  if (error || error2 || error3) return
+  if (errors.tokensError || errors.nftsError || error) return
   // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !balance || !nfts) return
+  if (!tokenPrices || !tokenBalance || !nfts) return
 
   const estimatedTotalValue = createCryptoTokenObject(
-    balance,
+    tokenBalance,
     tokenPrices
   ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
@@ -146,17 +125,19 @@ export default function Dashboard() {
       </nav>
       <div className="flex flex-col gap-4">
         {activeTab === 'Tokens' &&
-          createCryptoTokenObject(balance, tokenPrices).map((token, idx) => (
-            <div
-              key={idx}
-              onClick={() => {
-                setSelectedToken(token)
-                setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
-              }}
-              role="button">
-              <TokenItem token={token} />
-            </div>
-          ))}
+          createCryptoTokenObject(tokenBalance, tokenPrices).map(
+            (token, idx) => (
+              <div
+                key={idx}
+                onClick={() => {
+                  setSelectedToken(token)
+                  setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
+                }}
+                role="button">
+                <TokenItem token={token} />
+              </div>
+            )
+          )}
         {activeTab === TABS[1] && (
           <div className="grid grid-cols-2 gap-4 gap-x-2 ">
             {nfts.map((collectible, id) => (

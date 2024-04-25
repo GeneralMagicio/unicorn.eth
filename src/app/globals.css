@@ -18,3 +18,9 @@
 .qr-scanner-container svg {
   display: none;
 }
+
+.allWhiteBg {
+  * {
+    background-color: white !important;
+  }
+}
