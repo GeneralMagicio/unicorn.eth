@@ -1,25 +1,34 @@
 import { useState } from 'react'
 import Image from 'next/image'
+import { isAddress } from 'ethers'
 
-import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  Checkbox,
+  Input,
+  Modal,
+  Tag,
+  Typography,
+} from '@ensdomains/thorin'
 
 import { ModalHeader } from '../ModalHeader'
 
 import { useAuth } from '@/hooks/useAuth'
 import { ICryptoToken } from '@/services/types'
 import useSWR from 'swr'
-import { calculateBalance } from '@/utils/web3'
 import {
   createCryptoTokenObject,
   fetchTokenPrices,
 } from '@/app/dashboard/utils/tokens'
 import { TokenItem } from '../TokenItem'
 import { useBalance } from '@/hooks/useBalance'
+import { truncateEthAddress } from '@/utils/strings'
 
 enum WithdrawStep {
   ConnectToExchange,
   PickToken,
-  WithdrawToken,
+  WithdrawSingleToken,
+  WithdrawMultipleToken,
   ConfirmWithdraw,
   Processing,
 }
@@ -36,12 +45,39 @@ export const WithdrawModal: React.FC<{
     )
     const { ethBalance } = useAuth()
     const [inputError, setInputError] = useState<string | null>(null)
-    const [input, setInput] = useState<string | null>(null)
+    const [amountError, setAmountError] = useState<string | null>(null)
+    const [singleAmount, setSingleAmount] = useState<string>('')
+    const [input, setInput] = useState<string | null>(
+      '0x077E5fBe6F2EEb1083AcD5877b213d5F6eE071ba'
+    )
+    const [selectedTokens, setSelectedTokens] = useState<string[]>([])
 
     const { data: tokenPrices, error } = useSWR<Record<string, number>>(
       'token-prices',
       fetchTokenPrices
     )
+
+    const toggleTokenSelection = (event: any, tokenName: string) => {
+      event.stopPropagation()
+      setSelectedTokens((prevSelected) => {
+        let newSelectedTokens
+        if (prevSelected.includes(tokenName)) {
+          newSelectedTokens = prevSelected.filter((t) => t !== tokenName)
+        } else {
+          newSelectedTokens = [...prevSelected, tokenName]
+        }
+        return newSelectedTokens
+      })
+    }
+
+    const handleSelectAllTokens = () => {
+      if (!tokenPrices) return
+      const allTokenNames = createCryptoTokenObject(
+        tokenBalance,
+        tokenPrices
+      ).map((token) => token.name)
+      setSelectedTokens(allTokenNames)
+    }
 
     const handlePaste = async () => {
       try {
@@ -53,35 +89,59 @@ export const WithdrawModal: React.FC<{
       }
     }
 
-    const ethToken: ICryptoToken = {
-      name: 'xDAI', /// TODO: check on current network
-      value: Number(ethBalance),
-      price: 3000,
-      icon: '/img/eth.png',
-    }
-
+    const isWithdraw =
+      step === WithdrawStep.WithdrawSingleToken ||
+      step === WithdrawStep.WithdrawMultipleToken
     const isConnectToExchange = step === WithdrawStep.ConnectToExchange
     const isPickToken = step === WithdrawStep.PickToken
 
     if (errors.tokensError || errors.nftsError) return
     if (!tokenPrices || !tokenBalance) return
 
+    const cryptoTokens = createCryptoTokenObject(tokenBalance, tokenPrices)
+
+    const isSingleWithdraw = selectedTokens.length === 1 && selectedTokens[0]
+    const singleToken =
+      !!isSingleWithdraw &&
+      cryptoTokens.find((t) => t.name === isSingleWithdraw)
+    const isWithdrawAll = selectedTokens.length === cryptoTokens.length
+    const isWithdrawSome = selectedTokens.length > 1
+
+    const isConfirm = step === WithdrawStep.ConfirmWithdraw
+
+    const _dismiss = () => {
+      setInput(null)
+      setInputError(null)
+      setSingleAmount('')
+      setSelectedTokens([])
+      setStep(WithdrawStep.ConnectToExchange)
+      onDismiss()
+    }
+    const FeeItem = () => {
+      return (
+        <div className="flex w-full justify-between mt-4 rounded-lg bg-gray-100 py-2 px-4">
+          <Typography color="text" fontVariant="small">
+            Transaction Fee
+          </Typography>
+          <Typography
+            color="blue"
+            fontVariant="small">{`$1.50 (1.5 USDT)`}</Typography>
+        </div>
+      )
+    }
+
     return (
-      <Modal
-        open={open}
-        onDismiss={() => {
-          setInput(null)
-          setStep(WithdrawStep.ConnectToExchange)
-          onDismiss()
-        }}
-        mobileOnly>
+      <Modal open={open} onDismiss={_dismiss} mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
           <ModalHeader
             title={
               isConnectToExchange
                 ? 'Connect to exchange'
-                : isPickToken
-                  ? 'Withdraw to Bybit'
+                : isPickToken ||
+                    isWithdrawAll ||
+                    isWithdrawSome ||
+                    isSingleWithdraw
+                  ? 'Withdraw to  Bybit'
                   : 'Withdraw'
             }
           />
@@ -107,7 +167,7 @@ export const WithdrawModal: React.FC<{
             </div>
           )}
           {isPickToken && (
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col items-start mb-4">
               <Typography fontVariant="extraLargeBold" className="text-center">
                 Add Bybit address
               </Typography>
@@ -130,16 +190,170 @@ export const WithdrawModal: React.FC<{
                   setInput(e.target.value)
                 }}
               />
-              <div className="w-full mt-8">
-                {createCryptoTokenObject(tokenBalance, tokenPrices).map(
-                  (token, idx) => (
-                    <div key={idx} onClick={() => {}} role="button">
-                      <TokenItem token={token} />
+              <div className="w-full max-h-[35vh] mt-4">
+                <div
+                  role="button"
+                  onClick={() => {}}
+                  className="flex gap-4 cursor-pointer mt-4">
+                  <Checkbox
+                    label={
+                      <Typography fontVariant="body">
+                        Withdraw Everything
+                      </Typography>
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        handleSelectAllTokens()
+                      } else {
+                        setSelectedTokens([]) // Clear all selections
+                      }
+                    }}
+                    checked={
+                      selectedTokens.length ===
+                      createCryptoTokenObject(tokenBalance, tokenPrices).length
+                    }
+                  />
+                </div>
+                <div className="w-full max-h-[100%] mt-2 overflow-scroll">
+                  {cryptoTokens.map((token, idx) => (
+                    <div
+                      key={idx}
+                      role="button"
+                      className="flex gap-4 cursor-pointer mt-4">
+                      <Checkbox
+                        style={{
+                          margin: '50% 0 0 0',
+                        }}
+                        onChange={(e: any) =>
+                          //TODO: maybe let's do this with something more unique than the name
+                          toggleTokenSelection(e, token.name)
+                        }
+                        checked={selectedTokens.includes(token.name)}
+                        label={
+                          <TokenItem showOnlyNameAndAmount token={token} />
+                        }
+                      />
                     </div>
-                  )
-                )}
+                  ))}
+                </div>
               </div>
             </div>
+          )}
+          {!!isWithdraw && singleToken && (
+            <div className="flex flex-col items-start">
+              <Typography fontVariant="extraLargeBold" className="text-center">
+                Add Bybit address
+              </Typography>
+              <Input
+                label=""
+                disabled
+                error={inputError}
+                style={{ background: 'white' }}
+                prefix={
+                  <Image
+                    src={'/img/bybit_2.png'}
+                    alt={'bybit'}
+                    width={64}
+                    height={64}
+                  />
+                }
+                // parentStyles={getInputParentStyles()}
+                value={input ? truncateEthAddress(input) : ''}
+              />
+              <div className="w-full max-h-[35vh] p-2 mt-8 border-solid border-gray border rounded-xl">
+                <TokenItem showOnlyNameAndAmount token={singleToken} />
+              </div>
+              <div className="w-full mt-2 allWhiteBg">
+                <Input
+                  label=""
+                  placeholder="Amount"
+                  error={
+                    Number(singleAmount) > singleToken.value
+                      ? 'Not enough balance'
+                      : amountError
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value
+                      .replace(/[^0-9.]/g, '') // Allow only numbers and decimal points
+                      .replace(/(\..*)\./g, '$1') // Disallow multiple decimal points
+                    setSingleAmount(value)
+                  }}
+                  suffix={
+                    <Tag
+                      onClick={() =>
+                        setSingleAmount(singleToken.value.toString())
+                      }>
+                      Max
+                    </Tag>
+                  }
+                  value={!!singleAmount ? singleAmount : ''}
+                />
+              </div>
+              <FeeItem />
+            </div>
+          )}
+          {isConfirm && singleToken && (
+            <div className="flex flex-col items-start">
+              <div className="w-full max-h-[35vh] p-2 border-solid border-gray border rounded-xl">
+                <TokenItem reverse showOnlyNameAndAmount token={singleToken} />
+              </div>
+              <FeeItem />
+              <div className="flex w-[100%] flex-row mt-4 justify-between gap-[10px]">
+                <Button
+                  onClick={async () => {
+                    _dismiss()
+                  }}
+                  style={{ background: 'grey' }}>
+                  Cancel
+                </Button>
+                <Button onClick={() => {}}>Confirm</Button>
+              </div>
+            </div>
+          )}
+          {!isConnectToExchange ? (
+            isPickToken ? (
+              <Button
+                disabled={!!inputError}
+                onClick={() => {
+                  if (!input || !isAddress(input)) {
+                    setInputError('Please enter a valid address')
+                    return
+                  }
+                  if (selectedTokens.length === 0) {
+                    setInputError('Please select at least one token')
+                    return
+                  }
+                  if (isSingleWithdraw) {
+                    setStep(WithdrawStep.WithdrawSingleToken)
+                  } else {
+                    setStep(WithdrawStep.WithdrawMultipleToken)
+                  }
+                }}>
+                {isSingleWithdraw
+                  ? `Withdraw ${isSingleWithdraw}`
+                  : isWithdrawAll
+                    ? 'Withdraw All'
+                    : isWithdrawSome
+                      ? 'Withdraw Selected'
+                      : 'Select Tokens'}
+              </Button>
+            ) : null
+          ) : null}
+          {isWithdraw && (
+            <Button
+              onClick={() => {
+                if (
+                  Number(singleAmount) > 0 &&
+                  singleToken &&
+                  Number(singleAmount) <= singleToken.value
+                ) {
+                  setStep(WithdrawStep.ConfirmWithdraw)
+                } else {
+                  setAmountError('Invalid amount')
+                }
+              }}>
+              Withdraw
+            </Button>
           )}
         </div>
       </Modal>

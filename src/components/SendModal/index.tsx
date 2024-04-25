@@ -196,8 +196,8 @@ export const SendModal: React.FC<{
                 </div>
               )}
               {!selectedToken && (
-                <>
-                  <nav className="flex gap-4">
+                <div className="max-h-[40vh]">
+                  <nav className="flex gap-4 mb-2">
                     {TABS.map((tab, idx) => (
                       <Typography
                         role="button"
@@ -211,7 +211,7 @@ export const SendModal: React.FC<{
                       </Typography>
                     ))}
                   </nav>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-4 max-h-[100%] overflow-scroll">
                     {activeTab === 'Tokens' &&
                       createCryptoTokenObject(tokenBalance, tokenPrices).map(
                         (token, idx) => (
@@ -226,7 +226,7 @@ export const SendModal: React.FC<{
                         )
                       )}
                   </div>
-                </>
+                </div>
               )}
               {amountError && (
                 <Typography color="red">{amountError}</Typography>

@@ -38,7 +38,7 @@ export const TokenDetailModal: React.FC = () => {
         setSelectedToken(null)
       }}
       mobileOnly>
-      <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
+      <div className="flex min-h-[40%] max-h-[90vh] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4 overflow-scroll">
         <header className="flex justify-center text-center">
           <ModalHandlIcon />
         </header>
@@ -78,26 +78,24 @@ export const TokenDetailModal: React.FC = () => {
                   <ChevronRight />
                 </div>
               </div>
-              {createRandomHistoryArray().map(
-                (item, idx) => (
-                  <div key={idx} className="flex justify-between">
-                    <div className="flex flex-col">
-                      <Typography weight="bold">{item}</Typography>
-                      <Typography fontVariant="small" color="textSecondary">
-                        Dec 25, 2023
-                      </Typography>
-                    </div>
-                    <div className="flex flex-col  items-end">
-                      <Typography weight="bold">
-                        +{numberFormatter.format(0.1)} {token.name}
-                      </Typography>
-                      <Typography fontVariant="small" color="textSecondary">
-                        {priceFormatter.format(223.39)}
-                      </Typography>
-                    </div>
+              {createRandomHistoryArray().map((item, idx) => (
+                <div key={idx} className="flex justify-between">
+                  <div className="flex flex-col">
+                    <Typography weight="bold">{item}</Typography>
+                    <Typography fontVariant="small" color="textSecondary">
+                      Dec 25, 2023
+                    </Typography>
                   </div>
-                )
-              )}
+                  <div className="flex flex-col  items-end">
+                    <Typography weight="bold">
+                      +{numberFormatter.format(0.1)} {token.name}
+                    </Typography>
+                    <Typography fontVariant="small" color="textSecondary">
+                      {priceFormatter.format(223.39)}
+                    </Typography>
+                  </div>
+                </div>
+              ))}
               <hr />
               <Typography weight="bold">About ${token?.name}</Typography>
               <Typography fontVariant="small">
