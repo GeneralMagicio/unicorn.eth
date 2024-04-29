@@ -3,19 +3,25 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        port: "",
-        pathname: "**",
+        protocol: 'https',
+        hostname: 'giveth.mypinata.cloud',
+        port: '',
+        pathname: '**',
       },
       {
-        protocol: "https",
-        hostname: "assets.coingecko.com",
-        port: "",
-        pathname: "**",
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        port: '',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'assets.coingecko.com',
+        port: '',
+        pathname: '**',
       },
     ],
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

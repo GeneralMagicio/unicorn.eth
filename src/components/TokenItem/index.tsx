@@ -25,7 +25,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
     <div className={`flex items-center justify-between ${reverse && 'w-full'}`}>
       <div
         className={`flex gap-2 ${
-          reverse && 'flex-row-reverse w-[100%] justify-between'
+          reverse && 'w-[100%] flex-row-reverse justify-between'
         }`}>
         <Image
           src={token.icon || '/images/ens.png'}

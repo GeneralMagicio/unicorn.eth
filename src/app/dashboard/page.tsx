@@ -41,7 +41,7 @@ const TABS = ['Tokens', 'Collectibles']
 export default function Dashboard() {
   const theme = useTheme()
   const { canMintPOAP } = usePOAP()
-  const { username, userProfilePicture, ethBalance, userAddress } = useAuth()
+  const { username, userProfilePicture, userAddress } = useAuth()
   const [activeTab, setActiveTab] = useState('Tokens')
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
   const [, setSelectedToken] = useAtom(selectedTokenAtom)
