@@ -53,7 +53,8 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { username, userEmail, userProfilePicture, setUserProfilePicture } = useAuth()
+  const { username, userEmail, userProfilePicture, setUserProfilePicture } =
+    useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   const {
@@ -100,21 +101,27 @@ export const AccountDetailsModal: React.FC<{
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      convertImageToBase64(e.target.files[0], (base64) => {
-        setUserProfilePicture(base64)
-
-        axios.put(
+      const file = e.target.files[0]
+      const data = new FormData()
+      data.set('file', file)
+      axios.post('/api/files', data).then((res) => {
+        console.log({ d: res.data })
+        return axios.put(
           '/api/subname/data',
           {
-            data: base64,
+            data: res.data.IpfsHash,
           },
           {
             params: {
               label: username,
-              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
             },
           }
         )
+      })
+
+      convertImageToBase64(e.target.files[0], (base64) => {
+        setUserProfilePicture(base64)
       })
     }
   }
@@ -134,8 +141,8 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="rounded-full"
-                src={userProfilePicture || ''}
-                alt={username ||  '' }
+                src={userProfilePicture || '/img/validator.eth.png'}
+                alt={username || ''}
                 width={60}
                 height={60}
               />
