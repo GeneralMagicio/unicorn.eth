@@ -31,8 +31,8 @@ export default async function RootLayout({
         <AuthProvider>
           <html lang="en">
             <body className={inter.className}>
-              <ThirdwebAutoConnect/>
-              <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white">
+              <ThirdwebAutoConnect />
+              <main className="fixed inset-0 m-auto flex max-w-[430px] flex-col items-center justify-center bg-white">
                 {!isMobile
                   ? 'This app can only be viewed on mobile.'
                   : children}
