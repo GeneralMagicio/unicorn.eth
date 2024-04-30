@@ -20,6 +20,18 @@ const nextConfig = {
         port: '',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'image.nftscan.com',
+        port: '',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.seadn.io',
+        port: '',
+        pathname: '**',
+      },
     ],
   },
 }

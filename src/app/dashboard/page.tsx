@@ -69,13 +69,15 @@ export default function Dashboard() {
     tokenPrices
   ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
+  // TODO: this is a hack for now, pfp is returning undefined/undefined
+  const isProperPFP = !userProfilePicture?.includes('undefined')
   return (
     <>
       <header className="flex  items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
-            src={userProfilePicture || '/img/validator.eth.png'}
+            src={isProperPFP ? userProfilePicture : '/img/validator.eth.png'}
             alt={username || ''}
             width={40}
             height={40}
@@ -149,7 +151,7 @@ export default function Dashboard() {
                 }}
                 role="button">
                 <NftImage
-                  src={collectible.img || '/img/login-bg.png'}
+                  src={collectible?.img || '/img/login-bg.png'}
                   placeholder={'/img/login-bg.png'}
                   name={collectible.name}
                 />

@@ -47,7 +47,7 @@ export const TokenDetailModal: React.FC = () => {
             <BalanceBox>
               <div className="flex gap-2">
                 <Image
-                  src={token.icon || '/images/ens.png'}
+                  src={token?.icon || '/img/ens.png'}
                   alt={token.name}
                   width={46}
                   height={46}

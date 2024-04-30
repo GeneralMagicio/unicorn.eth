@@ -17,7 +17,11 @@ export type SupportedNFT = {
     height: number
     ipfs_hash: string
   }
-  iterationFunction?: "N-tokensOfOwner" | "W-tokensOfOwner" | "W-tokensOfOwnerByIndex" | "N-tokensOfOwnerByIndex",
+  iterationFunction?:
+    | 'N-tokensOfOwner'
+    | 'W-tokensOfOwner'
+    | 'W-tokensOfOwnerByIndex'
+    | 'N-tokensOfOwnerByIndex'
 }
 
 // @ts-ignore
@@ -41,7 +45,7 @@ export type SupportedNFT = {
 //   website: item.website || '',
 // }))
 
-// TODO: Replace it with a dynamic top 100 collections (probably via an OpenSea endpoint) 
+// TODO: Replace it with a dynamic top 100 collections (probably via an OpenSea endpoint)
 export const supportedNFTs: SupportedNFT[] = [
   {
     symbol: 'CKITTY',
@@ -59,7 +63,7 @@ export const supportedNFTs: SupportedNFT[] = [
       ipfs_hash: '',
     },
     website: 'https://www.cryptokitties.co/',
-    iterationFunction: "N-tokensOfOwner"
+    iterationFunction: 'N-tokensOfOwner',
   },
   {
     symbol: 'OPENSTORE',
@@ -162,7 +166,7 @@ export const supportedNFTs: SupportedNFT[] = [
       ipfs_hash: '',
     },
     website: 'https://artblocks.io',
-    iterationFunction: "W-tokensOfOwner",
+    iterationFunction: 'W-tokensOfOwner',
   },
   {
     symbol: 'KODA',
@@ -180,7 +184,7 @@ export const supportedNFTs: SupportedNFT[] = [
       ipfs_hash: '',
     },
     website: 'https://knownorigin.io',
-    iterationFunction: "W-tokensOfOwnerByIndex",
+    iterationFunction: 'W-tokensOfOwnerByIndex',
   },
   {
     symbol: 'PIONEER',
@@ -481,7 +485,7 @@ export const supportedNFTs: SupportedNFT[] = [
       },
     ],
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: -1,
       height: -1,
       ipfs_hash: '',
@@ -1280,7 +1284,7 @@ export const supportedNFTs: SupportedNFT[] = [
       },
     ],
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: -1,
       height: -1,
       ipfs_hash: '',

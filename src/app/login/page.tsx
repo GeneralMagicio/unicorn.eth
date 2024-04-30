@@ -158,7 +158,7 @@ export default function Login() {
                     {userProfilePicture && (
                       <Image
                         className="rounded-full"
-                        src={userProfilePicture}
+                        src={userProfilePicture || '/img/ens.png'}
                         alt={username!}
                         width={72}
                         height={72}
