@@ -67,7 +67,7 @@ export default function Login() {
   return (
     <>
       {isSigning && <SigningInPage />}
-      <div className="relative h-full w-full grow">
+      <div className="relative h-full max-h-screen w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
           {step >= 1 && (
             <ArrowLeft
