@@ -1,48 +1,48 @@
-'use client'
-
 import Image from 'next/image'
-import { Typography } from '@ensdomains/thorin'
-import { useTheme } from 'styled-components'
-import { ScanIcon } from '@/components/Icons/Scan'
+import { Button, Typography } from '@ensdomains/thorin'
 import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
 import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
-import { useAtom } from 'jotai'
-import {
-  activeModalAtom,
-  selectedCollectibleAtom,
-  selectedTokenAtom,
-} from '@/store'
-import { MODAL_TYPE } from './layout'
 import { priceFormatter } from '@/utils/price'
+
 import useSWR from 'swr'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
-import { createCryptoTokenObject, fetchTokenPrices } from './utils/tokens'
+import {
+  createCryptoTokenObject,
+  fetchTokenPrices,
+} from '@/app/dashboard/utils/tokens'
 
 import { NftImage } from '@/components/Dashboard/NftImage'
 import { usePOAP } from '@/hooks/usePOAP'
-import { useActiveAccount } from 'thirdweb/react'
+import { ConnectButton, lightTheme, useActiveAccount } from 'thirdweb/react'
 import { shortenEthereumAddress } from '@/utils/strings'
 import { useBalance } from '@/hooks/useBalance'
+import {
+  externalClient,
+  externalAllowedThirdwebWallets,
+} from '@/lib/third-web/provider'
 
 const TABS = ['Tokens', 'Collectibles']
 
-export default function Dashboard() {
-  const theme = useTheme()
+function Profile({
+  username,
+  userProfilePicture,
+  userAddress,
+}: {
+  username?: string
+  userProfilePicture?: string
+  userAddress?: string
+}) {
   const { canMintPOAP } = usePOAP()
-  const { username, userProfilePicture, userAddress } = useAuth()
+
   const [activeTab, setActiveTab] = useState('Tokens')
-  const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
-  const [, setSelectedToken] = useAtom(selectedTokenAtom)
-  const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
-  const account = useActiveAccount()
-
+  const connectedAccount = useActiveAccount()
+  // const _account = { account: username, address: '0x123' }
   // User shouldn't be in the dashboard if they don't have an account
-  const walletAddress = account?.address!
-
-  const { tokenBalance, nfts, errors } = useBalance(userAddress)
+  const walletAddress = connectedAccount?.address!
+  const { tokenBalance, nfts, errors } = useBalance(userAddress!)
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
@@ -63,11 +63,15 @@ export default function Dashboard() {
   const isProperPFP = !userProfilePicture?.includes('undefined')
   return (
     <>
-      <header className="flex  items-center justify-between">
+      <header className="flex items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
-            src={isProperPFP ? userProfilePicture : '/img/validator.eth.png'}
+            src={
+              isProperPFP && userProfilePicture
+                ? userProfilePicture
+                : '/img/validator.eth.png'
+            }
             alt={username || ''}
             width={40}
             height={40}
@@ -76,16 +80,13 @@ export default function Dashboard() {
             {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
-        <div
-          onClick={() => setActiveModal(MODAL_TYPE.SCAN)}
-          className="flex  items-center gap-2">
-          <ScanIcon color={theme.colors.grey} />
-        </div>
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
           {`Estimated Value for: ${
-            account?.address ? shortenEthereumAddress(account.address) : ''
+            connectedAccount?.address
+              ? shortenEthereumAddress(connectedAccount?.address)
+              : ''
           }`}
         </Typography>
         <Typography color="text" fontVariant="extraLarge">
@@ -119,13 +120,7 @@ export default function Dashboard() {
         {activeTab === 'Tokens' &&
           createCryptoTokenObject(tokenBalance, tokenPrices).map(
             (token, idx) => (
-              <div
-                key={idx}
-                onClick={() => {
-                  setSelectedToken(token)
-                  setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
-                }}
-                role="button">
+              <div key={idx} role="button">
                 <TokenItem token={token} />
               </div>
             )
@@ -133,13 +128,7 @@ export default function Dashboard() {
         {activeTab === TABS[1] && (
           <div className="grid grid-cols-2 gap-4 gap-x-2 ">
             {nfts.map((collectible, id) => (
-              <div
-                key={id}
-                onClick={() => {
-                  setSelectedCollectible(collectible)
-                  setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
-                }}
-                role="button">
+              <div key={id} role="button">
                 <NftImage
                   src={collectible?.img || '/img/login-bg.png'}
                   placeholder={'/img/login-bg.png'}
@@ -149,7 +138,37 @@ export default function Dashboard() {
             ))}
           </div>
         )}
+        <div className="flex justify-center w-[90%] fixed bottom-6">
+          {connectedAccount ? (
+            <Button onClick={() => alert('Proceed with deposit')}>
+              Deposit
+            </Button>
+          ) : (
+            <ConnectButton
+              wallets={externalAllowedThirdwebWallets}
+              connectModal={{
+                size: 'compact',
+                titleIcon: '',
+                showThirdwebBranding: false,
+              }}
+              connectButton={{
+                style: {
+                  width: '100%',
+                },
+                label: 'Deposit',
+              }}
+              theme={lightTheme({
+                colors: {
+                  primaryButtonBg: 'rgba(36, 131, 248, 1)',
+                },
+              })}
+              client={externalClient}
+            />
+          )}
+        </div>
       </div>
     </>
   )
 }
+
+export default Profile
