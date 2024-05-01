@@ -53,6 +53,14 @@ export function useEnsResolver() {
     []
   )
 
+  const getSubnameData = useCallback(
+    (label: string) =>
+      axios.get<Array<any>>('/api/subname/data', {
+        params: { label },
+      }),
+    []
+  )
+
   const getENSAddress = async (ens: string) => {
     try {
       return await resolveAddress({ client, name: ens })
