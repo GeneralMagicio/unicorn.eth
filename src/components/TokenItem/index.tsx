@@ -28,7 +28,7 @@ export const TokenItem: React.FC<TokenItemProps> = ({
           reverse && 'w-[100%] flex-row-reverse justify-between'
         }`}>
         <Image
-          src={token.icon || '/images/ens.png'}
+          src={token?.icon || '/img/ens.png'}
           alt={token.name}
           width={46}
           height={46}

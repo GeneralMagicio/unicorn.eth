@@ -252,7 +252,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://weth.io/',
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -275,7 +275,7 @@ export const supportedTokens: SupportedToken[] = [
     name: 'stETH',
     website: 'https://stake.lido.fi',
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: 64,
       height: 64,
       ipfs_hash: '',
@@ -353,7 +353,7 @@ export const supportedTokens: SupportedToken[] = [
     ens_address: '',
     website: 'https://www.centre.io',
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: 28,
       height: 28,
       ipfs_hash: '',
@@ -900,7 +900,7 @@ export const supportedTokens: SupportedToken[] = [
     name: 'xDai',
     ens_address: '',
     logo: {
-      src: '',
+      src: '/img/ens.png',
       width: 64,
       height: 64,
       ipfs_hash: '',

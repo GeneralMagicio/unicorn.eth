@@ -33,7 +33,7 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({
     <div className="flex items-center justify-between">
       <div className="flex gap-2">
         <Image
-          src={token.icon || '/images/ens.png'}
+          src={token?.icon || '/img/ens.png'}
           alt={token.name}
           width={46}
           height={46}

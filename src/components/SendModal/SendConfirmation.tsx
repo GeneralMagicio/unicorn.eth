@@ -161,7 +161,7 @@ const SendConfirmation = ({
                 width={24}
                 height={24}
                 className="h-[24px] w-[24px] rounded-full"
-                src={selectedToken?.icon!}
+                src={selectedToken?.icon || '/img/ens.png'}
                 alt="token icon"
               />
               <Typography weight="bold">
