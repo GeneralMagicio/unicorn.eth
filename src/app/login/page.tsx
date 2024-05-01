@@ -173,7 +173,7 @@ export default function Login() {
                   </div>
                   <Button
                     onClick={() => {
-                      setUsername(chosenUsername)
+                      setUsername(chosenUsername.toLowerCase())
                       router.push('/dashboard')
                     }}>
                     Go to wallet

@@ -104,25 +104,27 @@ export const AccountDetailsModal: React.FC<{
       const file = e.target.files[0]
       const data = new FormData()
       data.set('file', file)
-      axios.post('/api/files', data).then((res) => {
-        console.log({ d: res.data })
-        return axios.put(
-          '/api/subname/data',
-          {
-            data: res.data.IpfsHash,
-          },
-          {
-            params: {
-              label: username,
-              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+      axios
+        .post('/api/files', data)
+        .then((res) => {
+          return axios.put(
+            '/api/subname/data',
+            {
+              data: res.data.IpfsHash,
             },
-          }
-        )
-      })
-
-      convertImageToBase64(e.target.files[0], (base64) => {
-        setUserProfilePicture(base64)
-      })
+            {
+              params: {
+                label: username,
+                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+              },
+            }
+          )
+        })
+        .then(() => {
+          convertImageToBase64(file, (base64) => {
+            setUserProfilePicture(base64)
+          })
+        })
     }
   }
 
