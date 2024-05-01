@@ -75,8 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const username = res.data[res.data.length - 1].label
-        setUsername(username)
+        const username = res.data[res.data.length - 1]?.label || ''
+        setUsername(username.toLowerCase())
 
         goToDashboard = true
 

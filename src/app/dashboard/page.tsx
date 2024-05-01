@@ -69,15 +69,13 @@ export default function Dashboard() {
     tokenPrices
   ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
-  // TODO: this is a hack for now, pfp is returning undefined/undefined
-  const isProperPFP = !userProfilePicture?.includes('undefined')
   return (
     <>
       <header className="flex  items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
-            src={isProperPFP ? userProfilePicture : '/img/validator.eth.png'}
+            src={userProfilePicture || '/img/validator.eth.png'}
             alt={username || ''}
             width={40}
             height={40}
