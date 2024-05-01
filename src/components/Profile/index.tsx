@@ -1,13 +1,11 @@
+import { useState } from 'react'
 import Image from 'next/image'
 import { Button, Typography } from '@ensdomains/thorin'
-import { useState } from 'react'
 import { TokenItem } from '@/components/TokenItem'
-import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { priceFormatter } from '@/utils/price'
 
 import useSWR from 'swr'
-import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import {
   createCryptoTokenObject,
   fetchTokenPrices,
@@ -39,10 +37,12 @@ function Profile({
   const [activeTab, setActiveTab] = useState('Tokens')
   const [showPromotionBox, setShowPromotionBox] = useState(true)
   const connectedAccount = useActiveAccount()
-  // const _account = { account: username, address: '0x123' }
-  // User shouldn't be in the dashboard if they don't have an account
-  const walletAddress = connectedAccount?.address!
-  const { tokenBalance, nfts, errors } = useBalance(userAddress!)
+  const {
+    tokenBalance,
+    nfts,
+    errors,
+    loading: balanceLoading,
+  } = useBalance(userAddress!)
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
@@ -63,7 +63,7 @@ function Profile({
   const isProperPFP = !userProfilePicture?.includes('undefined')
   return (
     <>
-      <header className="flex items-center justify-between">
+      <div className="flex items-center justify-between">
         <UserInfo>
           <Image
             className="rounded-full"
@@ -80,7 +80,7 @@ function Profile({
             {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
           </Typography>
         </UserInfo>
-      </header>
+      </div>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
           {`Estimated Value for: ${
@@ -93,15 +93,22 @@ function Profile({
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-      {showPromotionBox && canMintPOAP && (
-        <PromotionBox
-          title="Claim your digital collectible"
-          subtitle="Welcome to your web3 wallet."
-          onClose={() => {
-            setShowPromotionBox(false)
-          }}
-        />
-      )}
+      <div className="flex align-center gap-2 bg-gray-100 rounded-xl p-2">
+        <div className="relative">
+          <Image
+            className="rounded-full"
+            src="/img/key.svg"
+            alt="Unicorn"
+            width={44}
+            height={44}
+          />
+        </div>
+        <div className="flex flex-col justify-center gap-1 ">
+          <Typography color="initial">
+            Get your own account.eth wallet
+          </Typography>
+        </div>
+      </div>
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography

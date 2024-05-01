@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { Thirdweb5Provider } from '@/lib/third-web/provider'
 import { ThirdwebAutoConnect } from '@/lib/third-web/AutoConnect'
 import { AuthProvider } from '@/lib/auth-provider'
+import { NextRequest } from 'next/server'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,8 +17,10 @@ export const metadata = {
 
 export default async function RootLayout({
   children,
+  request,
 }: {
   children: React.ReactNode
+  request: NextRequest
 }) {
   const UA = headers().get('user-agent') || ''
   const isMobile = Boolean(
