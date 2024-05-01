@@ -1,3 +1,4 @@
+import { OsNft } from '@/app/dashboard/utils/nft-balance-opensea'
 import axios from 'axios'
 
 export const axiosInstance = axios.create({
@@ -7,6 +8,33 @@ export const axiosInstance = axios.create({
     'X-API-Key': process.env.POAP_API_KEY,
   },
 })
+
+export const getUserPOAPs = async (address: string): Promise<OsNft[]> => {
+  const res = await axiosInstance.get<PoapResponse[]>(
+    `actions/scan/${address}`
+  )
+
+  return res.data.map(({ event, created, tokenId }) => ({
+    collection: 'POAP',
+    contract: '',
+    description: event.description,
+    floorPrice: 0,
+    image_url: event.image_url,
+    opensea_url: '',
+    identifier: tokenId,
+    is_disabled: false,
+    is_nsfw: false,
+    metadata: {
+      name: event.name,
+      description: event.description,
+      image: event.image_url,
+      attributes: [],
+    },
+    name: event.name,
+    token_standard: 'ERC721',
+    updated_at: created,
+  }))
+}
 
 export function postEventQRCodes(token: string) {
   return axiosInstance
@@ -108,5 +136,6 @@ export const poapService = {
   postActionsClaimQr,
   getActionsClaimQr,
   getActionsScan,
+  getUserPOAPs,
   mint,
 }
