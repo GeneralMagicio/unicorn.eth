@@ -1,7 +1,6 @@
 import { Provider } from 'ethers'
 import { atom } from 'jotai'
 
-
 // export const userInfoAtom = atom<UserInfo | null>(null)
 export const usernameAtom = atom<string>('')
 export const userAddressAtom = atom<string>('')

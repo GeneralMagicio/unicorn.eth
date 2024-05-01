@@ -90,6 +90,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUserProfilePicture(
             `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
           )
+        axios.put('/api/subname/record', {
+          label: username,
+          key: EnsRecordType.ACCOUNT_ADDRESS,
+          text: account.address,
+        })
       } catch (err) {
         console.error(err)
       } finally {

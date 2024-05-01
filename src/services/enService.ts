@@ -14,6 +14,7 @@ export const axiosInstance = axios.create({
 export const enum EnsRecordType {
   ACCOUNT_INFO = 'ACCOUNT_INFO',
   ACCOUNT_PROFILE_IMAGE_CID = 'ACCOUNT_PROFILE_IMAGE_CID',
+  ACCOUNT_ADDRESS = 'ACCOUNT_ADDRESS',
 }
 
 const ENS_DOMAIN = process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN
