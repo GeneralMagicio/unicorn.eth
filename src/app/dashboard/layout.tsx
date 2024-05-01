@@ -29,6 +29,7 @@ export const enum MODAL_TYPE {
   CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
   WITHDRAW = 'WITHDRAW',
   SCAN = 'SCAN',
+  DEPOSIT = 'DEPOSIT',
 }
 
 export default function DashboardLayout({

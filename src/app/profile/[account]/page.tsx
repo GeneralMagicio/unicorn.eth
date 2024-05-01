@@ -18,22 +18,27 @@ async function getAddress(account: string) {
 export default function Account({ params }: { params: { account: string } }) {
   const { account } = params
   const [address, setAddress] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (account) {
-      getAddress(account).then((addr) => setAddress(addr))
+      try {
+        setLoading(true)
+        getAddress(account).then((addr) => setAddress(addr))
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+      }
     }
   }, [account])
 
   return (
-    <div className="flex w-full grow flex-col">
-      <div className="flex flex-col gap-10 px-[20px] py-10">
-        {address ? (
-          <Profile username={account} userAddress={address} />
-        ) : (
-          <p>Loading...</p>
-        )}
-      </div>
+    <div className="flex flex-col gap-6">
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <Profile username={account} userAddress={address || ''} />
+      )}
     </div>
   )
 }

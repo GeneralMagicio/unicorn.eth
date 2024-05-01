@@ -3,6 +3,8 @@ import { fetchTokenPrices } from '@/app/dashboard/utils/tokens'
 import {
   errorBalanceAtom,
   isBalanceLoadingAtom,
+  secondaryTokenBalancesAtom,
+  secondaryUserNFTsAtom,
   tokenBalancesAtom,
   userNFTsAtom,
 } from '@/store'
@@ -13,7 +15,7 @@ import { useEffect } from 'react'
 // Atom to initiate fetching prices and balances
 export const fetchBalancesAtom = atom(
   null,
-  async (get, set, userAddress: string) => {
+  async (get, set, userAddress: string, isSecondary: boolean) => {
     const isLoading = get(isBalanceLoadingAtom)
 
     // Check if any fetch operation is already in progress
@@ -32,8 +34,11 @@ export const fetchBalancesAtom = atom(
       //TODO: fix this type
       const nfts: any = await findAllNFTsOsApi(userAddress)
 
-      set(tokenBalancesAtom, { ...balances, prices: tokenPrices })
-      set(userNFTsAtom, nfts)
+      set(isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom, {
+        ...balances,
+        prices: tokenPrices,
+      })
+      set(isSecondary ? secondaryUserNFTsAtom : userNFTsAtom, nfts)
     } catch (error) {
       console.error('Failed to fetch data:', error)
       set(errorBalanceAtom, {
@@ -46,25 +51,44 @@ export const fetchBalancesAtom = atom(
   }
 )
 
-export function useBalance(userAddress: string | null) {
-  const [tokenBalance] = useAtom(tokenBalancesAtom)
-  const [nfts] = useAtom(userNFTsAtom)
+export function useBalance(userAddress: string | null, isSecondary?: boolean) {
+  const [tokenBalance, setTokenBalance] = useAtom(
+    isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom
+  )
+  const [nfts, setNfts] = useAtom(
+    isSecondary ? secondaryUserNFTsAtom : userNFTsAtom
+  )
   const [, fetchBalances] = useAtom(fetchBalancesAtom)
-  const [loading] = useAtom(isBalanceLoadingAtom)
-  const [errors] = useAtom(errorBalanceAtom)
+  const [loading, setLoading] = useAtom(isBalanceLoadingAtom)
+  const [errors, setErrors] = useAtom(errorBalanceAtom)
 
   useEffect(() => {
-    if (userAddress) {
-      console.log('calling')
-      fetchBalances(userAddress)
+    if (!userAddress) {
+      // Reset balances and loading state if user address is null
+      setTokenBalance({})
+      setNfts([])
+      setLoading({ tokensLoading: false, nftsLoading: false })
+      setErrors({ tokensError: null, nftsError: null })
+      return
     }
-  }, [userAddress, fetchBalances])
+
+    // Fetch balances for the new user address
+    fetchBalances(userAddress, !!isSecondary)
+  }, [
+    userAddress,
+    setTokenBalance,
+    setNfts,
+    setLoading,
+    setErrors,
+    fetchBalances,
+  ])
 
   return {
     tokenBalance,
     nfts,
     loading,
     errors,
-    refreshBalances: () => userAddress && fetchBalances(userAddress),
+    refreshBalances: () =>
+      userAddress && fetchBalances(userAddress, !!isSecondary),
   }
 }
