@@ -86,10 +86,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
           },
         })
-
-        setUserProfilePicture(
-          `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
-        )
+        if (data.data)
+          setUserProfilePicture(
+            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
+          )
       } catch (err) {
         console.error(err)
       } finally {
