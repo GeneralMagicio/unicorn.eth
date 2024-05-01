@@ -19,7 +19,6 @@ import { priceFormatter } from '@/utils/price'
 import useSWR from 'swr'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { createCryptoTokenObject, fetchTokenPrices } from './utils/tokens'
-
 import { NftImage } from '@/components/Dashboard/NftImage'
 import { usePOAP } from '@/hooks/usePOAP'
 import { useActiveAccount } from 'thirdweb/react'
@@ -38,9 +37,6 @@ export default function Dashboard() {
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
   const account = useActiveAccount()
-
-  // User shouldn't be in the dashboard if they don't have an account
-  const walletAddress = account?.address!
 
   const { tokenBalance, nfts, errors } = useBalance(userAddress)
 
