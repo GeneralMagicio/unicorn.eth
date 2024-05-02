@@ -1,5 +1,6 @@
 import { axiosInstance } from '@/services/axiosInstance'
 import { SupportedChainIds, getChainIds } from '../data/supported_tokens'
+import axios from 'axios'
 
 // Free personal API key
 const OpenSeaApiKey = 'd339363f19444a649ff0d29965f58b2e'
@@ -121,6 +122,14 @@ export async function findAllNFTsOsApi(
   let nfts: OsNft[] = []
   for (const chain of getChainIds()) {
     try {
+      if (chain === SupportedChainIds.Gnosis) {
+        const res = await axios.get<OsNft[]>(`/api/poap/actions/scan/`, {
+          params: { address: walletAddress },
+        })
+        nfts.push(...res.data)
+        // OpenSea doesn't support gnosis chain
+        continue
+      }
       const res = await getAddressNfts(chain, walletAddress, limit)
       const nftsWithMetadata: OsNft[] = await Promise.all(
         addMetadataToNfts(res)

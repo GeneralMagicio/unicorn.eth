@@ -18,7 +18,6 @@ import { priceFormatter } from '@/utils/price'
 import useSWR from 'swr'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
 import { createCryptoTokenObject, fetchTokenPrices } from './utils/tokens'
-
 import { usePOAP } from '@/hooks/usePOAP'
 import { useActiveAccount } from 'thirdweb/react'
 import { shortenEthereumAddress } from '@/utils/strings'

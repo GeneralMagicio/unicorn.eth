@@ -1,5 +1,8 @@
 import { findAllNFTsOsApi } from '@/app/dashboard/utils/nft-balance-opensea'
-import { fetchTokenPrices } from '@/app/dashboard/utils/tokens'
+import {
+  createCollectibleObject,
+  fetchTokenPrices,
+} from '@/app/dashboard/utils/tokens'
 import {
   errorBalanceAtom,
   isBalanceLoadingAtom,
@@ -31,7 +34,6 @@ export const fetchBalancesAtom = atom(
     try {
       const tokenPrices = await fetchTokenPrices()
       const balances = await calculateBalance(userAddress)
-      //TODO: fix this type
       const nfts: any = await findAllNFTsOsApi(userAddress)
 
       set(isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom, {
