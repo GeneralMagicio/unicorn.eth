@@ -52,7 +52,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ address, isSecondary }) => {
           </Typography>
         ))}
       </nav>
-      <div className="flex flex-col gap-4 max-h-[100%] mb-[50px] overflow-scroll">
+      <div className="flex flex-col gap-4 h-[100%] max-h-[100%] mb-[50px] overflow-scroll">
         {activeTab === 'Tokens' &&
           createCryptoTokenObject(tokenBalance, tokenPrices).map(
             (token, idx) => (
