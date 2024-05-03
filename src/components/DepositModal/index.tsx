@@ -7,7 +7,11 @@ import {
 } from '@/store'
 import { DownArrowSVG, Modal, Typography } from '@ensdomains/thorin'
 import { ModalHeader } from '../ModalHeader'
-import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
+import {
+  useActiveAccount,
+  useActiveWallet,
+  useActiveWalletChain,
+} from 'thirdweb/react'
 import { ChainMetadata, defineChain, getChainMetadata } from 'thirdweb/chains'
 import UserBalance from '../Dashboard/UserBalance'
 import NetworkTab from './NetworkTab'
@@ -27,6 +31,7 @@ export const DepositModal: React.FC<{
   const account = useActiveAccount()
   const userAddress = account?.address
   const wallet = useActiveWallet()
+  const activeChain = useActiveWalletChain()
 
   const [currentPublicProfile] = useAtom(currentPublicProfileAtom)
   const [currentPublicProfileName] = useAtom(currentPublicProfileNameAtom)
@@ -41,29 +46,47 @@ export const DepositModal: React.FC<{
     }
 
     setup()
-  }, [userAddress])
+  }, [userAddress, activeChain])
 
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
       <div className="flex max-h-[90vh] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
         <ModalHeader title={'Deposit'} />
-        <div className="flex w-full flex-col items-center justify-center gap-2">
+        <div className="flex w-full flex-col items-center justify-center gap-4">
           <div className="flex w-full flex-row rounded-xl px-4 py-3 border border-neutral-200 gap-2">
-            <Typography fontVariant="small" weight="light">
-              From: <b>{userAddress && shortenEthereumAddress(userAddress)}</b>
+            <Typography
+              fontVariant="body"
+              weight="light"
+              className="flex flex-row gap-2">
+              From:
+              <Typography fontVariant="bodyBold">
+                {userAddress && shortenEthereumAddress(userAddress)}
+              </Typography>
             </Typography>
           </div>
           <DownArrowSVG />
           <div className="flex w-full flex-row rounded-xl px-4 py-3 border border-neutral-200 gap-2">
-            <Typography fontVariant="small" weight="light">
-              To: <b>{currentPublicProfileName && currentPublicProfileName}</b>
+            <Typography
+              fontVariant="body"
+              weight="light"
+              className="flex flex-row gap-2">
+              To:{' '}
+              <Typography fontVariant="bodyBold" color="accent">
+                {currentPublicProfileName && currentPublicProfileName}
+              </Typography>
             </Typography>
           </div>
         </div>
         {currentChain && (
-          <NetworkTab isConnected chain={currentChain} action={() => {}} />
+          <NetworkTab
+            isConnected
+            chain={currentChain}
+            action={() => {
+              setActiveModal(DEPOSIT_MODAL_TYPE.CHANGE_NETWORK)
+            }}
+          />
         )}
-        <div className="h-[40%]">
+        <div className="h-[45%]">
           {userAddress && <UserBalance address={userAddress} isSecondary />}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import Image from 'next/image'
 import { Button, Typography } from '@ensdomains/thorin'
 import { BalanceBox, UserInfo } from '@/components/Styled'
@@ -32,7 +32,6 @@ function Profile({
   userAddress: string
 }) {
   const connectedAccount = useActiveAccount()
-
   const [, setActiveModal] = useAtom(activeModalAtom)
   const { tokenBalance, nfts, errors } = useBalance(userAddress!)
 
@@ -42,7 +41,11 @@ function Profile({
   )
 
   const memoizedUserBalance = useMemo(
-    () => <UserBalance address={userAddress} />,
+    () => (
+      <div className="h-[100%]">
+        <UserBalance address={userAddress} />
+      </div>
+    ),
     []
   )
 
@@ -130,6 +133,9 @@ function Profile({
                 primaryButtonBg: 'rgba(36, 131, 248, 1)',
               },
             })}
+            onConnect={() => {
+              setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)
+            }}
             client={externalClient}
           />
         )}

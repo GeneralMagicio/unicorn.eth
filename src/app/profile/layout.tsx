@@ -21,7 +21,9 @@ export default function DashboardLayout({
       />
       <ChangeNetworkModal
         open={activeModal === DEPOSIT_MODAL_TYPE.CHANGE_NETWORK}
-        onDismiss={() => setActiveModal(null)}
+        onDismiss={() => {
+          setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)
+        }}
       />
     </div>
   )

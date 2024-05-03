@@ -10,14 +10,18 @@ interface INetworkTab {
 
 const NetworkTab = ({ chain, action, isConnected }: INetworkTab) => {
   return (
-    <div className="flex flex-row rounded-xl px-4 py-3 border border-neutral-200 gap-2">
+    <div
+      className="flex flex-row rounded-2xl p-2 border border-neutral-200 gap-3"
+      onClick={() => {
+        action && action()
+      }}>
       <Image
         src={`/img/chains/${chain.chainId}.svg`}
         width={44}
         height={44}
         alt="chain"
       />
-      <div className="flex flex-col">
+      <div className="flex flex-col justify-center">
         {isConnected && (
           <Typography fontVariant="small" weight="light">
             Connected Network

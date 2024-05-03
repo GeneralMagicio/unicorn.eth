@@ -89,7 +89,12 @@ export default function Dashboard() {
           }}
         />
       )}
-      {userAddress && <UserBalance address={userAddress} />}
+
+      {userAddress && (
+        <div className="h-[100%]">
+          <UserBalance address={userAddress} />
+        </div>
+      )}
     </>
   )
 }

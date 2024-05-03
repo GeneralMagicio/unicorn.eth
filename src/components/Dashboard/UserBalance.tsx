@@ -37,7 +37,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ address, isSecondary }) => {
   if (!tokenPrices || !tokenBalance || !nfts) return <></>
 
   return (
-    <div className="flex flex-col flex-start gap-4">
+    <div className="flex flex-col flex-start gap-4 h-[100%] ">
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography
@@ -52,7 +52,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({ address, isSecondary }) => {
           </Typography>
         ))}
       </nav>
-      <div className="flex flex-col gap-4 h-[100%] max-h-[100%] mb-[50px] overflow-scroll">
+      <div className="flex flex-col gap-4 h-[100%] mb-[50px] overflow-scroll">
         {activeTab === 'Tokens' &&
           createCryptoTokenObject(tokenBalance, tokenPrices).map(
             (token, idx) => (
