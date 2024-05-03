@@ -8,12 +8,7 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { useAtom } from 'jotai'
-import {
-  activeModalAtom,
-  selectedCollectibleAtom,
-  selectedTokenAtom,
-} from '@/store'
-import { MODAL_TYPE } from './layout'
+import { activeModalAtom } from '@/store'
 import { priceFormatter } from '@/utils/price'
 import useSWR from 'swr'
 import { PromotionBox } from '@/components/Dashboard/PromotionBox'
@@ -23,6 +18,7 @@ import { useActiveAccount } from 'thirdweb/react'
 import { shortenEthereumAddress } from '@/utils/strings'
 import { useBalance } from '@/hooks/useBalance'
 import UserBalance from '@/components/Dashboard/UserBalance'
+import { MODAL_TYPE } from '@/utils/modals'
 
 export default function Dashboard() {
   const theme = useTheme()

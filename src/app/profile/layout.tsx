@@ -1,8 +1,10 @@
 'use client'
 
 import { ChangeNetworkModal } from '@/components/ChangeNetworkModal'
-import { DEPOSIT_MODAL_TYPE, DepositModal } from '@/components/DepositModal'
+import { DepositModal } from '@/components/DepositModal'
+import { SendModal } from '@/components/SendModal'
 import { activeModalAtom } from '@/store'
+import { DEPOSIT_MODAL_TYPE, MODAL_TYPE } from '@/utils/modals'
 import { useAtom } from 'jotai'
 
 export default function DashboardLayout({
@@ -24,6 +26,12 @@ export default function DashboardLayout({
         onDismiss={() => {
           setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)
         }}
+      />
+      <SendModal
+        open={activeModal === MODAL_TYPE.SEND}
+        currentScan={null}
+        isDeposit
+        onDismiss={() => setActiveModal(null)}
       />
     </div>
   )

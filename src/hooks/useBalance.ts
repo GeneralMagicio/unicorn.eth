@@ -1,11 +1,13 @@
-import { findAllNFTsOsApi } from '@/app/dashboard/utils/nft-balance-opensea'
 import {
-  createCollectibleObject,
-  fetchTokenPrices,
-} from '@/app/dashboard/utils/tokens'
+  OsNft,
+  findAllNFTsOsApi,
+} from '@/app/dashboard/utils/nft-balance-opensea'
+import { fetchTokenPrices } from '@/app/dashboard/utils/tokens'
+import { Collectible } from '@/services/types'
 import {
   errorBalanceAtom,
   isBalanceLoadingAtom,
+  isSecondaryBalanceLoadingAtom,
   secondaryTokenBalancesAtom,
   secondaryUserNFTsAtom,
   tokenBalancesAtom,
@@ -15,32 +17,32 @@ import { calculateBalance } from '@/utils/web3'
 import { atom, useAtom } from 'jotai'
 import { useEffect } from 'react'
 
-// Atom to initiate fetching prices and balances
 export const fetchBalancesAtom = atom(
   null,
   async (get, set, userAddress: string, isSecondary: boolean) => {
-    const isLoading = get(isBalanceLoadingAtom)
+    const loadingAtom = isSecondary
+      ? isSecondaryBalanceLoadingAtom
+      : isBalanceLoadingAtom
+    const currentLoading = get(loadingAtom)
 
-    // Check if any fetch operation is already in progress
-    if (isLoading.tokensLoading || isLoading.nftsLoading) {
+    if (currentLoading.tokensLoading || currentLoading.nftsLoading) {
       console.log('Fetch operation already in progress...')
       return
     }
 
-    // Set loading states
-    set(isBalanceLoadingAtom, { tokensLoading: true, nftsLoading: true })
+    set(loadingAtom, { tokensLoading: true, nftsLoading: true })
     set(errorBalanceAtom, { tokensError: null, nftsError: null })
 
     try {
       const tokenPrices = await fetchTokenPrices()
       const balances = await calculateBalance(userAddress)
-      const nfts: any = await findAllNFTsOsApi(userAddress)
+      const nfts: Collectible[] | OsNft[] = await findAllNFTsOsApi(userAddress)
 
       set(isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom, {
         ...balances,
         prices: tokenPrices,
       })
-      set(isSecondary ? secondaryUserNFTsAtom : userNFTsAtom, nfts)
+      set(isSecondary ? secondaryUserNFTsAtom : userNFTsAtom, nfts as any)
     } catch (error) {
       console.error('Failed to fetch data:', error)
       set(errorBalanceAtom, {
@@ -48,33 +50,33 @@ export const fetchBalancesAtom = atom(
         nftsError: 'Failed to fetch NFT data',
       })
     } finally {
-      set(isBalanceLoadingAtom, { tokensLoading: false, nftsLoading: false })
+      set(loadingAtom, { tokensLoading: false, nftsLoading: false })
     }
   }
 )
 
 export function useBalance(userAddress: string | null, isSecondary?: boolean) {
-  const [tokenBalance, setTokenBalance] = useAtom(
-    isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom
-  )
-  const [nfts, setNfts] = useAtom(
-    isSecondary ? secondaryUserNFTsAtom : userNFTsAtom
-  )
+  const tokenBalanceAtom = isSecondary
+    ? secondaryTokenBalancesAtom
+    : tokenBalancesAtom
+  const userNFTsAtomValue = isSecondary ? secondaryUserNFTsAtom : userNFTsAtom
+  const [tokenBalance, setTokenBalance] = useAtom(tokenBalanceAtom)
+  const [nfts, setNfts] = useAtom(userNFTsAtomValue)
   const [, fetchBalances] = useAtom(fetchBalancesAtom)
-  const [loading, setLoading] = useAtom(isBalanceLoadingAtom)
+  const loadingAtom = isSecondary
+    ? isSecondaryBalanceLoadingAtom
+    : isBalanceLoadingAtom
+  const [loading, setLoading] = useAtom(loadingAtom)
   const [errors, setErrors] = useAtom(errorBalanceAtom)
 
   useEffect(() => {
     if (!userAddress) {
-      // Reset balances and loading state if user address is null
       setTokenBalance({})
       setNfts([])
-      setLoading({ tokensLoading: false, nftsLoading: false })
       setErrors({ tokensError: null, nftsError: null })
       return
     }
 
-    // Fetch balances for the new user address
     fetchBalances(userAddress, !!isSecondary)
   }, [
     userAddress,
@@ -83,6 +85,7 @@ export function useBalance(userAddress: string | null, isSecondary?: boolean) {
     setLoading,
     setErrors,
     fetchBalances,
+    isSecondary,
   ])
 
   return {

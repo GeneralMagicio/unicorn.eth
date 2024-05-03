@@ -20,7 +20,7 @@ import {
   externalAllowedThirdwebWallets,
   externalClient,
 } from '@/lib/third-web/provider'
-import { DEPOSIT_MODAL_TYPE } from '../DepositModal'
+import { DEPOSIT_MODAL_TYPE } from '@/utils/modals'
 
 function Profile({
   username,
@@ -42,7 +42,7 @@ function Profile({
 
   const memoizedUserBalance = useMemo(
     () => (
-      <div className="h-[100%]">
+      <div className="max-h-[40vh] h-[100%]">
         <UserBalance address={userAddress} />
       </div>
     ),

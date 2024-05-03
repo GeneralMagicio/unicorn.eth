@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation'
 import { useTheme } from 'styled-components'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
+
 import { ModalHeader } from '@/components/ModalHeader'
 import { IconButton } from '@/components/Styled'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
@@ -29,7 +30,7 @@ export const SettingsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const theme = useTheme()
   const router = useRouter()
-  const {disconnect} = useDisconnect()
+  const { disconnect } = useDisconnect()
   const wallet = useActiveWallet()
 
   const [, setActiveModal] = useAtom(activeModalAtom)

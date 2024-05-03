@@ -1,5 +1,5 @@
-import { MODAL_TYPE } from '@/app/dashboard/layout'
-import { DEPOSIT_MODAL_TYPE } from '@/components/DepositModal'
+import { MODAL_TYPE, DEPOSIT_MODAL_TYPE } from '@/utils/modals'
+
 import { SETTINGS_ACTION_TYPE } from '@/components/Settings/SettingsModal'
 import { TRANSACTION_ACTION_TYPE } from '@/components/TransactionModal'
 import { Collectible, ICryptoToken } from '@/services/types'
@@ -35,7 +35,15 @@ export const isBalanceLoadingAtom = atom({
   tokensLoading: false,
   nftsLoading: false,
 })
+export const isSecondaryBalanceLoadingAtom = atom({
+  tokensLoading: false,
+  nftsLoading: false,
+})
+
 export const errorBalanceAtom = atom<BalanceErrorState>({
   tokensError: null,
   nftsError: null,
 })
+
+// TODO: Fix this type
+export const currentSendTx = atom<any | null>(null)
