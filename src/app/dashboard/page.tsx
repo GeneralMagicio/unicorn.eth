@@ -36,6 +36,14 @@ export default function Dashboard() {
     fetchTokenPrices
   )
 
+  const copyToClipboard = (text: string) => async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+ };
+
   // TODO: Better error handling
   if (errors.tokensError || errors.nftsError || error) return
   // Probably use some spinner to indicate the loading time
@@ -53,7 +61,7 @@ export default function Dashboard() {
   return (
     <>
       <header className="flex  items-center justify-between">
-        <UserInfo>
+        <UserInfo onClick={copyToClipboard(userName)}>
           <Image
             className="rounded-full"
             src={userProfilePicture || '/img/profile-placeholder.svg'}
