@@ -27,7 +27,7 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <div className="flex w-full grow flex-col">
-        <div className="flex flex-col gap-10 px-[20px] py-10">{children}</div>
+        <div className="flex h-screen flex-col gap-10 px-[20px] py-10">{children}</div>
         <BottomNav />
         <TransactionModal
           open={activeModal === MODAL_TYPE.TRANSACTION}

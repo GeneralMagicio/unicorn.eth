@@ -8,10 +8,15 @@ import {
   fetchTokenPrices,
 } from '@/app/dashboard/utils/tokens'
 import { useAtom } from 'jotai'
-import { activeModalAtom } from '@/store'
+import {
+  activeModalAtom,
+  selectedCollectibleAtom,
+  selectedTokenAtom,
+} from '@/store'
 
 import { NftImage } from '@/components/Dashboard/NftImage'
 import { useBalance } from '@/hooks/useBalance'
+import { MODAL_TYPE } from '@/utils/modals'
 
 interface UserBalanceProps {
   address: string
@@ -27,6 +32,8 @@ const UserBalance: React.FC<UserBalanceProps> = ({
   action,
 }) => {
   const [, setActiveModal] = useAtom(activeModalAtom)
+  const [, setSelectedToken] = useAtom(selectedTokenAtom)
+  const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
 
   const [activeTab, setActiveTab] = useState('Tokens')
   const { tokenBalance, nfts, errors, loading } = useBalance(
@@ -44,8 +51,10 @@ const UserBalance: React.FC<UserBalanceProps> = ({
   // Probably use some spinner to indicate the loading time
   if (!tokenPrices || !tokenBalance || !nfts) return <></>
   const { nftsLoading, tokensLoading } = loading
+
+  const tokens = createCryptoTokenObject(tokenBalance, tokenPrices)
   return (
-    <div className="flex flex-col flex-start gap-4 h-[100%] ">
+    <div className="flex h-[100%] flex-col gap-4 ">
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography
@@ -60,34 +69,61 @@ const UserBalance: React.FC<UserBalanceProps> = ({
           </Typography>
         ))}
       </nav>
-      <div className="flex flex-col gap-4 h-[100%] mb-[50px] overflow-scroll">
-        {activeTab === 'Tokens' &&
-          (tokensLoading ? (
-            <div>Loading...</div>
-          ) : (
-            createCryptoTokenObject(tokenBalance, tokenPrices).map(
-              (token, idx) => (
-                <div key={idx} role="button" onClick={() => action?.(token)}>
-                  <TokenItem token={token} />
-                </div>
-              )
-            )
-          ))}
+      <div className="flex max-h-[60vh] flex-col scroll-auto p-1 pb-0">
+        {activeTab === TABS[0] && (
+          <div className="flex h-full flex-col gap-4 overflow-auto pb-20">
+            {tokensLoading && (
+              <Typography className="m-auto" fontVariant="large" color="grey">
+                Loading...
+              </Typography>
+            )}
+            {tokens.length === 0 && (
+              <Typography className="m-auto" fontVariant="large" color="grey">
+                No tokens found in your wallet
+              </Typography>
+            )}
+            {tokens.map((token, idx) => (
+              <div
+                key={idx}
+                onClick={() => {
+                  setSelectedToken(token)
+                  setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
+                }}
+                role="button">
+                <TokenItem token={token} />
+              </div>
+            ))}
+          </div>
+        )}
         {activeTab === TABS[1] && (
-          <div className="grid grid-cols-2 gap-4 gap-x-2 ">
-            {nftsLoading ? (
-              <div>Loading...</div>
-            ) : (
-              nfts.map((collectible, id) => (
-                <div key={id} role="button">
+          <div className="flex h-full flex-col gap-4 overflow-auto pb-20">
+            {tokensLoading && (
+              <Typography className="m-auto" fontVariant="large" color="grey">
+                Loading...
+              </Typography>
+            )}
+            {nfts.length === 0 && (
+              <Typography className="m-auto" fontVariant="large" color="grey">
+                No collectibles found in your wallet
+              </Typography>
+            )}
+            <div className="grid grid-cols-2 gap-4 gap-x-2 ">
+              {nfts.map((collectible, id) => (
+                <div
+                  key={id}
+                  onClick={() => {
+                    setSelectedCollectible(collectible)
+                    setActiveModal(MODAL_TYPE.COLLECTIBLE_DETAIL)
+                  }}
+                  role="button">
                   <NftImage
                     src={collectible?.img || '/img/login-bg.png'}
                     placeholder={'/img/login-bg.png'}
                     name={collectible.name}
                   />
                 </div>
-              ))
-            )}
+              ))}
+            </div>
           </div>
         )}
       </div>

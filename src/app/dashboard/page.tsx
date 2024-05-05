@@ -41,10 +41,14 @@ export default function Dashboard() {
   // Probably use some spinner to indicate the loading time
   if (!tokenPrices || !tokenBalance || !nfts) return
 
-  const estimatedTotalValue = createCryptoTokenObject(
-    tokenBalance,
-    tokenPrices
-  ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
+  const tokens = createCryptoTokenObject(tokenBalance, tokenPrices)
+
+  const estimatedTotalValue = tokens.reduce(
+    (acc, curr) => (acc += (curr.price || 0) * curr.value),
+    0
+  )
+
+  const userName = `${username}.${process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}`
 
   return (
     <>
@@ -74,7 +78,9 @@ export default function Dashboard() {
             account?.address ? shortenEthereumAddress(account.address) : ''
           }`}
         </Typography>
-        <Typography color="text" fontVariant="extraLarge">
+        <Typography
+          color={estimatedTotalValue === 0 ? 'grey' : 'text'}
+          fontVariant="extraLarge">
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
