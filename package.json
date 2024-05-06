@@ -28,6 +28,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.50.1",
+    "react-swipeable": "^7.0.1",
     "react-transition-state": "^1.1.5",
     "styled-components": "^6.1.6",
     "swr": "^2.2.4",
