@@ -1,4 +1,5 @@
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
+
 import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { SettingsModal } from './SettingsModal'

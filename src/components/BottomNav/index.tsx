@@ -5,8 +5,8 @@ import { TransactionsIcon } from '@/components/Icons/Transactions'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { useRouter } from 'next/navigation'
+import { MODAL_TYPE } from '@/utils/modals'
 
 const StyledNav = styled.nav(({ theme }) => ({
   position: 'fixed',

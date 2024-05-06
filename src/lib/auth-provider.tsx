@@ -10,11 +10,14 @@ import { EnsRecordType } from '@/services/enService'
 import axios from 'axios'
 import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
 import { client } from './third-web/provider'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const skipRedirect = pathname.includes('profile')
+
   const {
     // safeAuthPack,
     // setSafeAuthPack,
@@ -99,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error(err)
       } finally {
         await fetchEthBalance()
-        if (goToDashboard) router.push('/dashboard')
+        if (goToDashboard && !skipRedirect) router.push('/dashboard')
       }
     }
     ensSetup()
