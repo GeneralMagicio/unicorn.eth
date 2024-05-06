@@ -14,7 +14,7 @@ export const NftImage = ({
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      className="h-[180px] w-[180px] rounded-2xl"
+      className="h-[180px] w-[180px] rounded-2xl object-cover"
       src={image}
       alt={name}
       onError={() => {

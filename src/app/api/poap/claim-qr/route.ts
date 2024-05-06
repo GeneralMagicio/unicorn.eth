@@ -23,7 +23,6 @@ export async function POST(request: Request) {
   const qr_hash = searchParams.get('qr_hash') || ''
   const secret = searchParams.get('secret') || ''
   const token = searchParams.get('token') || ''
-  console.log({ qr_hash, address, secret, token })
   try {
     const data = await poapService.postActionsClaimQr(
       {
