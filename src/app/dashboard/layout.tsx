@@ -14,6 +14,7 @@ import { activeModalAtom, currentScanAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { WithdrawModal } from '@/components/WithdrawModal'
 import { MODAL_TYPE } from '@/utils/modals'
+import { Swap } from '@/components/Swap'
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -37,6 +38,8 @@ export default function DashboardLayout({
           currentScan={currentScan}
           onDismiss={() => setActiveModal(null)}
         />
+        <Swap />
+
         <ReceiveModal
           open={activeModal === MODAL_TYPE.RECEIVE}
           onDismiss={() => setActiveModal(null)}
