@@ -1,50 +1,41 @@
-'use client'
+// import Profile from '@/components/Profile'
+// import axios from 'axios'
+// import { EnsRecordType } from '@/services/enService'
 
-import { useEffect, useState } from 'react'
-import Profile from '@/components/Profile'
-import axios from 'axios'
-import { EnsRecordType } from '@/services/enService'
-import { useAtom } from 'jotai'
-import { currentPublicProfileNameAtom, currentPublicProfileAtom } from '@/store'
+// async function getAddress(account: string) {
+//   const res = await axios.get('/api/subname/record', {
+//     params: {
+//       label: account,
+//       type: EnsRecordType.ACCOUNT_ADDRESS,
+//     },
+//   })
+//   return res.data.ACCOUNT_ADDRESS
+// }
 
-async function getAddress(account: string) {
-  const res = await axios.get('/api/subname/record', {
-    params: {
-      label: account,
-      type: EnsRecordType.ACCOUNT_ADDRESS,
-    },
+export async function generateStaticParams() {
+  // TODO: Get all addresses before
+  // for now this is an example
+  return ['dazab'].map((account) => {
+    return {
+      account,
+      address: '0x379f6B7E32253C8e0B1c46f06051a0B803e2B642',
+    }
   })
-  return res.data.ACCOUNT_ADDRESS
 }
 
-export default function Account({ params }: { params: { account: string } }) {
-  const { account } = params
-  const [loading, setLoading] = useState(false)
-  const [address, setCurrentPublicProfile] = useAtom(currentPublicProfileAtom)
-  const [, setCurrentPublicProfileName] = useAtom(currentPublicProfileNameAtom)
-
-  useEffect(() => {
-    if (account) {
-      try {
-        setLoading(true)
-        getAddress(account).then((addr) => {
-          setCurrentPublicProfile(addr)
-          setCurrentPublicProfileName(account)
-        })
-        setLoading(false)
-      } catch (error) {
-        setLoading(false)
-      }
-    }
-  }, [account])
+export default function Account({
+  params,
+}: {
+  params: { account: string; address: string }
+}) {
+  const { account, address } = params
 
   return (
     <div className="flex flex-col gap-6">
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <Profile username={account} userAddress={address || ''} />
-      )}
+      <p>
+        your profile {account} {address}
+      </p>
+      {/* <Profile username={account} userAddress={address || ''} /> */}
     </div>
   )
 }

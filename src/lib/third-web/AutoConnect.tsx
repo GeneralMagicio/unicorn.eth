@@ -20,7 +20,7 @@ export const ThirdwebAutoConnect = () => {
   const { connect } = useConnect()
 
   const pathname = usePathname()
-  const skipAutoConnect = pathname.includes('profile')
+  const skipAutoConnect = pathname?.includes('profile')
 
   useEffect(() => {
     const main = async () => {

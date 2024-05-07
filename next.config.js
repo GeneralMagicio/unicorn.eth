@@ -1,6 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: process.env.NEXT_OUTPUT_MODE || 'standalone',
+  reactStrictMode: true,
+  trailingSlash: true,
+  webpack: (config) => {
+    if (process.env.NEXT_OUTPUT_MODE !== 'export' || !config.module) {
+      return config
+    }
+    config.module.rules?.push(
+      {
+        test: /src\/app\/api/,
+        loader: 'ignore-loader',
+      },
+      {
+        test: /src\/app\/dashboard/,
+        loader: 'ignore-loader',
+      }
+    )
+    return config
+  },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -33,15 +53,6 @@ const nextConfig = {
         pathname: '**',
       },
     ],
-  },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/login',
-        permanent: false,
-      },
-    ]
   },
 }
 

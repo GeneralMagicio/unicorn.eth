@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react'
+'use client'
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { Button, Typography } from '@ensdomains/thorin'
 import { BalanceBox, UserInfo } from '@/components/Styled'

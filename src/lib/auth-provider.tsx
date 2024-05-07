@@ -16,7 +16,7 @@ export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const skipRedirect = pathname.includes('profile')
+  const skipRedirect = pathname?.includes('profile')
 
   const {
     // safeAuthPack,
