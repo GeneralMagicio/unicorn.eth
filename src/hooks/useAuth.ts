@@ -7,8 +7,6 @@ import {
   userEmailAtom,
   userProfilePictureAtom,
 } from '@/store'
-import { userProfileImg } from '@/store/settings'
-import { userInfo } from 'os'
 
 export const enum AUTH_STATUS {
   PENDING,

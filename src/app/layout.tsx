@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { Thirdweb5Provider } from '@/lib/third-web/provider'
 import { ThirdwebAutoConnect } from '@/lib/third-web/AutoConnect'
 import { AuthProvider } from '@/lib/auth-provider'
+import { NextRequest } from 'next/server'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,8 +17,10 @@ export const metadata = {
 
 export default async function RootLayout({
   children,
+  request,
 }: {
   children: React.ReactNode
+  request: NextRequest
 }) {
   const UA = headers().get('user-agent') || ''
   const isMobile = Boolean(
@@ -31,8 +34,8 @@ export default async function RootLayout({
         <AuthProvider>
           <html lang="en">
             <body className={inter.className}>
-              <ThirdwebAutoConnect/>
-              <main className="m-auto flex min-h-screen max-w-[430px] flex-col items-center justify-center bg-white">
+              <ThirdwebAutoConnect />
+              <main className="fixed inset-0 m-auto flex max-w-[430px] flex-col items-center justify-center bg-white">
                 {!isMobile
                   ? 'This app can only be viewed on mobile.'
                   : children}

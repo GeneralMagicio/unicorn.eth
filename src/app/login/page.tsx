@@ -22,13 +22,14 @@ export default function Login() {
   const [isSigning, setIsSigning] = useState(false)
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
-  const {isAutoConnecting} = useIsAutoConnecting()
+  const { isAutoConnecting } = useIsAutoConnecting()
 
-  const {connect} = useConnect()
-  const {disconnect} = useDisconnect()
+  const { connect } = useConnect()
+  const { disconnect } = useDisconnect()
+
   const wallet = useActiveWallet()
-  
-  const {username, userProfilePicture, userEmail, setUsername} = useAuth()
+
+  const { username, userProfilePicture, userEmail, setUsername } = useAuth()
 
   const {
     isRegistering,
@@ -37,15 +38,18 @@ export default function Login() {
     debouncedCheckUserName,
     createEnsSubname,
   } = useEnsResolver()
-  
 
   const login = async () => {
-    setIsSigning(true);
+    setIsSigning(true)
     try {
-      await connect(createSmartWallet)
-      setStep(1)
+      await connect(createSmartWallet).then(() => {
+        if (wallet) {
+          setStep(1)
+          console.log({ step })
+        }
+      })
     } finally {
-      setIsSigning(false);
+      setIsSigning(false)
     }
   }
 
@@ -63,9 +67,9 @@ export default function Login() {
   return (
     <>
       {isSigning && <SigningInPage />}
-      <div className="relative h-full w-full grow">
+      <div className="relative h-full max-h-screen w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
-          {wallet && (
+          {step >= 1 && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
               onClick={handleBack}
@@ -90,7 +94,9 @@ export default function Login() {
                   <SignUpButton disabled={isAutoConnecting} onClick={login}>
                     <GoogleIcon />
                     <Typography fontVariant="body">
-                      {isAutoConnecting ? `Welcome back...` : `Sign in with Google`}
+                      {isAutoConnecting
+                        ? `Welcome back...`
+                        : `Sign in with Google`}
                     </Typography>
                   </SignUpButton>
                 </>
@@ -152,7 +158,7 @@ export default function Login() {
                     {userProfilePicture && (
                       <Image
                         className="rounded-full"
-                        src={userProfilePicture}
+                        src={userProfilePicture || '/img/ens.png'}
                         alt={username!}
                         width={72}
                         height={72}
@@ -165,7 +171,11 @@ export default function Login() {
                       {userEmail}
                     </Typography>
                   </div>
-                  <Button onClick={() => {setUsername(chosenUsername); router.push('/dashboard')}}>
+                  <Button
+                    onClick={() => {
+                      setUsername(chosenUsername.toLowerCase())
+                      router.push('/dashboard')
+                    }}>
                     Go to wallet
                   </Button>
                 </>

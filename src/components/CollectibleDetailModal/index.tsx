@@ -2,12 +2,12 @@ import { Button, Modal, Typography } from '@ensdomains/thorin'
 import Image from 'next/image'
 import { ModalHandlIcon } from '../Icons/ModalHandleIcon'
 import { useAtom } from 'jotai'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { activeModalAtom, selectedCollectibleAtom } from '@/store'
 import { LinkIcon } from '../Icons/Link'
 import { ExportIcon } from '../Icons/Export'
 import { RightIcon } from '../Icons/Right'
 import { trimString } from '@/app/dashboard/utils'
+import { MODAL_TYPE } from '@/utils/modals'
 
 export const CollectibleDetailModal: React.FC = () => {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
@@ -29,7 +29,7 @@ export const CollectibleDetailModal: React.FC = () => {
           <div className="flex flex-col gap-6">
             <img
               className="max-h-[300px] w-[350px] self-center rounded-xl"
-              src={collectible.img}
+              src={collectible?.img}
               alt={collectible.name}
             />
 

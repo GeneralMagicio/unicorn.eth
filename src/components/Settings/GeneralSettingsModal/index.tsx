@@ -17,7 +17,7 @@ import {
   showUnverifiedTokensAtom,
 } from '@/store/settings'
 import { ChevronRight } from '@/components/Icons/ChevronRight'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,

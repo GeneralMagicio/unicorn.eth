@@ -32,7 +32,7 @@ export const ChangeDomainModal: React.FC<{
     createEnsSubname(newUserName)
       .then(() => {
         setChanged(true)
-        setUsername(newUserName)
+        setUsername(newUserName.toLowerCase())
       })
       .then(() => {
         setUserProfilePicture('')

@@ -3,7 +3,8 @@ import { Button, Modal, Typography } from '@ensdomains/thorin'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { ModalHandlIcon } from '../Icons/ModalHandleIcon'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
+
 import { BalanceBox } from '../Styled'
 import { useAtom } from 'jotai'
 import { activeModalAtom, selectedTokenAtom } from '@/store'
@@ -47,7 +48,7 @@ export const TokenDetailModal: React.FC = () => {
             <BalanceBox>
               <div className="flex gap-2">
                 <Image
-                  src={token.icon || '/images/ens.png'}
+                  src={token?.icon || '/img/ens.png'}
                   alt={token.name}
                   width={46}
                   height={46}

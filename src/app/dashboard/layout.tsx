@@ -13,26 +13,8 @@ import { TransactionModal } from '@/components/TransactionModal'
 import { activeModalAtom, currentScanAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { WithdrawModal } from '@/components/WithdrawModal'
+import { MODAL_TYPE } from '@/utils/modals'
 import { Swap } from '@/components/Swap'
-
-export const enum MODAL_TYPE {
-  SETTINGS = 'SETTINGS',
-  TRANSACTION = 'TRANSACTION',
-  SEND = 'SEND',
-  RECEIVE = 'RECEIVE',
-  TOKEN_DETAIL = 'TOKEN_DETAIL',
-  SETTINGS_GENERAL = 'SETTINGS_GENERAL',
-  SETTINGS_CHANGE_CURRENCY = 'SECURITY_CHANGE_CURRENCY',
-  SETTINGS_ACCOUNT_DETAILS = 'SETTINGS_ACCOUNT_DETAILS',
-  SETTINGS_CHANGE_DOMIAN = 'SETTINGS_CHANGE_DOMIAN',
-  SETTINGS_BUY_ENS = 'SETTINGS_BUY_ENS',
-  COLLECTIBLE_DETAIL = 'COLLECTIBLE_DETAIL',
-  CLAIM_DIGITAL_STICKER = 'CLAIM_DIGITAL_STICKER',
-  WITHDRAW = 'WITHDRAW',
-  SCAN = 'SCAN',
-  SWAP = 'SWAP',
-  SWAP_SELECT_TOKENS = 'SWAP_SELECT_TOKENS',
-}
 
 export default function DashboardLayout({
   children, // will be a page or nested layout

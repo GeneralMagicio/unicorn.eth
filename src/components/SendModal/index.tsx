@@ -10,7 +10,7 @@ import { IconButton } from '../Styled'
 import { ChevronRight } from '../Icons/ChevronRight'
 import { ModalHeader } from '../ModalHeader'
 import { useAtom } from 'jotai'
-import { selectedTokenAtom } from '@/store'
+import { selectedTokenAtom, currentSendTx } from '@/store'
 import { useAuth } from '@/hooks/useAuth'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import SendConfirmation from './SendConfirmation'
@@ -26,10 +26,12 @@ export const SendModal: React.FC<{
   open: boolean
   onDismiss: () => void
   currentScan: string | null
-}> = ({ open, onDismiss, currentScan }) => {
+  isDeposit?: boolean
+}> = ({ open, onDismiss, isDeposit, currentScan }) => {
   {
     const [activeTab, setActiveTab] = useState('Tokens')
     const [selectedToken, setSelectedToken] = useAtom(selectedTokenAtom)
+    const [sendTx, setCurrentSendTx] = useAtom(currentSendTx)
     const [destinationError, setDestinationError] = useState<string | null>(
       null
     )
@@ -92,6 +94,11 @@ export const SendModal: React.FC<{
       }
       setConfirmTx(true)
       setDestination(currentDestination)
+      setCurrentSendTx({
+        destination: currentDestination,
+        amount: amount,
+        token: selectedToken,
+      })
     }
 
     const handlePaste = async () => {
@@ -122,21 +129,26 @@ export const SendModal: React.FC<{
       <Modal open={open} onDismiss={dismiss} mobileOnly>
         <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
           <ModalHeader
-            title={txDone ? 'Sent' : confirmTx ? 'Sending' : 'Send'}
+            title={
+              isDeposit
+                ? 'Deposit'
+                : txDone
+                  ? 'Sent'
+                  : confirmTx
+                    ? 'Sending'
+                    : 'Send'
+            }
           />
-          {confirmTx ? (
-            <>
-              <SendConfirmation
-                onDismiss={dismiss}
-                setTxDone={(val) => {
-                  setTxDone(val)
-                }}
-                setConfirmTx={(val) => setConfirmTx(val)}
-                destination={destination}
-                amount={amount}
-                selectedToken={selectedToken}
-              />
-            </>
+          {(confirmTx || isDeposit) && sendTx ? (
+            <SendConfirmation
+              isDeposit={isDeposit}
+              onDismiss={dismiss}
+              setTxDone={(val) => {
+                setTxDone(val)
+              }}
+              setConfirmTx={(val) => setConfirmTx(val)}
+              sendTransaction={sendTx}
+            />
           ) : (
             <>
               <Input

@@ -14,16 +14,12 @@ export function useEnsResolver() {
   const account = useActiveAccount()
 
   const checkUserName = async (input: string) => {
-    console.log('Here,', input)
-    if (/[A-Z]/.test(input)) {
-      return setIsNameAvailable(false)
-    }
     try {
       const res = await axios.get<{ isAvailable: boolean }>(
         '/api/subname/availability',
         {
           params: {
-            label: input,
+            label: input.toLowerCase(),
           },
         }
       )
@@ -40,7 +36,7 @@ export function useEnsResolver() {
     return axios
       .post('/api/subname/mint', {
         address: account.address,
-        label,
+        label: label.toLowerCase(),
       })
       .finally(() => {
         setISRegistering(false)
@@ -53,6 +49,14 @@ export function useEnsResolver() {
     (walletAddress: string) =>
       axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
         params: { address: walletAddress },
+      }),
+    []
+  )
+
+  const getSubnameData = useCallback(
+    (label: string) =>
+      axios.get<Array<any>>('/api/subname/data', {
+        params: { label },
       }),
     []
   )

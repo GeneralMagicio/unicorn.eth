@@ -10,7 +10,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { IconButton } from '@/components/Styled'
 import { PenIcon } from '@/components/Icons/Pen'
 import { ArrowRightIcon } from '@/components/Icons/ArrowRight'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
+
 import { Controller, useForm } from 'react-hook-form'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import useSWR from 'swr'
@@ -53,7 +54,8 @@ export const AccountDetailsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { username, userEmail, userProfilePicture, setUserProfilePicture } = useAuth()
+  const { username, userEmail, userProfilePicture, setUserProfilePicture } =
+    useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
 
   const {
@@ -100,22 +102,30 @@ export const AccountDetailsModal: React.FC<{
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      convertImageToBase64(e.target.files[0], (base64) => {
-        setUserProfilePicture(base64)
-
-        axios.put(
-          '/api/subname/data',
-          {
-            data: base64,
-          },
-          {
-            params: {
-              label: username,
-              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE,
+      const file = e.target.files[0]
+      const data = new FormData()
+      data.set('file', file)
+      axios
+        .post('/api/files', data)
+        .then((res) => {
+          return axios.put(
+            '/api/subname/data',
+            {
+              data: res.data.IpfsHash,
             },
-          }
-        )
-      })
+            {
+              params: {
+                label: username,
+                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+              },
+            }
+          )
+        })
+        .then(() => {
+          convertImageToBase64(file, (base64) => {
+            setUserProfilePicture(base64)
+          })
+        })
     }
   }
 
@@ -134,8 +144,8 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="rounded-full"
-                src={userProfilePicture || ''}
-                alt={username ||  '' }
+                src={userProfilePicture || '/img/validator.eth.png'}
+                alt={username || ''}
                 width={60}
                 height={60}
               />

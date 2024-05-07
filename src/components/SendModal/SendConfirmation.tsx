@@ -25,13 +25,18 @@ import { useActiveAccount, useEstimateGasCost } from 'thirdweb/react'
 import { activeChainId } from '@/lib/third-web/constants'
 import { getSupportedChain } from '@/utils/web3'
 
-interface ISendConfirmation {
+interface ISendTransaction {
   destination: string | null
   amount: string | null
-  selectedToken: ICryptoToken | null
+  token: ICryptoToken | null
+}
+
+interface ISendConfirmation {
+  sendTransaction: ISendTransaction
   onDismiss: () => void
   setConfirmTx: (value: boolean) => void
   setTxDone: (value: boolean) => void
+  isDeposit?: boolean
 }
 
 enum TxState {
@@ -42,23 +47,32 @@ enum TxState {
 }
 
 const SendConfirmation = ({
+  sendTransaction,
   onDismiss,
   setConfirmTx,
   setTxDone,
-  destination,
-  selectedToken,
-  amount,
+  isDeposit,
 }: ISendConfirmation) => {
+  console.log({
+    sendTransaction,
+    onDismiss,
+    setConfirmTx,
+    setTxDone,
+    isDeposit,
+  })
+  console.log({ sendTransaction })
   const router = useRouter()
   const account = useActiveAccount()
   const { mutate: estimateGasCost, data: gasEstimate } = useEstimateGasCost()
   const [txState, setTxState] = useState<TxState>(TxState.Initial)
   // TODO: right now sepolia, please make it dynamic according to the token
   const chainId = activeChainId
+  const selectedToken = sendTransaction?.token
   const supportedToken = supportedTokens.find(
     (token: SupportedToken) => token.symbol === selectedToken?.symbol
   )
-
+  const destination = sendTransaction?.destination
+  const amount = sendTransaction?.amount
   const _selectedToken = supportedToken?.addresses.find(
     (i) => i.chainId === chainId
   ) as any
@@ -79,12 +93,12 @@ const SendConfirmation = ({
           to: destination,
           chain: getSupportedChain(chainId),
           client: client,
-          value: toWei(amount),
+          value: toWei(amount?.toString()),
         })
       : prepareContractCall({
           contract,
           method: 'transfer',
-          params: [destination, toWei(amount)],
+          params: [destination, toWei(amount?.toString())],
           value: BigInt(0),
         })
     : null
@@ -115,7 +129,6 @@ const SendConfirmation = ({
       setTxState(TxState.Failed)
     }
   }
-  console.log({ tx })
   useEffect(() => {
     const getGas = async () => {
       try {
@@ -161,7 +174,7 @@ const SendConfirmation = ({
                 width={24}
                 height={24}
                 className="h-[24px] w-[24px] rounded-full"
-                src={selectedToken?.icon!}
+                src={selectedToken?.icon || '/img/ens.png'}
                 alt="token icon"
               />
               <Typography weight="bold">
@@ -269,6 +282,7 @@ const SendConfirmation = ({
         <CancelButton
           onClick={async () => {
             setConfirmTx(false)
+            isDeposit && onDismiss()
           }}
           className="btn-secondary">
           Cancel

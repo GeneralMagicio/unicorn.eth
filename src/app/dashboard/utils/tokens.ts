@@ -15,7 +15,7 @@ export const createCryptoTokenObject = (
     if (!tokenInfo || balance <= 0) continue
     result.push({
       name: tokenInfo.name,
-      icon: tokenInfo.logo.src,
+      icon: tokenInfo?.logo?.src || '/img/ens.png',
       price: prices[symbol],
       value: balance,
       symbol,
