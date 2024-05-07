@@ -7,10 +7,10 @@ import { Typography, Button } from '@ensdomains/thorin'
 import styled from 'styled-components'
 import { TokenSelectItem } from '../TokenSelectItem'
 import { useSwapContext } from '../swap-context'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { ICryptoToken } from '@/services/types'
 import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
+import { MODAL_TYPE } from '@/utils/modals'
 
 const InfoBox = styled.div(({ theme }) => ({
   display: 'flex',

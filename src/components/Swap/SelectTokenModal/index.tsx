@@ -12,7 +12,7 @@ import { TokenSelectItem } from '../TokenSelectItem'
 import { useSwapContext } from '../swap-context'
 import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
+import { MODAL_TYPE } from '@/utils/modals'
 
 export const SelectTokenModal: React.FC = () => {
   {

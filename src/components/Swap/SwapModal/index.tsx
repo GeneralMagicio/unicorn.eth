@@ -3,12 +3,12 @@ import { ModalHeader } from '@/components/ModalHeader'
 import { Modal } from '@ensdomains/thorin'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
-import { MODAL_TYPE } from '@/app/dashboard/layout'
 import { useSwapContext } from '../swap-context'
 import { USDC_TOKEN } from '@/utils/db'
 import { SwapForm } from '../SwapForm'
 import { SwapMultiSelect } from '../SwapMultiSelect'
 import { SwapConfirmation } from '../SwapConfirmation'
+import { MODAL_TYPE } from '@/utils/modals'
 
 export const SwapModal: React.FC = () => {
   {

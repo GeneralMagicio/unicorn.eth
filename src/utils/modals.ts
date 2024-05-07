@@ -14,6 +14,8 @@ export const enum MODAL_TYPE {
   WITHDRAW = 'WITHDRAW',
   SCAN = 'SCAN',
   DEPOSIT = 'DEPOSIT',
+  SWAP = 'SWAP',
+  SWAP_SELECT_TOKENS = 'SWAP_SELECT_TOKENS',
 }
 
 export const enum DEPOSIT_MODAL_TYPE {
