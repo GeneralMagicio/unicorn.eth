@@ -14,8 +14,6 @@ type MessageBoxProps = {
   onClose: () => void
 }
 
-// return <div {...handlers}> You can swipe here </div>;
-
 const numberOfSteps = 3
 
 export const PromotionBox: FC<MessageBoxProps> = ({
@@ -81,8 +79,7 @@ export const PromotionBox: FC<MessageBoxProps> = ({
       )}
       {step === 2 && (
         <div
-          className="flex cursor-pointer items-center gap-4"
-          onClick={() => setActiveModal(MODAL_TYPE.CLAIM_DIGITAL_STICKER)}>
+          className="flex cursor-pointer items-center gap-4">
           <span className="rounded-full bg-blue-500 p-1">
             <Image src={'/img/eth.png'} alt="poap" width={40} height={40} />
           </span>
@@ -104,8 +101,7 @@ export const PromotionBox: FC<MessageBoxProps> = ({
       )}
       {step === 3 && (
         <div
-          className="flex cursor-pointer items-center gap-4"
-          onClick={() => setActiveModal(MODAL_TYPE.CLAIM_DIGITAL_STICKER)}>
+          className="flex cursor-pointer items-center gap-4">
           <span className="rounded-full bg-blue-500 p-1">
             <Image src={'/img/ens.png'} alt="poap" width={40} height={40} />
           </span>

@@ -90,7 +90,7 @@ export default function Dashboard() {
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-      {true && (
+      {showPromotionBox && canMintPOAP && (
         <PromotionBox
           title="Claim your digital collectible"
           subtitle="Welcome to your web3 wallet."
