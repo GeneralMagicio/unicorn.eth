@@ -15,11 +15,16 @@ import { MODAL_TYPE } from '@/utils/modals'
 import { Controller, useForm } from 'react-hook-form'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import useSWR from 'swr'
-import { EnsRecordType, getSubnameMetadata } from '@/services/enService'
+import {
+  EnsRecordType,
+  getSubnameMetadata,
+  nsService,
+} from '@/services/enService'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { convertImageToBase64 } from '@/utils/image'
 import { UploadIcon } from '@/components/Icons/Upload'
 import axios from 'axios'
+import { pinataService } from '@/services/pinata'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -71,25 +76,35 @@ export const AccountDetailsModal: React.FC<{
     ),
   })
   const onSubmit = (data: FormData) => {
-    return axios.put('/api/subname/record', {
+    return nsService.createTextRecord({
       label: username,
       key: EnsRecordType.ACCOUNT_INFO,
       text: encodeURIComponent(JSON.stringify(data)),
     })
+    // return axios.put('/api/subname/record', {
+    //   label: username,
+    //   key: EnsRecordType.ACCOUNT_INFO,
+    //   text: encodeURIComponent(JSON.stringify(data)),
+    // })
   }
 
   useEffect(() => {
     if (open) {
-      axios
-        .get<{ record: string }>('/api/subname/record', {
-          params: {
-            label: username,
-            key: EnsRecordType.ACCOUNT_INFO,
-          },
+      // axios
+      //   .get<{ record: string }>('/api/subname/record', {
+      //     params: {
+      //       label: username,
+      //       key: EnsRecordType.ACCOUNT_INFO,
+      //     },
+      //   })
+      nsService
+        .getSubnameMetadata({
+          label: username,
+          key: EnsRecordType.ACCOUNT_INFO,
         })
         .then((data) => {
-          if (data.data?.record) {
-            setAccountDetails(JSON.parse(data.data?.record))
+          if (data?.record) {
+            setAccountDetails(JSON.parse(data?.record))
           }
           return {}
         })
@@ -103,29 +118,44 @@ export const AccountDetailsModal: React.FC<{
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
-      const data = new FormData()
-      data.set('file', file)
-      axios
-        .post('/api/files', data)
+      pinataService
+        .uploadImage(file)
         .then((res) => {
-          return axios.put(
-            '/api/subname/data',
-            {
-              data: res.data.IpfsHash,
-            },
-            {
-              params: {
-                label: username,
-                key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-              },
-            }
-          )
+          return nsService.createCustomSubnameData({
+            label: username,
+            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+            data: res.data.IpfsHash,
+          })
         })
         .then(() => {
           convertImageToBase64(file, (base64) => {
             setUserProfilePicture(base64)
           })
         })
+
+      // const data = new FormData()
+      // data.set('file', file)
+      // axios
+      //   .post('/api/files', data)
+      //   .then((res) => {
+      //     return axios.put(
+      //       '/api/subname/data',
+      //       {
+      //         data: res.data.IpfsHash,
+      //       },
+      //       {
+      //         params: {
+      //           label: username,
+      //           key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+      //         },
+      //       }
+      //     )
+      //   })
+      //   .then(() => {
+      //     convertImageToBase64(file, (base64) => {
+      //       setUserProfilePicture(base64)
+      //     })
+      //   })
     }
   }
 

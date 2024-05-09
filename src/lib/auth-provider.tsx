@@ -5,7 +5,7 @@ import { getUserEmail } from 'thirdweb/wallets/in-app'
 
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useAuth } from '@/hooks/useAuth'
-import { EnsRecordType } from '@/services/enService'
+import { EnsRecordType, nsService } from '@/services/enService'
 
 import axios from 'axios'
 import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
@@ -78,26 +78,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const username = res.data[res.data.length - 1]?.label || ''
+        const username = res[res.length - 1]?.label || ''
         setUsername(username.toLowerCase())
 
         goToDashboard = true
-
-        const { data } = await axios.get('/api/subname/data', {
-          params: {
-            label: username,
-            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-          },
+        const data = await nsService.getCustomSubnameData({
+          label: username,
+          key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
         })
-        if (data.data)
+        // const { data } = await axios.get('/api/subname/data', {
+        //   params: {
+        //     label: username,
+        //     key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+        //   },
+        // })
+        if (data)
           setUserProfilePicture(
-            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
+            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data}`
           )
-        axios.put('/api/subname/record', {
+        nsService.createTextRecord({
           label: username,
           key: EnsRecordType.ACCOUNT_ADDRESS,
           text: account.address,
         })
+        // axios.put('/api/subname/record', {
+        //   label: username,
+        //   key: EnsRecordType.ACCOUNT_ADDRESS,
+        //   text: account.address,
+        // })
       } catch (err) {
         console.error(err)
       } finally {

@@ -1,18 +1,17 @@
 import { OsNft } from '@/app/dashboard/utils/nft-balance-opensea'
 import axios from 'axios'
+import { API_KEYS } from './api-keys'
 
 export const axiosInstance = axios.create({
-  baseURL: process.env.POAP_BASE_URL,
+  baseURL: process.env.POAP_BASE_URL || API_KEYS.POAP_BASE_URL,
   headers: {
     'Content-type': 'application/json',
-    'X-API-Key': process.env.POAP_API_KEY,
+    'X-API-Key': process.env.POAP_API_KEY || API_KEYS.POAP_API_KEY,
   },
 })
 
 export const getUserPOAPs = async (address: string): Promise<OsNft[]> => {
-  const res = await axiosInstance.get<PoapResponse[]>(
-    `actions/scan/${address}`
-  )
+  const res = await axiosInstance.get<PoapResponse[]>(`actions/scan/${address}`)
 
   return res.data.map(({ event, created, tokenId }) => ({
     collection: 'POAP',
@@ -38,9 +37,12 @@ export const getUserPOAPs = async (address: string): Promise<OsNft[]> => {
 
 export function postEventQRCodes(token: string) {
   return axiosInstance
-    .post<boolean>(
-      `/event/${process.env.POAP_EVENT_ID}/qr-codes`,
-      { secret_code: process.env.POAP_EVENT_SECRET },
+    .post<Array<{ claimed: boolean; qr_hash: string }>>(
+      `/event/${process.env.POAP_EVENT_ID || API_KEYS.POAP_EVENT_ID}/qr-codes`,
+      {
+        secret_code:
+          process.env.POAP_EVENT_SECRET || API_KEYS.POAP_EVENT_SECRET,
+      },
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -50,7 +52,7 @@ export function postEventQRCodes(token: string) {
 
 export function getActionsClaimQr(params: { qr_hash: string }, token: string) {
   return axiosInstance
-    .get<boolean>('/actions/claim-qr', {
+    .get<{ secret: string }>('/actions/claim-qr', {
       params,
       headers: { Authorization: `Bearer ${token}` },
     })
@@ -75,8 +77,13 @@ export function postActionsClaimQr(
 
 export function getActionsScan(params: { address: string }) {
   return axiosInstance
-    .get<boolean>(
-      `/actions/scan/${params.address}/${process.env.POAP_EVENT_ID}`,
+    .get<{
+      owner?: string
+      error?: string
+    }>(
+      `/actions/scan/${params.address}/${
+        process.env.POAP_EVENT_ID || API_KEYS.POAP_EVENT_ID
+      }`,
       {
         params,
       }
@@ -86,16 +93,17 @@ export function getActionsScan(params: { address: string }) {
 
 export function postOauthToken() {
   return axiosInstance
-    .post<boolean>(
+    .post<{ access_token: string }>(
       '/oauth/token',
       {
         audience: 'https://api.poap.tech',
         grant_type: 'client_credentials',
-        client_id: process.env.POAP_CLIENT_ID,
-        client_secret: process.env.POAP_CLIENT_SECRET,
+        client_id: process.env.POAP_CLIENT_ID || API_KEYS.POAP_CLIENT_ID,
+        client_secret:
+          process.env.POAP_CLIENT_SECRET || API_KEYS.POAP_CLIENT_SECRET,
       },
       {
-        baseURL: process.env.POAP_AUTH_BASE_URL,
+        baseURL: process.env.POAP_AUTH_BASE_URL || API_KEYS.POAP_AUTH_BASE_URL,
         headers: {
           'X-API-Key': undefined,
         },
@@ -113,22 +121,39 @@ export async function mint({
   address: string
   mintLink: { qr_hash: string; claimed: boolean }
 }) {
-  const secret = await axios
-    .get<{ secret: string }>(`/api/poap/claim-qr`, {
-      params: {
-        qr_hash: mintLink.qr_hash,
-        token,
-      },
-    })
-    .then((res) => res.data.secret)
-  return axios.post<{ secret: string }>('/api/poap/claim-qr', null, {
-    params: {
+  const data = await poapService.getActionsClaimQr(
+    {
+      qr_hash: mintLink.qr_hash,
+    },
+    token
+  )
+
+  // const secret = await axios
+  //   .get<{ secret: string }>(`/api/poap/claim-qr`, {
+  //     params: {
+  //       qr_hash: mintLink.qr_hash,
+  //       token,
+  //     },
+  //   })
+  //   .then((res) => res.data.secret)
+  return poapService.postActionsClaimQr(
+    {
       address: address,
       qr_hash: mintLink?.qr_hash,
-      secret: secret,
-      token,
+      secret: data.secret,
+      sendEmail: false,
     },
-  })
+    token
+  )
+
+  // return axios.post<{ secret: string }>('/api/poap/claim-qr', null, {
+  //   params: {
+  //     address: address,
+  //     qr_hash: mintLink?.qr_hash,
+  //     secret: secret,
+  //     token,
+  //   },
+  // })
 }
 export const poapService = {
   postOauthToken,
