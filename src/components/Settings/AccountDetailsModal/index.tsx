@@ -1,4 +1,11 @@
-import { Button, Input, Modal, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  Input,
+  Modal,
+  Spinner,
+  Toast,
+  Typography,
+} from '@ensdomains/thorin'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
 import { ModalHeader } from '@/components/ModalHeader'
@@ -13,17 +20,10 @@ import { ArrowRightIcon } from '@/components/Icons/ArrowRight'
 import { MODAL_TYPE } from '@/utils/modals'
 
 import { Controller, useForm } from 'react-hook-form'
-import { useEnsResolver } from '@/hooks/useEnsResolver'
-import useSWR from 'swr'
-import {
-  EnsRecordType,
-  getSubnameMetadata,
-  nsService,
-} from '@/services/enService'
+import { EnsRecordType, nsService } from '@/services/enService'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { convertImageToBase64 } from '@/utils/image'
 import { UploadIcon } from '@/components/Icons/Upload'
-import axios from 'axios'
 import { pinataService } from '@/services/pinata'
 
 const UserInfoBox = styled.div(({ theme }) => ({
@@ -62,6 +62,8 @@ export const AccountDetailsModal: React.FC<{
   const { username, userEmail, userProfilePicture, setUserProfilePicture } =
     useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
+  const [isUploading, setIsUploading] = useState(false)
+  const [isSubmited, setIsSubmited] = useState(true)
 
   const {
     handleSubmit,
@@ -76,11 +78,15 @@ export const AccountDetailsModal: React.FC<{
     ),
   })
   const onSubmit = (data: FormData) => {
-    return nsService.createTextRecord({
-      label: username,
-      key: EnsRecordType.ACCOUNT_INFO,
-      text: encodeURIComponent(JSON.stringify(data)),
-    })
+    return nsService
+      .createTextRecord({
+        label: username,
+        key: EnsRecordType.ACCOUNT_INFO,
+        text: encodeURIComponent(JSON.stringify(data)),
+      })
+      .then(() => {
+        setIsSubmited(true)
+      })
     // return axios.put('/api/subname/record', {
     //   label: username,
     //   key: EnsRecordType.ACCOUNT_INFO,
@@ -108,6 +114,7 @@ export const AccountDetailsModal: React.FC<{
           }
           return {}
         })
+      setIsSubmited(false)
     }
   }, [open, username])
 
@@ -118,6 +125,7 @@ export const AccountDetailsModal: React.FC<{
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0]
+      setIsUploading(true)
       pinataService
         .uploadImage(file)
         .then((res) => {
@@ -131,6 +139,9 @@ export const AccountDetailsModal: React.FC<{
           convertImageToBase64(file, (base64) => {
             setUserProfilePicture(base64)
           })
+        })
+        .finally(() => {
+          setIsUploading(false)
         })
 
       // const data = new FormData()
@@ -167,13 +178,13 @@ export const AccountDetailsModal: React.FC<{
           <div className="flex gap-2 ">
             <div className="relative">
               <input
-                className="absolute inset-0 opacity-0"
+                className="absolute inset-0 z-10 opacity-0"
                 type="file"
                 ref={inputRef}
                 onInput={handleFileChange}
               />
               <Image
-                className="rounded-full"
+                className="max-h-[60px] max-w-[60px] rounded-full"
                 src={userProfilePicture || '/img/validator.eth.png'}
                 alt={username || ''}
                 width={60}
@@ -182,6 +193,11 @@ export const AccountDetailsModal: React.FC<{
               <div className="!absolute bottom-0 right-0 rounded-full bg-white p-1">
                 <UploadIcon />
               </div>
+              {isUploading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Spinner size="medium" color="indigoSurface" />
+                </div>
+              )}
             </div>
             <div className="flex flex-col justify-center gap-2">
               <Typography fontVariant="bodyBold">
@@ -272,6 +288,16 @@ export const AccountDetailsModal: React.FC<{
               Update
             </Button>
           </form>
+          <Toast
+            msToShow={1000}
+            description="Your information has been updated"
+            open={isSubmited}
+            title=""
+            className="text-center"
+            bottom="0"
+            variant="touch"
+            onClose={() => setIsSubmited(false)}
+          />
         </div>
       </div>
     </Modal>

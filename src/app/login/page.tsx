@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button, Input, Typography } from '@ensdomains/thorin'
 import { GoogleIcon } from '@/components/Icons/Google'
@@ -15,6 +15,8 @@ import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useActiveWallet, useConnect, useDisconnect } from 'thirdweb/react'
 import { createSmartWallet } from '@/lib/third-web/methods'
 import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
+import { useAtom } from 'jotai'
+import { isSettingEnsInfoAtom } from '@/store'
 
 export default function Login() {
   const router = useRouter()
@@ -23,13 +25,20 @@ export default function Login() {
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
   const { isAutoConnecting } = useIsAutoConnecting()
+  const [isSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
 
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
 
   const wallet = useActiveWallet()
 
-  const { username, userProfilePicture, userEmail, setUsername } = useAuth()
+  const {
+    username,
+    userProfilePicture,
+    userEmail,
+    setUsername,
+    clearUserInfo,
+  } = useAuth()
 
   const {
     isRegistering,
@@ -39,22 +48,25 @@ export default function Login() {
     createEnsSubname,
   } = useEnsResolver()
 
+  useEffect(() => {
+    if (wallet && step !== 1) {
+      setStep(1)
+    }
+  }, [wallet, step])
   const login = async () => {
     setIsSigning(true)
     try {
-      await connect(createSmartWallet).then(() => {
-        if (wallet) {
-          setStep(1)
-          console.log({ step })
-        }
-      })
+      await connect(createSmartWallet)
     } finally {
       setIsSigning(false)
     }
   }
 
   const logout = async () => {
-    if (wallet) disconnect(wallet)
+    if (wallet) {
+      disconnect(wallet)
+      clearUserInfo()
+    }
   }
 
   const handleBack = () => {
@@ -63,10 +75,19 @@ export default function Login() {
     }
     setStep(Math.max(step - 1, 0))
   }
-
+  console.log({
+    isSigning,
+    isAutoConnecting,
+    isSettingEnsInfo,
+    wallet,
+    username,
+  })
   return (
     <>
-      {isSigning && <SigningInPage />}
+      {(isSigning ||
+        isAutoConnecting ||
+        isSettingEnsInfo ||
+        (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
           {step >= 1 && (
