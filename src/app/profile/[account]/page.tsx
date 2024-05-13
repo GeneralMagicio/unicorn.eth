@@ -11,6 +11,9 @@ export async function generateStaticParams() {
   })
 }
 
+export const dynamicParams = true
+export const revalidate = 3600 // revalidate at most every hour
+
 export default function Account({
   params,
 }: {
