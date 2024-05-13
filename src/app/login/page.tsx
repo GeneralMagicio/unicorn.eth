@@ -18,9 +18,15 @@ import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
 
+const enum LoginSteps {
+  WELCOME_SCREEN,
+  PICK_USERNAME,
+  PROFILE_PREVIEW,
+}
+
 export default function Login() {
   const router = useRouter()
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(LoginSteps.WELCOME_SCREEN)
   const [isSigning, setIsSigning] = useState(false)
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
@@ -49,8 +55,8 @@ export default function Login() {
   } = useEnsResolver()
 
   useEffect(() => {
-    if (wallet && step !== 1) {
-      setStep(1)
+    if (wallet && step !== LoginSteps.PICK_USERNAME) {
+      setStep(LoginSteps.PICK_USERNAME)
     }
   }, [wallet, step])
   const login = async () => {
@@ -70,18 +76,12 @@ export default function Login() {
   }
 
   const handleBack = () => {
-    if (step === 1) {
+    if (step === LoginSteps.PICK_USERNAME) {
       logout()
     }
     setStep(Math.max(step - 1, 0))
   }
-  console.log({
-    isSigning,
-    isAutoConnecting,
-    isSettingEnsInfo,
-    wallet,
-    username,
-  })
+
   return (
     <>
       {(isSigning ||
@@ -90,7 +90,7 @@ export default function Login() {
         (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
-          {step >= 1 && (
+          {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
               onClick={handleBack}
@@ -106,11 +106,11 @@ export default function Login() {
               width={170}
               height={48}
               className={cn('mx-auto object-cover', {
-                'mt-[57px]': step === 0,
+                'mt-[57px]': step === LoginSteps.WELCOME_SCREEN,
               })}
             />
             <div className="flex flex-col gap-6">
-              {step === 0 && (
+              {step === LoginSteps.WELCOME_SCREEN && (
                 <>
                   <SignUpButton disabled={isAutoConnecting} onClick={login}>
                     <GoogleIcon />
@@ -122,7 +122,7 @@ export default function Login() {
                   </SignUpButton>
                 </>
               )}
-              {step === 1 && (
+              {step === LoginSteps.PICK_USERNAME && (
                 <>
                   <Typography fontVariant="extraLarge">
                     Choose your wallet domain.
@@ -163,14 +163,14 @@ export default function Login() {
                     disabled={!chosenUsername || !Boolean(isNameAvailable)}
                     onClick={() => {
                       createEnsSubname(chosenUsername).then(() => {
-                        setStep(2)
+                        setStep(LoginSteps.PROFILE_PREVIEW)
                       })
                     }}>
                     Next
                   </Button>
                 </>
               )}
-              {step === 2 && (
+              {step === LoginSteps.PROFILE_PREVIEW && (
                 <>
                   <Typography fontVariant="extraLarge">
                     Welcome to the web3
