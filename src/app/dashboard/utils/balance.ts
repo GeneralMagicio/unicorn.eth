@@ -94,6 +94,7 @@ export async function getBalanceForTokenChainPairs(
   }
   for (const token of supportedTokens) {
     for (const { address, chainId } of token.addresses) {
+      if (chainId === SupportedChainIds.Arbitrum) continue
       promises.push(func(token.symbol, address, chainId))
     }
   }
