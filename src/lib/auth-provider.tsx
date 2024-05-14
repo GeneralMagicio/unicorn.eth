@@ -5,18 +5,20 @@ import { getUserEmail } from 'thirdweb/wallets/in-app'
 
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useAuth } from '@/hooks/useAuth'
-import { EnsRecordType } from '@/services/enService'
+import { EnsRecordType, nsService } from '@/services/enService'
 
-import axios from 'axios'
 import { useActiveAccount, useActiveWallet } from 'thirdweb/react'
 import { client } from './third-web/provider'
 import { usePathname, useRouter } from 'next/navigation'
+import { useAtom } from 'jotai'
+import { isSettingEnsInfoAtom } from '@/store'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const skipRedirect = pathname.includes('profile')
+  const [, setIsSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
 
   const {
     // safeAuthPack,
@@ -74,34 +76,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const ensSetup = async () => {
       if (!wallet || !account) return
       setUserAddress(account.address)
+      setIsSettingEnsInfo(true)
       const email = await getUserEmail({ client })
       if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const username = res.data[res.data.length - 1]?.label || ''
+        const username = res[res?.length - 1]?.label || ''
         setUsername(username.toLowerCase())
 
         goToDashboard = true
-
-        const { data } = await axios.get('/api/subname/data', {
-          params: {
+        nsService
+          .getCustomSubnameData({
             label: username,
             key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-          },
-        })
-        if (data.data)
-          setUserProfilePicture(
-            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
-          )
-        axios.put('/api/subname/record', {
+          })
+          .then((data) => {
+            setUserProfilePicture(
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
+            )
+          })
+        // const { data } = await axios.get('/api/subname/data', {
+        //   params: {
+        //     label: username,
+        //     key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+        //   },
+        // })
+
+        nsService.createTextRecord({
           label: username,
           key: EnsRecordType.ACCOUNT_ADDRESS,
           text: account.address,
         })
+        // axios.put('/api/subname/record', {
+        //   label: username,
+        //   key: EnsRecordType.ACCOUNT_ADDRESS,
+        //   text: account.address,
+        // })
       } catch (err) {
         console.error(err)
       } finally {
-        await fetchEthBalance()
+        setIsSettingEnsInfo(false)
+        fetchEthBalance()
         if (goToDashboard && !skipRedirect) router.push('/dashboard')
       }
     }

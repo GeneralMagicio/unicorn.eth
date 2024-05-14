@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { SubnameResolutionResponse } from './types/ens'
+import { API_KEYS } from './api-keys'
 
 export const axiosInstance = axios.create({
   baseURL:
@@ -7,7 +8,9 @@ export const axiosInstance = axios.create({
     'https://offchain.namespace.tech',
   headers: {
     'Content-type': 'application/json',
-    Authorization: `Bearer ${process.env.OFFCHIAN_API_KEY}`,
+    Authorization: `Bearer ${
+      process.env.OFFCHIAN_API_KEY || API_KEYS.OFFCHIAN_API_KEY
+    }`,
   },
 })
 
@@ -70,10 +73,16 @@ export function createCustomSubnameData(body: {
 export function getCustomSubnameData(params: { label: string; key: string }) {
   const { label, key } = params
   return axiosInstance
-    .get<string>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`)
+    .get<{ data: string }>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`)
     .then((res) => res.data)
 }
 
 export const nsService = {
   getIsNameAvailable,
+  getSubnameResolution,
+  getSubnameMetadata,
+  getCustomSubnameData,
+  createSubname,
+  createCustomSubnameData,
+  createTextRecord,
 }

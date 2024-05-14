@@ -29,6 +29,12 @@ export const useAuth = () => {
   // const [signer, setSigner] = useAtom(signerAtom)
   const [ethBalance, setEthBalance] = useAtom(ethBalanceAtom)
   // const [profileImage, setProfileImage] = useAtom(userProfileImg)
+  const clearUserInfo = () => {
+    setUsername('')
+    setUserEmail('')
+    setUserProfilePicture('')
+    setUserAddress('')
+  }
 
   return {
     // safeAuthPack,
@@ -55,6 +61,7 @@ export const useAuth = () => {
     // setSigner,
     ethBalance,
     setEthBalance,
+    clearUserInfo,
     // userAddress,
     // setUserAddress,
   }

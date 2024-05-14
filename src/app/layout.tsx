@@ -1,7 +1,7 @@
 import { ClientProviders } from '@/lib/client-providers'
 import './globals.css'
 import { Inter } from 'next/font/google'
-import { headers } from 'next/headers'
+
 import { Thirdweb5Provider } from '@/lib/third-web/provider'
 import { ThirdwebAutoConnect } from '@/lib/third-web/AutoConnect'
 import { AuthProvider } from '@/lib/auth-provider'
@@ -22,12 +22,6 @@ export default async function RootLayout({
   children: React.ReactNode
   request: NextRequest
 }) {
-  const UA = headers().get('user-agent') || ''
-  const isMobile = Boolean(
-    UA.match(
-      /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i
-    )
-  )
   return (
     <ClientProviders>
       <Thirdweb5Provider>
@@ -36,9 +30,7 @@ export default async function RootLayout({
             <body className={inter.className}>
               <ThirdwebAutoConnect />
               <main className="fixed inset-0 m-auto flex max-w-[430px] flex-col items-center justify-center bg-white">
-                {!isMobile
-                  ? 'This app can only be viewed on mobile.'
-                  : children}
+                {children}
               </main>
             </body>
           </html>

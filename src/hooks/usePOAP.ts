@@ -11,19 +11,20 @@ export function usePOAP() {
     access_token: string
   }>(
     'poap-access-token',
-    () => axios.post('/api/poap/token').then((res) => res.data),
+    () => poapService.postOauthToken(),
+    // axios.post('/api/poap/token').then((res) => res.data),
     { revalidateIfStale: false }
   )
   const { data: mintLinks } = useSWR(
     () => tokenData?.access_token,
-    () =>
-      axios
-        .post<Array<{ qr_hash: string; claimed: boolean }>>(
-          `/api/poap/event`,
-          null,
-          { params: { token: tokenData?.access_token } }
-        )
-        .then((res) => res.data),
+    () => poapService.postEventQRCodes(tokenData?.access_token!),
+    // axios
+    //   .post<Array<{ qr_hash: string; claimed: boolean }>>(
+    //     `/api/poap/event`,
+    //     null,
+    //     { params: { token: tokenData?.access_token } }
+    //   )
+    //   .then((res) => res.data),
     { revalidateIfStale: false }
   )
 
@@ -37,19 +38,23 @@ export function usePOAP() {
       })
   )
 
-  const { data: poapMintData, isLoading: isCheckingPOAPStatus } = useSWR<{
-    owner?: string
-    error?: string
-  }>(
+  const { data: poapMintData, isLoading: isCheckingPOAPStatus } = useSWR<
+    | {
+        owner?: string
+        error?: string
+      }
+    | undefined
+  >(
     `poap-actions-${userAddress}`,
     () =>
       !userAddress
         ? Promise.resolve(undefined)
-        : axios
-            .get('/api/poap/actions', {
-              params: { address: userAddress },
-            })
-            .then((res) => res.data),
+        : poapService.getActionsScan({ address: userAddress }),
+    // axios
+    //     .get('/api/poap/actions', {
+    //       params: { address: userAddress },
+    //     })
+    //     .then((res) => res.data),
     { revalidateIfStale: false }
   )
 

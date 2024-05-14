@@ -1,4 +1,4 @@
-import { getSubnameMetadata } from '@/services/enService'
+import { getSubnameMetadata, nsService } from '@/services/enService'
 import { useCallback, useState } from 'react'
 import { debounce } from '@/utils/debounce'
 import axios from 'axios'
@@ -15,15 +15,18 @@ export function useEnsResolver() {
 
   const checkUserName = async (input: string) => {
     try {
-      const res = await axios.get<{ isAvailable: boolean }>(
-        '/api/subname/availability',
-        {
-          params: {
-            label: input.toLowerCase(),
-          },
-        }
-      )
-      setIsNameAvailable(res.data.isAvailable ?? null)
+      const data = await nsService.getIsNameAvailable({
+        label: input.toLowerCase(),
+      })
+      // const res = await axios.get<{ isAvailable: boolean }>(
+      //   '/api/subname/availability',
+      //   {
+      //     params: {
+      //       label: input.toLowerCase(),
+      //     },
+      //   }
+      // )
+      setIsNameAvailable(data.isAvailable ?? null)
     } catch (err) {
       setIsNameAvailable(false)
     }
@@ -32,34 +35,42 @@ export function useEnsResolver() {
     setIsNameAvailable(true)
 
     if (!account) throw new Error('Account is not available')
-
-    return axios
-      .post('/api/subname/mint', {
+    return nsService
+      .createSubname({
         address: account.address,
         label: label.toLowerCase(),
       })
       .finally(() => {
         setISRegistering(false)
       })
+    // return axios
+    //   .post('/api/subname/mint', {
+    //     address: account.address,
+    //     label: label.toLowerCase(),
+    //   })
+    //   .finally(() => {
+    //     setISRegistering(false)
+    //   })
   }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedCheckUserName = useCallback(debounce(checkUserName, 300), [])
 
   const getSubnameDataset = useCallback(
     (walletAddress: string) =>
-      axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
-        params: { address: walletAddress },
-      }),
+      nsService.getSubnameResolution({ address: walletAddress }),
+    // axios.get<Array<SubnameResolutionResponse>>('/api/subname/resolution', {
+    //   params: { address: walletAddress },
+    // }),
     []
   )
 
-  const getSubnameData = useCallback(
-    (label: string) =>
-      axios.get<Array<any>>('/api/subname/data', {
-        params: { label },
-      }),
-    []
-  )
+  // const getSubnameData = useCallback(
+  //   (label: string) =>
+  //     axios.get<Array<any>>('/api/subname/data', {
+  //       params: { label },
+  //     }),
+  //   []
+  // )
 
   const getENSAddress = async (ens: string) => {
     try {

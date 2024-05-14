@@ -14,6 +14,7 @@ import { MODAL_TYPE } from '@/utils/modals'
 import { ModalHeader } from '@/components/ModalHeader'
 import { IconButton } from '@/components/Styled'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
+import { useAuth } from '@/hooks/useAuth'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -30,6 +31,7 @@ export const SettingsModal: React.FC<{
 }> = ({ open, onDismiss }) => {
   const theme = useTheme()
   const router = useRouter()
+  const { clearUserInfo } = useAuth()
   const { disconnect } = useDisconnect()
   const wallet = useActiveWallet()
 
@@ -53,6 +55,7 @@ export const SettingsModal: React.FC<{
     if (wallet) {
       disconnect(wallet)
       setActiveModal(null)
+      clearUserInfo()
     }
   }
 

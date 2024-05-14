@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button, Input, Typography } from '@ensdomains/thorin'
 import { GoogleIcon } from '@/components/Icons/Google'
@@ -15,21 +15,36 @@ import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useActiveWallet, useConnect, useDisconnect } from 'thirdweb/react'
 import { createSmartWallet } from '@/lib/third-web/methods'
 import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
+import { useAtom } from 'jotai'
+import { isSettingEnsInfoAtom } from '@/store'
+
+const enum LoginSteps {
+  WELCOME_SCREEN,
+  PICK_USERNAME,
+  PROFILE_PREVIEW,
+}
 
 export default function Login() {
   const router = useRouter()
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(LoginSteps.WELCOME_SCREEN)
   const [isSigning, setIsSigning] = useState(false)
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
   const { isAutoConnecting } = useIsAutoConnecting()
+  const [isSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
 
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
 
   const wallet = useActiveWallet()
 
-  const { username, userProfilePicture, userEmail, setUsername } = useAuth()
+  const {
+    username,
+    userProfilePicture,
+    userEmail,
+    setUsername,
+    clearUserInfo,
+  } = useAuth()
 
   const {
     isRegistering,
@@ -39,26 +54,29 @@ export default function Login() {
     createEnsSubname,
   } = useEnsResolver()
 
+  useEffect(() => {
+    if (wallet && step !== LoginSteps.PICK_USERNAME) {
+      setStep(LoginSteps.PICK_USERNAME)
+    }
+  }, [wallet, step])
   const login = async () => {
     setIsSigning(true)
     try {
-      await connect(createSmartWallet).then(() => {
-        if (wallet) {
-          setStep(1)
-          console.log({ step })
-        }
-      })
+      await connect(createSmartWallet)
     } finally {
       setIsSigning(false)
     }
   }
 
   const logout = async () => {
-    if (wallet) disconnect(wallet)
+    if (wallet) {
+      disconnect(wallet)
+      clearUserInfo()
+    }
   }
 
   const handleBack = () => {
-    if (step === 1) {
+    if (step === LoginSteps.PICK_USERNAME) {
       logout()
     }
     setStep(Math.max(step - 1, 0))
@@ -66,10 +84,13 @@ export default function Login() {
 
   return (
     <>
-      {isSigning && <SigningInPage />}
+      {(isSigning ||
+        isAutoConnecting ||
+        isSettingEnsInfo ||
+        (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
         <div className="absolute mb-28 flex h-4/5 w-full">
-          {step >= 1 && (
+          {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
               onClick={handleBack}
@@ -85,11 +106,11 @@ export default function Login() {
               width={170}
               height={48}
               className={cn('mx-auto object-cover', {
-                'mt-[57px]': step === 0,
+                'mt-[57px]': step === LoginSteps.WELCOME_SCREEN,
               })}
             />
             <div className="flex flex-col gap-6">
-              {step === 0 && (
+              {step === LoginSteps.WELCOME_SCREEN && (
                 <>
                   <SignUpButton disabled={isAutoConnecting} onClick={login}>
                     <GoogleIcon />
@@ -101,7 +122,7 @@ export default function Login() {
                   </SignUpButton>
                 </>
               )}
-              {step === 1 && (
+              {step === LoginSteps.PICK_USERNAME && (
                 <>
                   <Typography fontVariant="extraLarge">
                     Choose your wallet domain.
@@ -142,14 +163,14 @@ export default function Login() {
                     disabled={!chosenUsername || !Boolean(isNameAvailable)}
                     onClick={() => {
                       createEnsSubname(chosenUsername).then(() => {
-                        setStep(2)
+                        setStep(LoginSteps.PROFILE_PREVIEW)
                       })
                     }}>
                     Next
                   </Button>
                 </>
               )}
-              {step === 2 && (
+              {step === LoginSteps.PROFILE_PREVIEW && (
                 <>
                   <Typography fontVariant="extraLarge">
                     Welcome to the web3
