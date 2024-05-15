@@ -17,6 +17,7 @@ import { createSmartWallet } from '@/lib/third-web/methods'
 import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
+import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -72,6 +73,7 @@ export default function Login() {
     if (wallet) {
       disconnect(wallet)
       clearUserInfo()
+      localStorage.removeItem(LAST_CONNECT_PERSONAL_WALLET_ID)
     }
   }
 
