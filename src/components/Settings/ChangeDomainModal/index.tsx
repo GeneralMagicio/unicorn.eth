@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect, useState } from 'react'
 import { TickCircleIcon } from '@/components/Icons/TickCircle'
+import { appConfig } from '@/config'
 
 export const ChangeDomainModal: React.FC<{
   open: boolean
@@ -89,7 +90,7 @@ export const ChangeDomainModal: React.FC<{
                 label=""
                 name="username"
                 placeholder="username"
-                suffix=".account.eth"
+                suffix={appConfig.ensDomain}
                 size="large"
                 error={isNameAvailable === false && "Oops! That's unavailable."}
               />

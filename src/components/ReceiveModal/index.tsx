@@ -7,6 +7,7 @@ import { QRView } from './QRView'
 import { QRBlack } from '../Icons/QRBlack'
 import { CopyBlack } from '../Icons/CopyBlack'
 import CopyWrapper from './CopyWrapper'
+import { appConfig } from '@/config'
 
 export const ReceiveModal: React.FC<{
   open: boolean
@@ -15,7 +16,7 @@ export const ReceiveModal: React.FC<{
   {
     const [openQR, setOpenQR] = useState(false)
     const { username, userAddress } = useAuth()
-    const suffix = '.account.eth'
+    const suffix = appConfig.ensDomain
     const account = `${username}${suffix}`
 
     return (
@@ -35,7 +36,7 @@ export const ReceiveModal: React.FC<{
           <div className="flex flex-col gap-4">
             <div
               onClick={() => setOpenQR(true)}
-              className="flex flex-row w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2 justify-between items-center">
+              className="border-[rgba(232, 232, 1)] flex min-h-[71px] w-full flex-row items-center justify-between gap-2 rounded-xl border-[1px] border-solid p-4">
               <div className="flex flex-col gap-2">
                 <Typography color="text" weight="bold" fontVariant="body">
                   Web QR
@@ -47,14 +48,14 @@ export const ReceiveModal: React.FC<{
               <QRBlack />
             </div>
             <CopyWrapper textToCopy={account} absolute>
-              <div className="flex flex-row w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2 justify-between items-center">
+              <div className="border-[rgba(232, 232, 1)] flex min-h-[71px] w-full flex-row items-center justify-between gap-2 rounded-xl border-[1px] border-solid p-4">
                 <Typography color="text" weight="bold" fontVariant="body">
                   {account}
                 </Typography>
                 <CopyBlack />
               </div>
             </CopyWrapper>
-            <div className="flex flex-col w-full min-h-[71px] border-[1px] border-solid border-[rgba(232, 232, 232, 1)] rounded-xl p-4 gap-2  justify-center">
+            <div className="border-[rgba(232, 232, 1)] flex min-h-[71px] w-full flex-col justify-center gap-2 rounded-xl border-[1px] border-solid  p-4">
               <Typography
                 weight="bold"
                 fontVariant="body"

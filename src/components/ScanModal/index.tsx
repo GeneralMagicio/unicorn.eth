@@ -13,6 +13,7 @@ import { isAddress } from 'thirdweb'
 import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
+import { appConfig } from '@/config'
 
 export const ScanModal: React.FC<{
   open: boolean
@@ -43,14 +44,14 @@ export const ScanModal: React.FC<{
 
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
-      <div className="flex relative justify-between min-h-[80vh] h-full w-full flex-col gap-2 rounded-t-[32px] border-b bg-black pt-6">
-        <div className="flex flex-col gap-2 items-center justify-center text-center mx-5 z-10">
-          <div className="w-full relative flex flex-row justify-between bg-red z-10">
+      <div className="relative flex h-full min-h-[80vh] w-full flex-col justify-between gap-2 rounded-t-[32px] border-b bg-black pt-6">
+        <div className="z-10 mx-5 flex flex-col items-center justify-center gap-2 text-center">
+          <div className="bg-red relative z-10 flex w-full flex-row justify-between">
             <div onClick={() => onDismiss()}>
               <Exit />
             </div>
             {username && (
-              <CopyWrapper textToCopy={username + '.account.eth.limo'} absolute>
+              <CopyWrapper textToCopy={username + appConfig.ensDomain} absolute>
                 <CopyWhite />
               </CopyWrapper>
             )}
@@ -80,7 +81,7 @@ export const ScanModal: React.FC<{
           />
         </div>
 
-        <div className="flex flex-col w-[100%] justify-center align-center items-center z-10 ">
+        <div className="align-center z-10 flex w-[100%] flex-col items-center justify-center ">
           <QRScan />
           <Typography
             className="w-[255px] text-center"
@@ -89,7 +90,7 @@ export const ScanModal: React.FC<{
             Send crypto or connect to dapps by scanning a QR code
           </Typography>
         </div>
-        <div className="flex justify-center align-center min-h-[162px] z-10 bg-neutral-800 rounded-t-xl pt-[24px] pb-[48px] px-[16px] ">
+        <div className="align-center z-10 flex min-h-[162px] justify-center rounded-t-xl bg-neutral-800 px-[16px] pb-[48px] pt-[24px] ">
           <Button
             style={{
               maxWidth: '200px',

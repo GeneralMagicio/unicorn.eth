@@ -22,9 +22,7 @@ export default function Home() {
   const { username } = useAuth()
 
   const subname = useMemo(
-    () =>
-      (typeof window !== 'undefined' && getSubdomain(window.location.origin)) ||
-      '',
+    () => typeof window !== 'undefined' && getSubdomain(window.location.origin),
     []
   )
   console.log({ subname })

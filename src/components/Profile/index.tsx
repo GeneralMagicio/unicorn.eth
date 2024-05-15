@@ -26,6 +26,7 @@ import useDetectDevice from '@/hooks/useDetectDevice'
 import { FullPageSpinner } from '../FullPageSpinner'
 import { useRouter } from 'next/navigation'
 import { EnsRecordType, nsService } from '@/services/enService'
+import { appConfig } from '@/config'
 
 function Profile({
   username,
@@ -93,7 +94,8 @@ function Profile({
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {username}
+            {appConfig.ensDomain}
           </Typography>
         </UserInfo>
       </div>
@@ -122,7 +124,7 @@ function Profile({
           onClick={() => router.push('/login')}
           className="flex flex-col justify-center gap-1 ">
           <Typography color="initial">
-            Get your own account.eth wallet
+            Get your own {process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN} wallet
           </Typography>
         </div>
       </div>
