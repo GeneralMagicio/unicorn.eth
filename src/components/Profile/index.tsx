@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react'
+'use client'
+import { useMemo } from 'react'
 import Image from 'next/image'
 import { Button, Typography } from '@ensdomains/thorin'
 import { BalanceBox, UserInfo } from '@/components/Styled'
@@ -21,6 +22,7 @@ import {
   externalClient,
 } from '@/lib/third-web/provider'
 import { DEPOSIT_MODAL_TYPE } from '@/utils/modals'
+import useDetectDevice from '@/hooks/useDetectDevice'
 
 function Profile({
   username,
@@ -31,6 +33,7 @@ function Profile({
   userProfilePicture?: string
   userAddress: string
 }) {
+  const { isMobile } = useDetectDevice()
   const connectedAccount = useActiveAccount()
   const [, setActiveModal] = useAtom(activeModalAtom)
   const { tokenBalance, nfts, errors } = useBalance(userAddress!)
@@ -61,7 +64,7 @@ function Profile({
 
   // TODO: this is a hack for now, pfp is returning undefined/undefined
   const isProperPFP = !userProfilePicture?.includes('undefined')
-
+  if (!isMobile) return <p>mobile only</p>
   return (
     <>
       <div className="flex items-center">
