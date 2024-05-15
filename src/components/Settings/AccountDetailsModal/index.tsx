@@ -170,6 +170,7 @@ export const AccountDetailsModal: React.FC<{
       //   })
     }
   }
+  console.log({ userProfilePicture })
 
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>

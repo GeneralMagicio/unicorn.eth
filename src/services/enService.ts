@@ -1,18 +1,5 @@
-import axios from 'axios'
 import { SubnameResolutionResponse } from './types/ens'
-import { API_KEYS } from './api-keys'
-
-export const axiosInstance = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_OFFCHAIN_BASE_URL ||
-    'https://offchain.namespace.tech',
-  headers: {
-    'Content-type': 'application/json',
-    Authorization: `Bearer ${
-      process.env.OFFCHIAN_API_KEY || API_KEYS.OFFCHIAN_API_KEY
-    }`,
-  },
-})
+import { axiosInstance } from './axiosInstance'
 
 export const enum EnsRecordType {
   ACCOUNT_INFO = 'ACCOUNT_INFO',
@@ -20,12 +7,9 @@ export const enum EnsRecordType {
   ACCOUNT_ADDRESS = 'ACCOUNT_ADDRESS',
 }
 
-const ENS_DOMAIN = process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN
-const COIN_TYPE = 60 /* ETH */
-
 export function createSubname(body: { label: string; address: string }) {
   return axiosInstance
-    .post<boolean>('/v1/subname/mint', { ...body, domain: ENS_DOMAIN })
+    .post<boolean>('ns/createSubname', body)
     .then((res) => res.data)
 }
 export function createTextRecord(body: {
@@ -33,30 +17,28 @@ export function createTextRecord(body: {
   key: string
   text: string
 }) {
-  const { label, key, text } = body
   return axiosInstance
-    .put<boolean>(`/v1/subname/record/${label}/${ENS_DOMAIN}/${key}/${text}`)
+    .put<boolean>(`ns/createTextRecord`, body)
     .then((res) => res.data)
 }
 export function getIsNameAvailable(params: { label: string }) {
   return axiosInstance
-    .get<{ isAvailable: boolean }>(
-      `/v1/subname/availability/${params.label}/${ENS_DOMAIN}`
-    )
+    .get<{ isAvailable: boolean }>(`ns/isavailable`, {
+      params,
+    })
     .then((res) => res.data)
 }
 export function getSubnameResolution(params: { address: string }) {
   return axiosInstance
-    .get<Array<SubnameResolutionResponse>>(
-      `/v1/subname/resolution/${params.address}/${COIN_TYPE}`
-    )
+    .get<Array<SubnameResolutionResponse>>(`ns/getsubnameresolution`, {
+      params,
+    })
     .then((res) => res.data)
 }
 
 export function getSubnameMetadata(params: { label: string; key: string }) {
-  const { label, key } = params
   return axiosInstance
-    .get<{ record: string }>(`/v1/subname/record/${label}/${ENS_DOMAIN}/${key}`)
+    .get<{ record: string }>(`ns/getSubnameMetadata`, { params })
     .then((res) => res.data)
 }
 
@@ -65,15 +47,13 @@ export function createCustomSubnameData(body: {
   key: string
   data: string
 }) {
-  const { label, key, data } = body
   return axiosInstance
-    .put<boolean>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`, { data })
+    .put<boolean>(`ns/createCustomSubnameData`, body)
     .then((res) => res.data)
 }
 export function getCustomSubnameData(params: { label: string; key: string }) {
-  const { label, key } = params
   return axiosInstance
-    .get<{ data: string }>(`/v1/subname/data/${label}/${ENS_DOMAIN}/${key}`)
+    .get<string>(`ns/getCustomSubnameData`, { params })
     .then((res) => res.data)
 }
 

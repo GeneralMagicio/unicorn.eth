@@ -1,17 +1,10 @@
 import { OsNft } from '@/app/dashboard/utils/nft-balance-opensea'
 import axios from 'axios'
 import { API_KEYS } from './api-keys'
-
-export const axiosInstance = axios.create({
-  baseURL: process.env.POAP_BASE_URL || API_KEYS.POAP_BASE_URL,
-  headers: {
-    'Content-type': 'application/json',
-    'X-API-Key': process.env.POAP_API_KEY || API_KEYS.POAP_API_KEY,
-  },
-})
+import { axiosInstance } from './axiosInstance'
 
 export const getUserPOAPs = async (address: string): Promise<OsNft[]> => {
-  const res = await axiosInstance.get<PoapResponse[]>(`actions/scan/${address}`)
+  const res = await axiosInstance.get<PoapResponse[]>(`poap/scan/${address}`)
 
   return res.data.map(({ event, created, tokenId }) => ({
     collection: 'POAP',
@@ -93,22 +86,7 @@ export function getActionsScan(params: { address: string }) {
 
 export function postOauthToken() {
   return axiosInstance
-    .post<{ access_token: string }>(
-      '/oauth/token',
-      {
-        audience: 'https://api.poap.tech',
-        grant_type: 'client_credentials',
-        client_id: process.env.POAP_CLIENT_ID || API_KEYS.POAP_CLIENT_ID,
-        client_secret:
-          process.env.POAP_CLIENT_SECRET || API_KEYS.POAP_CLIENT_SECRET,
-      },
-      {
-        baseURL: process.env.POAP_AUTH_BASE_URL || API_KEYS.POAP_AUTH_BASE_URL,
-        headers: {
-          'X-API-Key': undefined,
-        },
-      }
-    )
+    .post<{ access_token: string }>('poap/oauth/token')
     .then((res) => res.data)
 }
 

@@ -82,19 +82,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const res = await getSubnameDataset(account.address)
         const username = res[res?.length - 1]?.label || ''
-        setUsername(username.toLowerCase())
+        console.log({ username })
+        setUsername(username.toLowerCase() || 'Youssef')
 
         goToDashboard = true
-        nsService
-          .getCustomSubnameData({
-            label: username,
-            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-          })
-          .then((data) => {
-            setUserProfilePicture(
-              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data}`
-            )
-          })
+        if (username) {
+          nsService
+            .getCustomSubnameData({
+              label: username,
+              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+            })
+            .then((data) => {
+              setUserProfilePicture(
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data}`
+              )
+            })
+        }
         // const { data } = await axios.get('/api/subname/data', {
         //   params: {
         //     label: username,
@@ -102,11 +105,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         //   },
         // })
 
-        nsService.createTextRecord({
-          label: username,
-          key: EnsRecordType.ACCOUNT_ADDRESS,
-          text: account.address,
-        })
+        // nsService.createTextRecord({
+        //   label: username,
+        //   key: EnsRecordType.ACCOUNT_ADDRESS,
+        //   text: account.address,
+        // })
         // axios.put('/api/subname/record', {
         //   label: username,
         //   key: EnsRecordType.ACCOUNT_ADDRESS,

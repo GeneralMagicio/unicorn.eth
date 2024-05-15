@@ -109,7 +109,11 @@ function Profile({
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
+<<<<<<< HEAD
       <div className="flex items-center gap-2 rounded-xl bg-gray-100 p-2">
+=======
+      <div className="align-center flex gap-2 rounded-xl bg-gray-100 p-2">
+>>>>>>> abd7da5 (refactor(apis): connecto the new back-end)
         <div className="relative">
           <Image
             className="rounded-full"
