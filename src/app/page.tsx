@@ -28,8 +28,8 @@ export default function Home() {
 
   const subname = useMemo(
     () =>
-      (typeof window !== 'undefined' && getSubdomain(window.location.origin)) ||
-      getSubdomainParam(),
+      getSubdomainParam() ||
+      (typeof window !== 'undefined' && getSubdomain(window.location.origin)),
     []
   )
 
