@@ -25,6 +25,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { convertImageToBase64 } from '@/utils/image'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { pinataService } from '@/services/pinata'
+import { appConfig } from '@/config'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -201,7 +202,8 @@ export const AccountDetailsModal: React.FC<{
             </div>
             <div className="flex flex-col justify-center gap-2">
               <Typography fontVariant="bodyBold">
-                {username}.unicorn.eth
+                {username}
+                {appConfig.ensDomain}
               </Typography>
               <Typography color="textSecondary">{userEmail}</Typography>
             </div>

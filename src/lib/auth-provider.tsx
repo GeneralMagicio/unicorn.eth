@@ -17,7 +17,7 @@ export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const skipRedirect = pathname.includes('profile')
+  const skipRedirect = pathname === '/'
   const [, setIsSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
 
   const {
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           })
           .then((data) => {
             setUserProfilePicture(
-              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data.data}`
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data}`
             )
           })
         // const { data } = await axios.get('/api/subname/data', {

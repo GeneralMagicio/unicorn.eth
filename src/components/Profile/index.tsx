@@ -23,6 +23,10 @@ import {
 } from '@/lib/third-web/provider'
 import { DEPOSIT_MODAL_TYPE } from '@/utils/modals'
 import useDetectDevice from '@/hooks/useDetectDevice'
+import { FullPageSpinner } from '../FullPageSpinner'
+import { useRouter } from 'next/navigation'
+import { EnsRecordType, nsService } from '@/services/enService'
+import { appConfig } from '@/config'
 
 function Profile({
   username,
@@ -33,6 +37,7 @@ function Profile({
   userProfilePicture?: string
   userAddress: string
 }) {
+  const router = useRouter()
   const { isMobile } = useDetectDevice()
   const connectedAccount = useActiveAccount()
   const [, setActiveModal] = useAtom(activeModalAtom)
@@ -43,9 +48,18 @@ function Profile({
     fetchTokenPrices
   )
 
+  const { data: imageHash } = useSWR(
+    'account-profile-image',
+    () =>
+      nsService.getCustomSubnameData({
+        label: username!,
+        key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+      })!
+  )
+
   const memoizedUserBalance = useMemo(
     () => (
-      <div className="max-h-[40vh] h-[100%]">
+      <div className="h-[100%] max-h-[40vh]">
         <UserBalance address={userAddress} />
       </div>
     ),
@@ -53,17 +67,16 @@ function Profile({
   )
 
   // TODO: Better error handling
-  if (errors.tokensError || errors.nftsError || error) return
-  // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !tokenBalance || !nfts) return
+  if (errors.tokensError || errors.nftsError || error)
+    return <div className="text-red-600">ERORR</div>
+
+  if (!tokenPrices || !tokenBalance || !nfts) return <FullPageSpinner />
 
   const estimatedTotalValue = createCryptoTokenObject(
     tokenBalance,
     tokenPrices
   ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
 
-  // TODO: this is a hack for now, pfp is returning undefined/undefined
-  const isProperPFP = !userProfilePicture?.includes('undefined')
   if (!isMobile) return <p>mobile only</p>
   return (
     <>
@@ -72,8 +85,8 @@ function Profile({
           <Image
             className="rounded-full"
             src={
-              isProperPFP && userProfilePicture
-                ? userProfilePicture
+              imageHash
+                ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${imageHash}`
                 : '/img/validator.eth.png'
             }
             alt={username || ''}
@@ -81,7 +94,8 @@ function Profile({
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {username}
+            {appConfig.ensDomain}
           </Typography>
         </UserInfo>
       </div>
@@ -95,7 +109,7 @@ function Profile({
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-      <div className="flex align-center gap-2 bg-gray-100 rounded-xl p-2">
+      <div className="flex items-center gap-2 rounded-xl bg-gray-100 p-2">
         <div className="relative">
           <Image
             className="rounded-full"
@@ -105,14 +119,17 @@ function Profile({
             height={44}
           />
         </div>
-        <div className="flex flex-col justify-center gap-1 ">
+        <div
+          role="button"
+          onClick={() => router.push('/login')}
+          className="flex flex-col justify-center gap-1 ">
           <Typography color="initial">
-            Get your own account.eth wallet
+            Get your own {process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN} wallet
           </Typography>
         </div>
       </div>
       {memoizedUserBalance}
-      <div className="flex justify-center w-[90%] fixed bottom-6">
+      <div className="fixed bottom-6 flex w-[90%] justify-center">
         {connectedAccount ? (
           <Button onClick={() => setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)}>
             Deposit

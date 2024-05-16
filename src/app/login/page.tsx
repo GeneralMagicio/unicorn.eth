@@ -17,6 +17,8 @@ import { createSmartWallet } from '@/lib/third-web/methods'
 import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
+import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
+import { appConfig } from '@/config'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -72,6 +74,7 @@ export default function Login() {
     if (wallet) {
       disconnect(wallet)
       clearUserInfo()
+      localStorage.removeItem(LAST_CONNECT_PERSONAL_WALLET_ID)
     }
   }
 
@@ -150,7 +153,7 @@ export default function Login() {
                       label=""
                       name="username"
                       placeholder="username"
-                      suffix=".account.eth"
+                      suffix={appConfig.ensDomain}
                       size="large"
                       error={
                         isNameAvailable === false && "Oops! That's unavailable."

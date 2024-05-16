@@ -19,6 +19,7 @@ import { shortenEthereumAddress } from '@/utils/strings'
 import { useBalance } from '@/hooks/useBalance'
 import UserBalance from '@/components/Dashboard/UserBalance'
 import { MODAL_TYPE } from '@/utils/modals'
+import { appConfig } from '@/config'
 
 export default function Dashboard() {
   const theme = useTheme()
@@ -57,7 +58,8 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {username}.{process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}
+            {username}
+            {appConfig.ensDomain}
           </Typography>
         </UserInfo>
         <div
