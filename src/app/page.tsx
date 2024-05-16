@@ -56,7 +56,7 @@ export default function Home() {
     // }
   }, [router, isLoading, address])
 
-  if (isLoading || !subname) return <FullPageSpinner />
+  if (isLoading || !subname || !data?.data) return <FullPageSpinner />
 
   return (
     <div className="flex w-full grow flex-col">
