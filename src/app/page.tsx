@@ -10,22 +10,26 @@ import { useAtom } from 'jotai'
 import { useAuth } from '@/hooks/useAuth'
 import { EnsRecordType, nsService } from '@/services/enService'
 import { getSubdomain } from '@/utils/helpers'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import useSWR from 'swr'
 // import { useIsAutoConnecting } from 'thirdweb/react'
 import Profile from '@/components/Profile'
 import { FullPageSpinner } from '@/components/FullPageSpinner'
 
+// TODO: to be removed
+const getSubdomainParam = () =>
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('subdomain')
+
 export default function Home() {
   const router = useRouter()
   const { username } = useAuth()
-  const searchParams = useSearchParams()
 
   const subname = useMemo(
     () =>
       (typeof window !== 'undefined' && getSubdomain(window.location.origin)) ||
-      searchParams.get('subdomain'),
+      getSubdomainParam(),
     []
   )
 
