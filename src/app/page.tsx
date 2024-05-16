@@ -10,7 +10,7 @@ import { useAtom } from 'jotai'
 import { useAuth } from '@/hooks/useAuth'
 import { EnsRecordType, nsService } from '@/services/enService'
 import { getSubdomain } from '@/utils/helpers'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import useSWR from 'swr'
 // import { useIsAutoConnecting } from 'thirdweb/react'
@@ -20,12 +20,15 @@ import { FullPageSpinner } from '@/components/FullPageSpinner'
 export default function Home() {
   const router = useRouter()
   const { username } = useAuth()
+  const searchParams = useSearchParams()
 
   const subname = useMemo(
-    () => typeof window !== 'undefined' && getSubdomain(window.location.origin),
+    () =>
+      (typeof window !== 'undefined' && getSubdomain(window.location.origin)) ||
+      searchParams.get('subdomain'),
     []
   )
-  console.log({ subname })
+
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
   // const isAutoConnecting = useIsAutoConnecting()
 
@@ -33,12 +36,11 @@ export default function Home() {
     subname
       ? nsService.getSubnameMetadata({
           label: subname,
-          key: EnsRecordType.ACCOUNT_ADDRESS,
+          key: EnsRecordType.account_address,
         })
       : undefined
   )
-
-  const address = data?.record
+  const address = data?.data
 
   useEffect(() => {
     if (!username && !isLoading && !address) {

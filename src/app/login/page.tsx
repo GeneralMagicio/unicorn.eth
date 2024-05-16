@@ -57,7 +57,11 @@ export default function Login() {
   } = useEnsResolver()
 
   useEffect(() => {
-    if (wallet && step !== LoginSteps.PICK_USERNAME) {
+    if (
+      wallet &&
+      step !== LoginSteps.PICK_USERNAME &&
+      step !== LoginSteps.PROFILE_PREVIEW
+    ) {
       setStep(LoginSteps.PICK_USERNAME)
     }
   }, [wallet, step])

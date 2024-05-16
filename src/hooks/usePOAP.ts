@@ -8,16 +8,17 @@ import { useMemo } from 'react'
 export function usePOAP() {
   const { userAddress } = useAuth()
   const { data: tokenData, isLoading: isGettingToken } = useSWR<{
-    access_token: string
+    data: { access_token: string }
   }>(
     'poap-access-token',
     () => poapService.postOauthToken(),
     // axios.post('/api/poap/token').then((res) => res.data),
     { revalidateIfStale: false }
   )
+  console.log({ tokenData })
   const { data: mintLinks } = useSWR(
-    () => tokenData?.access_token,
-    () => poapService.postEventQRCodes(tokenData?.access_token!),
+    () => tokenData?.data?.access_token,
+    () => poapService.postEventQRCodes(tokenData?.data?.access_token!),
     // axios
     //   .post<Array<{ qr_hash: string; claimed: boolean }>>(
     //     `/api/poap/event`,
@@ -27,9 +28,10 @@ export function usePOAP() {
     //   .then((res) => res.data),
     { revalidateIfStale: false }
   )
+  console.log({ mintLinks })
 
   const { trigger: postMint, isMutating: isMinting } = useSWRMutation(
-    ['poap-event-qrcode', tokenData?.access_token],
+    ['poap-event-qrcode', tokenData?.data?.access_token],
     async ([, access_token]) =>
       poapService.mint({
         token: access_token!,
@@ -38,33 +40,23 @@ export function usePOAP() {
       })
   )
 
-  const { data: poapMintData, isLoading: isCheckingPOAPStatus } = useSWR<
-    | {
-        owner?: string
-        error?: string
-      }
-    | undefined
-  >(
+  const { data: poapMintData, isLoading: isCheckingPOAPStatus } = useSWR(
     `poap-actions-${userAddress}`,
     () =>
       !userAddress
         ? Promise.resolve(undefined)
         : poapService.getActionsScan({ address: userAddress }),
-    // axios
-    //     .get('/api/poap/actions', {
-    //       params: { address: userAddress },
-    //     })
-    //     .then((res) => res.data),
     { revalidateIfStale: false }
   )
 
   const mintLink = useMemo(
-    () => mintLinks?.find((link) => !link.claimed),
+    () => mintLinks?.data?.find((link) => !link.claimed),
     [mintLinks]
   )
 
   const canMintPOAP =
-    poapMintData !== undefined && !poapMintData?.owner && mintLink
+    poapMintData !== undefined && !poapMintData?.data?.owner && mintLink
+  console.log({ poapMintData, canMintPOAP, mintLink })
 
   return {
     isGettingToken,

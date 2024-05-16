@@ -82,8 +82,8 @@ export const AccountDetailsModal: React.FC<{
     return nsService
       .createTextRecord({
         label: username,
-        key: EnsRecordType.ACCOUNT_INFO,
-        text: encodeURIComponent(JSON.stringify(data)),
+        key: EnsRecordType.account_info,
+        data: encodeURIComponent(JSON.stringify(data)),
       })
       .then(() => {
         setIsSubmited(true)
@@ -107,11 +107,12 @@ export const AccountDetailsModal: React.FC<{
       nsService
         .getSubnameMetadata({
           label: username,
-          key: EnsRecordType.ACCOUNT_INFO,
+          key: EnsRecordType.account_info,
         })
         .then((data) => {
-          if (data?.record) {
-            setAccountDetails(JSON.parse(data?.record))
+          console.log({ data })
+          if (data) {
+            setAccountDetails(JSON.parse(data.data))
           }
           return {}
         })
@@ -130,9 +131,10 @@ export const AccountDetailsModal: React.FC<{
       pinataService
         .uploadImage(file)
         .then((res) => {
-          return nsService.createCustomSubnameData({
+          console.log(res)
+          return nsService.createTextRecord({
             label: username,
-            key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+            key: EnsRecordType.account_avatar,
             data: res.data.IpfsHash,
           })
         })

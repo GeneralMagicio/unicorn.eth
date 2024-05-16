@@ -81,46 +81,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const username = res[res?.length - 1]?.label || ''
-        console.log({ username })
-        setUsername(username.toLowerCase() || 'Youssef')
+        const username = res.data[res.data?.length - 1]?.label || ''
+        setUsername(username.toLowerCase())
 
         goToDashboard = true
         if (username) {
           nsService
-            .getCustomSubnameData({
+            .getSubnameMetadata({
               label: username,
-              key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+              key: EnsRecordType.account_avatar,
             })
             .then((data) => {
-              setUserProfilePicture(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data}`
-              )
+              if (data?.data)
+                setUserProfilePicture(
+                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data?.data}`
+                )
             })
         }
-        // const { data } = await axios.get('/api/subname/data', {
-        //   params: {
-        //     label: username,
-        //     key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-        //   },
-        // })
-
-        // nsService.createTextRecord({
-        //   label: username,
-        //   key: EnsRecordType.ACCOUNT_ADDRESS,
-        //   text: account.address,
-        // })
-        // axios.put('/api/subname/record', {
-        //   label: username,
-        //   key: EnsRecordType.ACCOUNT_ADDRESS,
-        //   text: account.address,
-        // })
+        nsService.createTextRecord({
+          label: username,
+          key: EnsRecordType.account_address,
+          data: account.address,
+        })
       } catch (err) {
         console.error(err)
       } finally {
         setIsSettingEnsInfo(false)
         fetchEthBalance()
-        if (goToDashboard && !skipRedirect) router.push('/dashboard')
+        // if (goToDashboard && !skipRedirect) router.push('/dashboard')
       }
     }
     ensSetup()

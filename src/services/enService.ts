@@ -2,9 +2,9 @@ import { SubnameResolutionResponse } from './types/ens'
 import { axiosInstance } from './axiosInstance'
 
 export const enum EnsRecordType {
-  ACCOUNT_INFO = 'ACCOUNT_INFO',
-  ACCOUNT_PROFILE_IMAGE_CID = 'ACCOUNT_PROFILE_IMAGE_CID',
-  ACCOUNT_ADDRESS = 'ACCOUNT_ADDRESS',
+  account_info = 'account_info',
+  account_avatar = 'avatar',
+  account_address = 'address',
 }
 
 export function createSubname(body: { label: string; address: string }) {
@@ -15,7 +15,7 @@ export function createSubname(body: { label: string; address: string }) {
 export function createTextRecord(body: {
   label: string
   key: string
-  text: string
+  data: string
 }) {
   return axiosInstance
     .put<boolean>(`ns/createTextRecord`, body)
@@ -23,23 +23,27 @@ export function createTextRecord(body: {
 }
 export function getIsNameAvailable(params: { label: string }) {
   return axiosInstance
-    .get<{ isAvailable: boolean }>(`ns/isavailable`, {
+    .get<boolean>(`ns/isavailable`, {
       params,
     })
     .then((res) => res.data)
 }
 export function getSubnameResolution(params: { address: string }) {
   return axiosInstance
-    .get<Array<SubnameResolutionResponse>>(`ns/getsubnameresolution`, {
-      params,
-    })
+    .get<{ data: Array<SubnameResolutionResponse> }>(
+      `ns/getsubnameresolution`,
+      {
+        params,
+      }
+    )
     .then((res) => res.data)
 }
 
 export function getSubnameMetadata(params: { label: string; key: string }) {
   return axiosInstance
-    .get<{ record: string }>(`ns/getSubnameMetadata`, { params })
+    .get<{ data: string }>(`ns/getSubnameMetadata`, { params })
     .then((res) => res.data)
+    .catch((e) => console.log({ errrrrrrrrrr: e }))
 }
 
 export function createCustomSubnameData(body: {

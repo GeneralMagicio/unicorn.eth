@@ -51,9 +51,9 @@ function Profile({
   const { data: imageHash } = useSWR(
     'account-profile-image',
     () =>
-      nsService.getCustomSubnameData({
+      nsService.getSubnameMetadata({
         label: username!,
-        key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
+        key: EnsRecordType.account_avatar,
       })!
   )
 
@@ -85,8 +85,8 @@ function Profile({
           <Image
             className="rounded-full"
             src={
-              imageHash
-                ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${imageHash}`
+              imageHash?.data
+                ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${imageHash?.data}`
                 : '/img/validator.eth.png'
             }
             alt={username || ''}
@@ -109,11 +109,7 @@ function Profile({
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-<<<<<<< HEAD
       <div className="flex items-center gap-2 rounded-xl bg-gray-100 p-2">
-=======
-      <div className="align-center flex gap-2 rounded-xl bg-gray-100 p-2">
->>>>>>> abd7da5 (refactor(apis): connecto the new back-end)
         <div className="relative">
           <Image
             className="rounded-full"

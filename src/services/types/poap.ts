@@ -1,21 +1,20 @@
 interface PoapResponse {
-  event: {
-    id: number
-    fancy_id: string
+  collection: string
+  contract: string
+  description: string
+  floorPrice: number
+  image_url: string
+  opensea_url: string
+  identifier: string
+  is_disabled: boolean
+  is_nsfw: boolean
+  metadata: {
     name: string
-    event_url: string
-    image_url: string
-    country: string
-    city: string
     description: string
-    year: number
-    start_date: string
-    end_date: string
-    expiry_date: string
-    supply: number
+    image: string
+    attributes: { value: string; trait_type: string }[]
   }
-  tokenId: string
-  owner: string
-  chain: string
-  created: string
+  name: string
+  token_standard: string
+  updated_at: string
 }

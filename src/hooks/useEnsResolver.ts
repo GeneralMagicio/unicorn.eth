@@ -15,18 +15,11 @@ export function useEnsResolver() {
 
   const checkUserName = async (input: string) => {
     try {
-      const data = await nsService.getIsNameAvailable({
+      const isAvailable = await nsService.getIsNameAvailable({
         label: input.toLowerCase(),
       })
-      // const res = await axios.get<{ isAvailable: boolean }>(
-      //   '/api/subname/availability',
-      //   {
-      //     params: {
-      //       label: input.toLowerCase(),
-      //     },
-      //   }
-      // )
-      setIsNameAvailable(data.isAvailable ?? null)
+
+      setIsNameAvailable(isAvailable ?? null)
     } catch (err) {
       setIsNameAvailable(false)
     }
