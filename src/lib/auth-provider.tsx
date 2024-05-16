@@ -108,7 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } finally {
         setIsSettingEnsInfo(false)
         fetchEthBalance()
-        // if (goToDashboard && !skipRedirect) router.push('/dashboard')
+        if (goToDashboard && !skipRedirect) router.push('/dashboard')
       }
     }
     ensSetup()
