@@ -103,7 +103,12 @@ export default function Login() {
               onClick={handleBack}
             />
           )}
-          <Image src="/img/login-bg.png" alt="Unicorn" fill />
+          <Image
+            className="object-cover"
+            src="/img/login-bg.png"
+            alt="Unicorn"
+            fill
+          />
         </div>
         <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] border-b bg-white px-4 py-12">
           <div className="flex flex-col gap-10">
