@@ -52,7 +52,7 @@ export default function Dashboard() {
         <UserInfo>
           <Image
             className="rounded-full"
-            src={userProfilePicture || '/img/validator.eth.png'}
+            src={userProfilePicture || '/img/profile-placeholder.svg'}
             alt={username || ''}
             width={40}
             height={40}

@@ -87,7 +87,7 @@ function Profile({
             src={
               imageHash?.data
                 ? `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${imageHash?.data}`
-                : '/img/validator.eth.png'
+                : '/img/profile-placeholder.svg'
             }
             alt={username || ''}
             width={40}

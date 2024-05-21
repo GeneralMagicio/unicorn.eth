@@ -1,7 +1,7 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
-import { Button, Input, Typography } from '@ensdomains/thorin'
+import { Button, Input, Spinner, Typography } from '@ensdomains/thorin'
 import { GoogleIcon } from '@/components/Icons/Google'
 import { ArrowLeft } from '@/components/Icons/ArrowLeft'
 import { SigningInPage } from '@/components/SigningInPage'
@@ -19,6 +19,8 @@ import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
 import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
 import { appConfig } from '@/config'
+import { UploadIcon } from '@/components/Icons/Upload'
+import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -34,19 +36,15 @@ export default function Login() {
   const [error, setError] = useState('')
   const { isAutoConnecting } = useIsAutoConnecting()
   const [isSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
+  const { userProfilePicture, isUploading, handleFileChange, inputRef } =
+    useUploadProfilePicture()
 
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
 
   const wallet = useActiveWallet()
 
-  const {
-    username,
-    userProfilePicture,
-    userEmail,
-    setUsername,
-    clearUserInfo,
-  } = useAuth()
+  const { username, userEmail, setUsername, clearUserInfo } = useAuth()
 
   const {
     isRegistering,
@@ -188,17 +186,34 @@ export default function Login() {
                     Welcome to the web3
                   </Typography>
                   <div className="flex flex-col items-center justify-center gap-2 rounded-[40px] bg-background-secondary p-2">
-                    {userProfilePicture && (
+                    <div className="relative">
+                      <input
+                        className="absolute inset-0 z-10 opacity-0"
+                        type="file"
+                        ref={inputRef}
+                        onInput={handleFileChange}
+                      />
                       <Image
-                        className="rounded-full"
-                        src={userProfilePicture || '/img/ens.png'}
-                        alt={username!}
+                        className="max-h-[72px] max-w-[72px] rounded-full"
+                        src={
+                          userProfilePicture || '/img/profile-placeholder.svg'
+                        }
+                        alt={username || ''}
                         width={72}
                         height={72}
                       />
-                    )}
+                      <div className="!absolute bottom-0 right-0 rounded-full bg-white p-1">
+                        <UploadIcon />
+                      </div>
+                      {isUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Spinner size="medium" color="indigoSurface" />
+                        </div>
+                      )}
+                    </div>
                     <Typography className="flex items-center gap-1 lowercase ">
-                      {chosenUsername}.unicorn.eth <Copy />
+                      {chosenUsername || username}
+                      {appConfig.ensDomain} <Copy />
                     </Typography>
                     <Typography className="text-text-secondary">
                       {userEmail}

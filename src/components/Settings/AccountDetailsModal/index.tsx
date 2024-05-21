@@ -21,11 +21,10 @@ import { MODAL_TYPE } from '@/utils/modals'
 
 import { Controller, useForm } from 'react-hook-form'
 import { EnsRecordType, nsService } from '@/services/enService'
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { convertImageToBase64 } from '@/utils/image'
+import { useEffect, useMemo, useState } from 'react'
 import { UploadIcon } from '@/components/Icons/Upload'
-import { pinataService } from '@/services/pinata'
 import { appConfig } from '@/config'
+import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -58,12 +57,11 @@ export const AccountDetailsModal: React.FC<{
   open: boolean
   onDismiss: () => void
 }> = ({ open, onDismiss }) => {
-  const inputRef = useRef<HTMLInputElement>(null)
   const [accountDetails, setAccountDetails] = useState(null)
-  const { username, userEmail, userProfilePicture, setUserProfilePicture } =
-    useAuth()
+  const { username, userEmail } = useAuth()
   const [, setActiveModal] = useAtom(activeModalAtom)
-  const [isUploading, setIsUploading] = useState(false)
+  const { userProfilePicture, isUploading, handleFileChange, inputRef } =
+    useUploadProfilePicture()
   const [isSubmited, setIsSubmited] = useState(true)
 
   const {
@@ -124,56 +122,6 @@ export const AccountDetailsModal: React.FC<{
     if (accountDetails) reset(accountDetails)
   }, [accountDetails, reset])
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0]
-      setIsUploading(true)
-      pinataService
-        .uploadImage(file)
-        .then((res) => {
-          console.log(res)
-          return nsService.createTextRecord({
-            label: username,
-            key: EnsRecordType.account_avatar,
-            data: res.data.IpfsHash,
-          })
-        })
-        .then(() => {
-          convertImageToBase64(file, (base64) => {
-            setUserProfilePicture(base64)
-          })
-        })
-        .finally(() => {
-          setIsUploading(false)
-        })
-
-      // const data = new FormData()
-      // data.set('file', file)
-      // axios
-      //   .post('/api/files', data)
-      //   .then((res) => {
-      //     return axios.put(
-      //       '/api/subname/data',
-      //       {
-      //         data: res.data.IpfsHash,
-      //       },
-      //       {
-      //         params: {
-      //           label: username,
-      //           key: EnsRecordType.ACCOUNT_PROFILE_IMAGE_CID,
-      //         },
-      //       }
-      //     )
-      //   })
-      //   .then(() => {
-      //     convertImageToBase64(file, (base64) => {
-      //       setUserProfilePicture(base64)
-      //     })
-      //   })
-    }
-  }
-  console.log({ userProfilePicture })
-
   return (
     <Modal open={open} onDismiss={onDismiss} mobileOnly>
       <div className="flex min-h-[40%] w-full flex-col gap-10 rounded-t-[32px] border-b bg-white p-5 pb-12 pt-4">
@@ -189,7 +137,7 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="max-h-[60px] max-w-[60px] rounded-full"
-                src={userProfilePicture || '/img/validator.eth.png'}
+                src={userProfilePicture || '/img/profile-placeholder.svg'}
                 alt={username || ''}
                 width={60}
                 height={60}
