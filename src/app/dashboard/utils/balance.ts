@@ -21,7 +21,7 @@ export function getProviderUrl(chainId: number) {
     [SupportedChainIds.OP]: `https://optimism.llamarpc.com	`,
     [SupportedChainIds.Gnosis]: `https://gnosis-rpc.publicnode.com`,
     // [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Arbitrum]: `https://1rpc.io/arb`,
+    [SupportedChainIds.Arbitrum]: `https://arbitrum.llamarpc.com`,
     [SupportedChainIds.Base]: `https://mainnet.base.org`,
     // [SupportedChainIds.Polygon]: `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
     [SupportedChainIds.Polygon]: `https://rpc.ankr.com/polygon`,
@@ -94,7 +94,7 @@ export async function getBalanceForTokenChainPairs(
   }
   for (const token of supportedTokens) {
     for (const { address, chainId } of token.addresses) {
-      if (chainId === SupportedChainIds.Arbitrum) continue
+      // if (chainId === SupportedChainIds.Arbitrum) continue
       promises.push(func(token.symbol, address, chainId))
     }
   }
