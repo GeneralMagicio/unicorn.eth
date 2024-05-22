@@ -27,6 +27,7 @@ import { shortenEthereumAddress } from '@/utils/strings'
 import Image from 'next/image'
 import { ChevronRight } from '../Icons/ChevronRight'
 import { MODAL_TYPE, DEPOSIT_MODAL_TYPE } from '@/utils/modals'
+import { useAuth } from '@/hooks/useAuth'
 
 export const DepositModal: React.FC<{
   open: boolean
@@ -41,9 +42,11 @@ export const DepositModal: React.FC<{
   const userAddress = account?.address
   const wallet = useActiveWallet()
   const activeChain = useActiveWalletChain()
-
   const [currentPublicProfile] = useAtom(currentPublicProfileAtom)
   const [currentPublicProfileName] = useAtom(currentPublicProfileNameAtom)
+
+  const isSmart = wallet?.id === 'smart'
+  const { username } = useAuth()
 
   useEffect(() => {
     const setup = async () => {
@@ -69,7 +72,9 @@ export const DepositModal: React.FC<{
               className="flex flex-row gap-2">
               From:
               <Typography fontVariant="bodyBold">
-                {userAddress && shortenEthereumAddress(userAddress)}
+                {isSmart
+                  ? username
+                  : userAddress && shortenEthereumAddress(userAddress)}
               </Typography>
             </Typography>
           </div>

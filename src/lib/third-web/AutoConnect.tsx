@@ -24,23 +24,29 @@ export const ThirdwebAutoConnect = () => {
 
   useEffect(() => {
     const main = async () => {
-      // Skipping auto connection for public profile page
-      // This is mainly to avoid auto connecting to the wrong wallet
-      if (skipAutoConnect) return
-      setIsAutoConnecting(true)
       try {
-        const personalWalletId = localStorage.getItem(
-          LAST_CONNECT_PERSONAL_WALLET_ID
-        )
-        if (!personalWalletId) return
-        const personalWallet = createWallet(personalWalletId as WalletId)
-        const personalAccount = await personalWallet.autoConnect({
-          client: client,
-        })
-        const smartWallet = createWallet('smart', smartWalletConfig)
-        await smartWallet.connect({ personalAccount, client: client })
-        await connect(smartWallet)
-      } finally {
+        // Skipping auto connection for public profile page
+        // This is mainly to avoid auto connecting to the wrong wallet
+        if (skipAutoConnect) return
+        setIsAutoConnecting(true)
+        try {
+          const personalWalletId = localStorage.getItem(
+            LAST_CONNECT_PERSONAL_WALLET_ID
+          )
+          if (!personalWalletId) return
+          const personalWallet = createWallet(personalWalletId as WalletId)
+          if (!personalWallet) return
+          const personalAccount = await personalWallet?.autoConnect({
+            client: client,
+          })
+          const smartWallet = createWallet('smart', smartWalletConfig)
+          await smartWallet.connect({ personalAccount, client: client })
+          await connect(smartWallet)
+        } finally {
+          setIsAutoConnecting(false)
+        }
+      } catch (error) {
+        console.error('Auto connect error', error)
         setIsAutoConnecting(false)
       }
     }

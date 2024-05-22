@@ -3,7 +3,11 @@
 import { ChangeNetworkModal } from '@/components/ChangeNetworkModal'
 import { DepositModal } from '@/components/DepositModal'
 import { SendModal } from '@/components/SendModal'
-import { activeModalAtom } from '@/store'
+import {
+  activeModalAtom,
+  currentPublicProfileAtom,
+  currentPublicProfileNameAtom,
+} from '@/store'
 import { DEPOSIT_MODAL_TYPE, MODAL_TYPE } from '@/utils/modals'
 import { useAtom } from 'jotai'
 
@@ -25,6 +29,8 @@ const getSubdomainParam = () =>
 export default function Home() {
   const router = useRouter()
   const { username } = useAuth()
+  const [, setCurrentPublicProfile] = useAtom(currentPublicProfileAtom)
+  const [, setCurrentPublicProfileName] = useAtom(currentPublicProfileNameAtom)
 
   const subname = useMemo(
     () =>
@@ -45,6 +51,15 @@ export default function Home() {
       : undefined
   )
   const address = data?.data
+
+  useEffect(() => {
+    if (address) {
+      setCurrentPublicProfile(address)
+    }
+    if (subname) {
+      setCurrentPublicProfileName(subname)
+    }
+  }, [address, subname])
 
   useEffect(() => {
     if (!username && !isLoading && !address) {
