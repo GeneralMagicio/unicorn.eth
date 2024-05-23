@@ -36,7 +36,7 @@ export const fetchBalancesAtom = atom(
     try {
       const tokenPrices = await fetchTokenPrices()
       const balances = await calculateBalance(userAddress)
-      const nfts: Collectible[] | OsNft[] = await findAllNFTsOsApi(userAddress)
+      const nfts = await findAllNFTsOsApi(userAddress)
 
       set(isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom, {
         ...balances,

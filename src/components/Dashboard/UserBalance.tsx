@@ -4,6 +4,7 @@ import { TokenItem } from '@/components/TokenItem'
 
 import useSWR from 'swr'
 import {
+  createCollectibleObject,
   createCryptoTokenObject,
   fetchTokenPrices,
 } from '@/app/dashboard/utils/tokens'
@@ -36,23 +37,24 @@ const UserBalance: React.FC<UserBalanceProps> = ({
   const [, setSelectedCollectible] = useAtom(selectedCollectibleAtom)
 
   const [activeTab, setActiveTab] = useState('Tokens')
-  const { tokenBalance, nfts, errors, loading } = useBalance(
-    address,
-    isSecondary === true
-  )
+  const {
+    tokenBalance,
+    nfts: collectibleRes,
+    errors,
+    loading,
+  } = useBalance(address, isSecondary === true)
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
     fetchTokenPrices
   )
-
   // TODO: Better error handling
   if (errors.tokensError || errors.nftsError || error) return <></>
   // Probably use some spinner to indicate the loading time
-  if (!tokenPrices || !tokenBalance || !nfts) return <></>
+  if (!tokenPrices || !tokenBalance || !collectibleRes) return <></>
   const { nftsLoading, tokensLoading } = loading
-
   const tokens = createCryptoTokenObject(tokenBalance, tokenPrices)
+  const nfts = createCollectibleObject(collectibleRes)
   return (
     <div className="flex h-[100%] flex-col gap-4 ">
       <nav className="flex gap-4">

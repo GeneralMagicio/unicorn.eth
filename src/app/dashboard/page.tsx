@@ -56,12 +56,12 @@ export default function Dashboard() {
     0
   )
 
-  const userName = `${username}.${process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN}`
+  const userNameWithDomain = `${username}${appConfig.ensDomain}`
 
   return (
     <>
       <header className="flex  items-center justify-between">
-        <UserInfo onClick={copyToClipboard(userName)}>
+        <UserInfo onClick={copyToClipboard(userNameWithDomain)}>
           <Image
             className="rounded-full"
             src={userProfilePicture || '/img/profile-placeholder.svg'}
@@ -70,8 +70,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {username}
-            {appConfig.ensDomain}
+            {userNameWithDomain}
           </Typography>
         </UserInfo>
         <div
