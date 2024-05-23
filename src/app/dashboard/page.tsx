@@ -36,20 +36,32 @@ export default function Dashboard() {
     fetchTokenPrices
   )
 
+  const copyToClipboard = (text: string) => async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+ };
+
   // TODO: Better error handling
   if (errors.tokensError || errors.nftsError || error) return
   // Probably use some spinner to indicate the loading time
   if (!tokenPrices || !tokenBalance || !nfts) return
 
-  const estimatedTotalValue = createCryptoTokenObject(
-    tokenBalance,
-    tokenPrices
-  ).reduce((acc, curr) => (acc += (curr.price || 0) * curr.value), 0)
+  const tokens = createCryptoTokenObject(tokenBalance, tokenPrices)
+
+  const estimatedTotalValue = tokens.reduce(
+    (acc, curr) => (acc += (curr.price || 0) * curr.value),
+    0
+  )
+
+  const userNameWithDomain = `${username}${appConfig.ensDomain}`
 
   return (
     <>
       <header className="flex  items-center justify-between">
-        <UserInfo>
+        <UserInfo onClick={copyToClipboard(userNameWithDomain)}>
           <Image
             className="rounded-full"
             src={userProfilePicture || '/img/profile-placeholder.svg'}
@@ -58,8 +70,7 @@ export default function Dashboard() {
             height={40}
           />
           <Typography fontVariant="bodyBold">
-            {username}
-            {appConfig.ensDomain}
+            {userNameWithDomain}
           </Typography>
         </UserInfo>
         <div
@@ -70,11 +81,11 @@ export default function Dashboard() {
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
-          {`Estimated Value for: ${
-            account?.address ? shortenEthereumAddress(account.address) : ''
-          }`}
+          Estimated Value:
         </Typography>
-        <Typography color="text" fontVariant="extraLarge">
+        <Typography
+          color={estimatedTotalValue === 0 ? 'grey' : 'text'}
+          fontVariant="extraLarge">
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>

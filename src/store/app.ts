@@ -4,6 +4,7 @@ import { SETTINGS_ACTION_TYPE } from '@/components/Settings/SettingsModal'
 import { TRANSACTION_ACTION_TYPE } from '@/components/TransactionModal'
 import { Collectible, ICryptoToken } from '@/services/types'
 import { atom } from 'jotai'
+import { OsNft } from '@/app/dashboard/utils/nft-balance-opensea'
 
 interface BalanceErrorState {
   tokensError: string | null
@@ -27,9 +28,9 @@ export const currentPublicProfileAtom = atom<string | null>(null)
 export const currentPublicProfileNameAtom = atom<string | null>(null)
 
 export const tokenBalancesAtom = atom({})
-export const userNFTsAtom = atom<Collectible[]>([])
+export const userNFTsAtom = atom<OsNft[]>([])
 export const secondaryTokenBalancesAtom = atom({})
-export const secondaryUserNFTsAtom = atom<Collectible[]>([])
+export const secondaryUserNFTsAtom = atom<OsNft[]>([])
 
 export const isBalanceLoadingAtom = atom({
   tokensLoading: false,
