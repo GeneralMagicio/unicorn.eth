@@ -63,6 +63,14 @@ export default function Login() {
       setStep(LoginSteps.PICK_USERNAME)
     }
   }, [wallet, step])
+
+  useEffect(() => {
+    // Check for signed in users
+    if (wallet && username && !chosenUsername) {
+      router.push('/dashboard')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wallet, username, chosenUsername])
   const login = async () => {
     setIsSigning(true)
     try {
