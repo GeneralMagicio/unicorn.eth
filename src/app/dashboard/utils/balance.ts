@@ -9,23 +9,17 @@ import {
 const PrecisionDigits = 4
 
 export function getProviderUrl(chainId: number) {
-  // This is a public api key so don't worry.
-  const infuraApiKey = '75268e971ab6449981ac429cf62c5fb7'
+  const drpcKey = process.env.NEXT_PUBLIC_DRPC_KEY
 
   const urls: Record<number, string> = {
-    // [SupportedChainIds.Mainnet]: `https://mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Mainnet]: `https://eth.llamarpc.com`,
-    // [SupportedChainIds.Sepolia]: `https://sepolia.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Sepolia]: `https://sepolia.drpc.org`,
-    // [SupportedChainIds.OP]: `https://optimism-mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.OP]: `https://mainnet.optimism.io`,
-    [SupportedChainIds.Gnosis]: `https://gnosis-rpc.publicnode.com`,
-    // [SupportedChainIds.Arbitrum]: `https://arbitrum-mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Arbitrum]: `https://endpoints.omniatech.io/v1/arbitrum/one/public`,
-    [SupportedChainIds.Base]: `https://mainnet.base.org`,
-    // [SupportedChainIds.Polygon]: `https://polygon-mainnet.infura.io/v3/${infuraApiKey}`,
-    [SupportedChainIds.Polygon]: `https://rpc.ankr.com/polygon`,
-    [SupportedChainIds.BSC]: `https://bsc-dataseed3.binance.org`,
+    [SupportedChainIds.Mainnet]: `https://lb.drpc.org/ogrpc?network=ethereum&dkey=${drpcKey}`,
+    [SupportedChainIds.Sepolia]: `https://lb.drpc.org/ogrpc?network=sepolia&dkey=${drpcKey}`,
+    [SupportedChainIds.OP]: `https://lb.drpc.org/ogrpc?network=optimism&dkey=${drpcKey}`,
+    [SupportedChainIds.Gnosis]: `https://lb.drpc.org/ogrpc?network=gnosis&dkey=${drpcKey}`,
+    [SupportedChainIds.Arbitrum]: `https://lb.drpc.org/ogrpc?network=arbitrum&dkey=${drpcKey}`,
+    [SupportedChainIds.Base]: `https://lb.drpc.org/ogrpc?network=base&dkey=${drpcKey}`,
+    [SupportedChainIds.Polygon]: `https://lb.drpc.org/ogrpc?network=polygon&dkey=${drpcKey}`,
+    [SupportedChainIds.BSC]: `https://lb.drpc.org/ogrpc?network=bsc&dkey=${drpcKey}`,
   }
 
   return urls[chainId] || 'Chain ID not supported'
@@ -86,11 +80,17 @@ export async function getBalanceForTokenChainPairs(
   )
   const promises : Promise<void>[] = []
   const func = async (symbol: string, address: string, chainId: SupportedChainIds) => {
-    totalBalance[symbol][chainId] = await getTokenBalance(
-      chainId,
-      address,
-      walletAddress
-    )
+    let result = BigInt(0)
+    try {
+      result = await getTokenBalance(
+        chainId,
+        address,
+        walletAddress
+      )
+    } catch (e) {
+      console.error("error for", e)
+    }
+    totalBalance[symbol][chainId] = result
   }
   for (const token of supportedTokens) {
     for (const { address, chainId } of token.addresses) {
