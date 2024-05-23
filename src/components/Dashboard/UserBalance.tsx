@@ -56,7 +56,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({
   const tokens = createCryptoTokenObject(tokenBalance, tokenPrices)
   const nfts = createCollectibleObject(collectibleRes)
   return (
-    <div className="flex h-[100%] flex-col gap-4 ">
+    <div className="flex h-[100%] flex-col gap-4">
       <nav className="flex gap-4">
         {TABS.map((tab, idx) => (
           <Typography
@@ -71,7 +71,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({
           </Typography>
         ))}
       </nav>
-      <div className="flex max-h-[60vh] flex-col scroll-auto p-1 pb-0">
+      <div className="flex flex-col gap-4 h-[100%] mb-[20px] overflow-scroll">
         {activeTab === TABS[0] && (
           <div className="flex h-full flex-col gap-4 overflow-auto pb-20">
             {tokensLoading && (
@@ -89,7 +89,9 @@ const UserBalance: React.FC<UserBalanceProps> = ({
                 key={idx}
                 onClick={() => {
                   setSelectedToken(token)
-                  setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
+                  action
+                    ? action(token)
+                    : setActiveModal(MODAL_TYPE.TOKEN_DETAIL)
                 }}
                 role="button">
                 <TokenItem token={token} />

@@ -60,7 +60,7 @@ const SendConfirmation = ({
     setTxDone,
     isDeposit,
   })
-  console.log({ sendTransaction })
+
   const router = useRouter()
   const account = useActiveAccount()
   const { mutate: estimateGasCost, data: gasEstimate } = useEstimateGasCost()
