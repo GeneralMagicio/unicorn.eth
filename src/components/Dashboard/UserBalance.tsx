@@ -77,7 +77,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({
                 Loading...
               </Typography>
             )}
-            {tokens.length === 0 && (
+            {tokens.length === 0 && !tokensLoading && (
               <Typography className="m-auto" fontVariant="large" color="grey">
                 No tokens found in your wallet
               </Typography>
@@ -102,7 +102,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({
                 Loading...
               </Typography>
             )}
-            {nfts.length === 0 && (
+            {nfts.length === 0 && !nftsLoading && (
               <Typography className="m-auto" fontVariant="large" color="grey">
                 No collectibles found in your wallet
               </Typography>

@@ -82,9 +82,7 @@ export default function Dashboard() {
       </header>
       <BalanceBox>
         <Typography color="inherit" fontVariant="small">
-          {`Estimated Value for: ${
-            account?.address ? shortenEthereumAddress(account.address) : ''
-          }`}
+          Estimated Value:
         </Typography>
         <Typography
           color={estimatedTotalValue === 0 ? 'grey' : 'text'}
