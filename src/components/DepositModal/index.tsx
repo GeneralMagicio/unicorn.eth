@@ -159,6 +159,7 @@ export const DepositModal: React.FC<{
             <UserBalance
               address={userAddress}
               isSecondary={true}
+              chainId={currentChain?.chainId}
               action={(pickedToken: any) => {
                 setSelectedToken(pickedToken)
                 setDepositAmount(pickedToken.value)

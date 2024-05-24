@@ -19,7 +19,13 @@ import { useEffect } from 'react'
 
 export const fetchBalancesAtom = atom(
   null,
-  async (get, set, userAddress: string, isSecondary: boolean) => {
+  async (
+    get,
+    set,
+    userAddress: string,
+    isSecondary: boolean,
+    chainId?: number
+  ) => {
     const loadingAtom = isSecondary
       ? isSecondaryBalanceLoadingAtom
       : isBalanceLoadingAtom
@@ -35,7 +41,7 @@ export const fetchBalancesAtom = atom(
 
     try {
       const tokenPrices = await fetchTokenPrices()
-      const balances = await calculateBalance(userAddress)
+      const balances = await calculateBalance(userAddress, chainId)
       const nfts = await findAllNFTsOsApi(userAddress)
 
       set(isSecondary ? secondaryTokenBalancesAtom : tokenBalancesAtom, {
@@ -55,7 +61,11 @@ export const fetchBalancesAtom = atom(
   }
 )
 
-export function useBalance(userAddress: string | null, isSecondary?: boolean) {
+export function useBalance(
+  userAddress: string | null,
+  isSecondary?: boolean,
+  chainId?: number
+) {
   const tokenBalanceAtom = isSecondary
     ? secondaryTokenBalancesAtom
     : tokenBalancesAtom
@@ -77,7 +87,7 @@ export function useBalance(userAddress: string | null, isSecondary?: boolean) {
       return
     }
 
-    fetchBalances(userAddress, !!isSecondary)
+    fetchBalances(userAddress, !!isSecondary, chainId)
   }, [
     userAddress,
     setTokenBalance,
@@ -86,6 +96,7 @@ export function useBalance(userAddress: string | null, isSecondary?: boolean) {
     setErrors,
     fetchBalances,
     isSecondary,
+    chainId,
   ])
 
   return {
@@ -94,6 +105,6 @@ export function useBalance(userAddress: string | null, isSecondary?: boolean) {
     loading,
     errors,
     refreshBalances: () =>
-      userAddress && fetchBalances(userAddress, !!isSecondary),
+      userAddress && fetchBalances(userAddress, !!isSecondary, chainId),
   }
 }
