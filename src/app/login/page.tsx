@@ -21,6 +21,7 @@ import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
 import { appConfig } from '@/config'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
+import { UNICORN_MODE } from '@/store/settings'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -102,26 +103,40 @@ export default function Login() {
         isSettingEnsInfo ||
         (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
-        <div className="absolute mb-28 flex h-4/5 w-full">
+        <div className="bg-accent-light absolute mb-28 flex h-4/5 w-full">
           {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
               onClick={handleBack}
             />
           )}
-          <Image
-            className="object-cover"
-            src="/img/login-bg.png"
-            alt="Unicorn"
-            fill
-          />
-        </div>
-        <div className="absolute inset-x-0 bottom-0 rounded-t-[32px] border-b bg-white px-4 py-12">
-          <div className="flex flex-col gap-10">
+          {!!UNICORN_MODE ? (
+            <div className="relative w-[239px] mx-[25%]">
+              <Image
+                className="object-contain"
+                src={'/img/logo-unicorn-landing.png'}
+                alt="Unicorn"
+                fill
+              />
+            </div>
+          ) : (
             <Image
-              src="/img/logo.svg"
+              className="object-cover"
+              src={'/img/login-bg.png'}
               alt="Unicorn"
-              width={170}
+              fill
+            />
+          )}
+        </div>
+        <div
+          className={`absolute bg-accent-light inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
+            UNICORN_MODE ? 'border-neutral-950' : 'border-transparent'
+          } border-b-transparent px-4 pt-4 pb-12`}>
+          <div className="flex flex-col gap-10 ">
+            <Image
+              src={UNICORN_MODE ? '/img/unicorn-logo.svg' : '/img/logo.svg'}
+              alt="Unicorn"
+              width={UNICORN_MODE ? 231 : 170}
               height={48}
               className={cn('mx-auto object-cover', {
                 'mt-[57px]': step === LoginSteps.WELCOME_SCREEN,

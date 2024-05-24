@@ -5,13 +5,17 @@ import { ThemeProvider } from 'styled-components'
 
 import StyledComponentsRegistry from '@/lib/styled-components-registry'
 import { Tokens } from '@ensdomains/thorin/dist/types/tokens'
+import { UNICORN_MODE } from '@/store/settings'
 
 const customTheme = {
   ...lightTheme,
   colors: {
     ...lightTheme.colors,
-    textSecondary: '#9B9BA7',
+    textSecondary: UNICORN_MODE ? '#746866' : '#9B9BA7',
     additionalBorder: '#E8E8E8',
+    backgroundSecondary: UNICORN_MODE ? '#F7E7CD' : '#F5F5F5',
+    greySecondary: UNICORN_MODE ? '#F7E7CD' : '#F5F5F5',
+    accent: UNICORN_MODE ? '#FFB409' : '#3889FF',
   },
   fontWeights: {
     ...lightTheme.fontWeights,

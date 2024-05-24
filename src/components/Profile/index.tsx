@@ -27,6 +27,7 @@ import { FullPageSpinner } from '../FullPageSpinner'
 import { useRouter } from 'next/navigation'
 import { EnsRecordType, nsService } from '@/services/enService'
 import { appConfig } from '@/config'
+import { UNICORN_MODE } from '@/store/settings'
 
 function Profile({
   username,
@@ -113,7 +114,7 @@ function Profile({
         <div className="relative">
           <Image
             className="rounded-full"
-            src="/img/key.svg"
+            src={UNICORN_MODE ? '/img/logo-unicorn.png' : '/img/key.svg'}
             alt="Unicorn"
             width={44}
             height={44}
@@ -131,7 +132,9 @@ function Profile({
       {memoizedUserBalance}
       <div className="fixed bottom-6 flex w-[90%] justify-center">
         {connectedAccount ? (
-          <Button onClick={() => setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)}>
+          <Button
+            onClick={() => setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)}
+            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
             Deposit
           </Button>
         ) : (
@@ -150,7 +153,9 @@ function Profile({
             }}
             theme={lightTheme({
               colors: {
-                primaryButtonBg: 'rgba(36, 131, 248, 1)',
+                primaryButtonBg: UNICORN_MODE
+                  ? 'var(--gradient-orange)'
+                  : 'rgba(36, 131, 248, 1)',
               },
             })}
             onConnect={() => {

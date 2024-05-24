@@ -6,6 +6,8 @@ export const IconButton = styled(Button)<{ height?: string }>(
     padding: 0,
     width: height,
     height: height,
+    // @ts-ignore
+    background: theme.colors.greySecondary,
     svg: {
       width: 'unset',
       height: 'unset',

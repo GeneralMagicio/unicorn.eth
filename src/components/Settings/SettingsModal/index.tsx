@@ -16,6 +16,7 @@ import { IconButton } from '@/components/Styled'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 import { useAuth } from '@/hooks/useAuth'
 import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
+import { UNICORN_MODE } from '@/store/settings'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -118,7 +119,10 @@ export const SettingsModal: React.FC<{
           </div>
         ))}
         <div className="flex justify-between gap-4">
-          <Button size="small" shape="rounded">
+          <Button
+            size="small"
+            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+            shape="rounded">
             Follow on X
           </Button>
           <Button colorStyle="greySecondary" size="small" shape="rounded">
