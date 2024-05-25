@@ -167,7 +167,10 @@ export const SendModal: React.FC<{
                   <div
                     onClick={handlePaste}
                     className="flex items-center gap-1 cursor-pointer">
-                    <Typography color="bluePrimary">Paste</Typography>
+                    <Typography
+                      color={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
+                      Paste
+                    </Typography>
                     <IconButton
                       colorStyle="transparent"
                       size="small"
@@ -246,7 +249,7 @@ export const SendModal: React.FC<{
               )}
               <Button
                 onClick={startTx}
-                className="btn-primary"
+                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
                 colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
                 Send
               </Button>

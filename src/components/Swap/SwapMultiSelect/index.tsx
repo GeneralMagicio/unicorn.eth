@@ -1,6 +1,7 @@
 import { TokenItem } from '@/components/TokenItem'
 import { Typography, Checkbox, Button } from '@ensdomains/thorin'
 import { SwapSelectedTokens, useSwapContext } from '../swap-context'
+import { UNICORN_MODE } from '@/store/settings'
 
 export const SwapMultiSelect = () => {
   const {
@@ -30,6 +31,7 @@ export const SwapMultiSelect = () => {
         <label className="flex items-center gap-4">
           <Checkbox
             name="swap-everything"
+            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
             label={''}
             width="auto"
             checked={isAllSelected}
@@ -55,6 +57,7 @@ export const SwapMultiSelect = () => {
             <Checkbox
               name={token.name}
               label={''}
+              colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
               width="auto"
               checked={Boolean(selectedTokens[token.name])}
               onChange={(e) => {
@@ -77,6 +80,7 @@ export const SwapMultiSelect = () => {
       {error && <Typography color="red">{error}</Typography>}
       <Button
         disabled={!Boolean(Object.keys(selectedTokens).length)}
+        colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
         onClick={handleConfirm}>
         Swap
       </Button>

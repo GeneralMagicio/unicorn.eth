@@ -145,7 +145,7 @@ const SendConfirmation = ({
 
   if (txState === TxState.Failed) {
     return (
-      <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
+      <div className="flex flex-wrap gap-4 flex-col  justify-center text-center gap-x-16">
         <Typography fontVariant="headingThree" weight="bold">
           Transaction Failed
         </Typography>
@@ -161,7 +161,7 @@ const SendConfirmation = ({
 
   if (txLoading || txComplete) {
     return (
-      <div className="flex flex-wrap gap-4 flex-col align-center justify-center text-center gap-x-16">
+      <div className="flex flex-wrap gap-4 flex-col  justify-center text-center gap-x-16">
         <LoadingArc duration={5000} txComplete={txComplete} />
         {!txComplete && (
           <Typography fontVariant="headingThree" weight="bold">
@@ -169,8 +169,8 @@ const SendConfirmation = ({
           </Typography>
         )}
         {txComplete && (
-          <div className="flex flex-col w-[250px] items-center self-center mt-2 gap-2 align-center justify-center text-center">
-            <div className="flex flex-row gap-2 items-center content-center align-center text-center">
+          <div className="flex flex-col w-[250px] items-center self-center mt-2 gap-2  justify-center text-center">
+            <div className="flex flex-row gap-2 items-center content-center  text-center">
               <Image
                 width={24}
                 height={24}
@@ -188,7 +188,7 @@ const SendConfirmation = ({
               src="/img/double-arrow-down.svg"
               alt="arrow"
             />
-            <div className="flex flex-row gap-2 items-center content-center align-center text-center">
+            <div className="flex flex-row gap-2 items-center content-center  text-center">
               <Image
                 width={24}
                 height={24}

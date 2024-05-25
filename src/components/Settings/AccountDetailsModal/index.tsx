@@ -25,6 +25,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { appConfig } from '@/config'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
+import { UNICORN_MODE } from '@/store/settings'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -237,7 +238,11 @@ export const AccountDetailsModal: React.FC<{
                 />
               )}
             />
-            <Button className="mt-10" type="submit" loading={isSubmitting}>
+            <Button
+              colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+              className="mt-10"
+              type="submit"
+              loading={isSubmitting}>
               Update
             </Button>
           </form>

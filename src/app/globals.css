@@ -26,6 +26,7 @@
   --borderPrimary: #2c2c2c;
   --borderTetrary: #b6a89a;
   --border: #adadad;
+  --border-primary: #332933;
   --additionalBorder: #ffd900;
 
   /* Gradients */
@@ -46,5 +47,12 @@
 .allWhiteBg {
   * {
     background-color: white !important;
+  }
+}
+
+.unicorn-btn {
+  border: 1px solid var(--border-primary) !important;
+  * {
+    color: var(--border-primary) !important;
   }
 }

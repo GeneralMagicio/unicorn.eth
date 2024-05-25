@@ -22,6 +22,7 @@ import { appConfig } from '@/config'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 import { UNICORN_MODE } from '@/store/settings'
+import { useTheme } from 'styled-components'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -35,6 +36,7 @@ export default function Login() {
   const [isSigning, setIsSigning] = useState(false)
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
+  const theme = useTheme()
   const { isAutoConnecting } = useIsAutoConnecting()
   const [isSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
   const { userProfilePicture, isUploading, handleFileChange, inputRef } =
@@ -107,16 +109,19 @@ export default function Login() {
           {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
+              color={theme.colors.accent}
               onClick={handleBack}
             />
           )}
           {!!UNICORN_MODE ? (
-            <div className="relative w-[239px] mx-[25%]">
+            <div className="flex w-full self-center justify-center absolute">
               <Image
                 className="object-contain"
                 src={'/img/logo-unicorn-landing.png'}
                 alt="Unicorn"
-                fill
+                width={200}
+                height={200}
+                style={{ marginTop: '-32%' }}
               />
             </div>
           ) : (
@@ -172,7 +177,7 @@ export default function Login() {
                       description={
                         chosenUsername && isNameAvailable
                           ? 'Great choice! That’s available.'
-                          : 'Hide'
+                          : ''
                       }
                       value={chosenUsername}
                       onChange={(e) => {
@@ -193,6 +198,7 @@ export default function Login() {
 
                   <Button
                     loading={isRegistering}
+                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     disabled={!chosenUsername || !Boolean(isNameAvailable)}
                     onClick={() => {
                       createEnsSubname(chosenUsername).then(() => {
@@ -243,6 +249,7 @@ export default function Login() {
                     </Typography>
                   </div>
                   <Button
+                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     onClick={() => {
                       setUsername(chosenUsername.toLowerCase())
                       router.push('/dashboard')

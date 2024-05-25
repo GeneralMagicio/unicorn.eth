@@ -21,4 +21,4 @@ export const appearanceAtom = atom<(typeof Appearances)[number]>('light')
 export const localCurrencyAtom = atom<LocalCurrencyType>('USD')
 export const showUnverifiedTokensAtom = atom<boolean>(false)
 export const userProfileImg = atom<string>('')
-export const UNICORN_MODE = true
+export const UNICORN_MODE = false

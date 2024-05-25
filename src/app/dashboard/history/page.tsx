@@ -14,7 +14,6 @@ export default function HistoryPage() {
       <div className="flex items-center gap-2">
         <IconButton
           onClick={() => router.back()}
-          colorStyle="transparent"
           size="small"
           shape="square"
           width="auto">
