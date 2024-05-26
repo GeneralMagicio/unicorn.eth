@@ -54,14 +54,13 @@ export function usePOAP() {
     [mintLinks]
   )
 
-  const canMintPOAP =
-    poapMintData !== undefined && !poapMintData?.data?.owner && mintLink
+  const canMintPOAP = !isCheckingPOAPStatus && !poapMintData && mintLink
   console.log({ poapMintData, canMintPOAP, mintLink })
 
   return {
     isGettingToken,
     isMinting,
-    canMintPOAP,
+    canMintPOAP: Boolean(canMintPOAP),
     postMint,
   }
 }
