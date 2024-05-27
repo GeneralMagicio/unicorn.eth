@@ -27,9 +27,12 @@ export default async function RootLayout({
           <html lang="en" data-unicorn-mode={UNICORN_MODE}>
             <body className={inter.className}>
               <ThirdwebAutoConnect />
-              <main className="fixed inset-0 m-auto flex max-w-[430px] flex-col items-center justify-center bg-white">
+              <main className="fixed inset-0 m-auto flex max-w-[430px] overflow-x-hidden flex-col items-center justify-center bg-white md:hidden">
                 {children}
               </main>
+              <div className="hidden fixed inset-0 justify-center items-center md:flex">
+                You can see the app only on mobile
+              </div>
             </body>
           </html>
         </AuthProvider>
