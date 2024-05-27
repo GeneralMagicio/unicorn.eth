@@ -13,6 +13,9 @@ import { useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
 import { usePOAP } from '@/hooks/usePOAP'
+import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '@/components/UnicornButton'
+import { brandColor } from '@/lib/client-providers'
 
 const InfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -57,13 +60,17 @@ export const ClaimDigitalStickerModal: React.FC<{
               width={320}
               height={320}
               className="mx-auto h-[320px] w-[320px] rounded-full object-cover"
-              src="/img/login-bg.png"
+              src={
+                UNICORN_MODE
+                  ? '/img/unicorn-black-logo.svg'
+                  : '/img/login-bg.png'
+              }
               alt="Unicorn"
             />
             <Typography fontVariant="extraLarge" weight="bold">
               Welcome to account.eth
             </Typography>
-            <Button onClick={() => setStep(1)}>Mint</Button>
+            <UnicornButton onClick={() => setStep(1)}>Mint</UnicornButton>
           </>
         )}
         {step === 1 && (
@@ -96,13 +103,13 @@ export const ClaimDigitalStickerModal: React.FC<{
               <Button onClick={() => setStep(0)} colorStyle="greyPrimary">
                 Cancel
               </Button>
-              <Button
+              <UnicornButton
                 onClick={() => {
                   setStep(2)
                   postMint().then(() => setStep(3))
                 }}>
                 Confirm
-              </Button>
+              </UnicornButton>
             </div>
           </div>
         )}
@@ -110,9 +117,9 @@ export const ClaimDigitalStickerModal: React.FC<{
           <>
             <div className="flex flex-col items-center gap-10">
               {/* {isMinting && } */}
-              <Typography color="bluePrimary">
+              <Typography color={brandColor}>
                 {isMinting ? (
-                  <Spinner size="large" color="bluePrimary" />
+                  <Spinner size="large" color={brandColor} />
                 ) : (
                   <CheckCircleSVG width={64} height={64} />
                 )}
@@ -144,14 +151,16 @@ export const ClaimDigitalStickerModal: React.FC<{
                     className="inline-flex"
                     fontVariant="extraSmall"
                     onClick={goToHistory}
-                    color="bluePrimary">
+                    color={brandColor}>
                     Transaction History
                   </Typography>
                   .
                 </Typography>
               </div>
             </div>
-            <Button onClick={goToHistory}>Go to Transaction History</Button>
+            <UnicornButton onClick={goToHistory}>
+              Go to Transaction History
+            </UnicornButton>
           </>
         )}
       </div>

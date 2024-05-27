@@ -1,3 +1,5 @@
+import { UNICORN_MODE } from '@/store/settings'
+
 interface Props {
   activeStep: number
   steps: number
@@ -9,6 +11,7 @@ export const DotStepper: React.FC<Props> = ({
   steps,
   changeStep,
 }) => {
+  const colorClassName = UNICORN_MODE ? 'bg-accent' : 'bg-blue-500'
   return (
     <div className="flex gap-2">
       {Array(steps)
@@ -17,7 +20,7 @@ export const DotStepper: React.FC<Props> = ({
           // eslint-disable-next-line tailwindcss/no-custom-classname
           <div
             className={`h-3 w-3 cursor-pointer rounded-full ${
-              step + 1 === activeStep ? `bg-blue-500` : `bg-[#fff]`
+              step + 1 === activeStep ? colorClassName : `bg-[#fff]`
             }`}
             key={step}
             onClick={() => changeStep(step + 1)}

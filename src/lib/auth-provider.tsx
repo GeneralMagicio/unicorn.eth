@@ -12,6 +12,7 @@ import { client } from './third-web/provider'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
+import { UNICORN_MODE } from '@/store/settings'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
@@ -96,6 +97,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 setUserProfilePicture(
                   `${process.env.NEXT_PUBLIC_GATEWAY_URL}/${data?.data}`
                 )
+              else {
+                setUserProfilePicture(
+                  UNICORN_MODE
+                    ? '/img/unicorn-profile-placeholder.svg'
+                    : '/img/profile-placeholder.svg'
+                )
+              }
             })
         }
         nsService.createTextRecord({

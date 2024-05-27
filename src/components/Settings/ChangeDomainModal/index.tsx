@@ -7,6 +7,8 @@ import { useEnsResolver } from '@/hooks/useEnsResolver'
 import { useEffect, useState } from 'react'
 import { TickCircleIcon } from '@/components/Icons/TickCircle'
 import { appConfig } from '@/config'
+import { UnicornButton } from '@/components/UnicornButton'
+import { UNICORN_MODE } from '@/store/settings'
 
 export const ChangeDomainModal: React.FC<{
   open: boolean
@@ -47,20 +49,24 @@ export const ChangeDomainModal: React.FC<{
         {changed ? (
           <div className="flex flex-col items-center gap-1">
             <TickCircleIcon
-              color={theme.colors.bluePrimary}
+              color={
+                UNICORN_MODE
+                  ? theme.colors.orangePrimary
+                  : theme.colors.bluePrimary
+              }
               width={100}
               height={100}
               strokeWidth={0.5}
             />
             <Typography fontVariant="small">Wallet domain updated!</Typography>
-            <Button
+            <UnicornButton
               className="mt-9"
               onClick={() => {
                 setChanged(false)
                 onDismiss()
               }}>
               Back to Account Details
-            </Button>
+            </UnicornButton>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
@@ -96,12 +102,12 @@ export const ChangeDomainModal: React.FC<{
               />
             </UserNameInput>
 
-            <Button
+            <UnicornButton
               loading={isRegistering}
               disabled={!username || !Boolean(isNameAvailable)}
               onClick={updateUserName}>
               Update Username
-            </Button>
+            </UnicornButton>
           </div>
         )}
       </div>

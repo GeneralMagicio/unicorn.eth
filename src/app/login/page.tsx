@@ -105,37 +105,27 @@ export default function Login() {
         isSettingEnsInfo ||
         (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
-        <div className="bg-accent-light absolute mb-28 flex h-4/5 w-full">
+        <div className="bg-accent-light absolute top-0  flex h-4/5 w-full">
           {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
               className="absolute left-5 top-10 z-10"
-              color={theme.colors.accent}
               onClick={handleBack}
             />
           )}
-          {!!UNICORN_MODE ? (
-            <div className="flex w-full self-center justify-center absolute">
-              <Image
-                className="object-contain"
-                src={'/img/logo-unicorn-landing.png'}
-                alt="Unicorn"
-                width={200}
-                height={200}
-                style={{ marginTop: '-32%' }}
-              />
-            </div>
-          ) : (
-            <Image
-              className="object-cover"
-              src={'/img/login-bg.png'}
-              alt="Unicorn"
-              fill
-            />
-          )}
+          <Image
+            className="object-contain"
+            src={
+              UNICORN_MODE
+                ? '/img/logo-unicorn-landing.svg'
+                : '/img/login-bg.png'
+            }
+            alt="Unicorn"
+            fill
+          />
         </div>
         <div
-          className={`absolute bg-accent-light inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
-            UNICORN_MODE ? 'border-neutral-950' : 'border-transparent'
+          className={`absolute flex flex-col justify-center min-h-[426px] bg-white inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
+            UNICORN_MODE ? 'border-accent' : 'border-transparent'
           } border-b-transparent px-4 pt-4 pb-12`}>
           <div className="flex flex-col gap-10 ">
             <Image
@@ -197,6 +187,7 @@ export default function Login() {
                   </UserNameInput>
 
                   <Button
+                    className={UNICORN_MODE ? 'unicorn-btn' : ''}
                     loading={isRegistering}
                     colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     disabled={!chosenUsername || !Boolean(isNameAvailable)}
@@ -224,9 +215,7 @@ export default function Login() {
                       />
                       <Image
                         className="max-h-[72px] max-w-[72px] rounded-full"
-                        src={
-                          userProfilePicture || '/img/profile-placeholder.svg'
-                        }
+                        src={userProfilePicture}
                         alt={username || ''}
                         width={72}
                         height={72}
@@ -249,6 +238,7 @@ export default function Login() {
                     </Typography>
                   </div>
                   <Button
+                    className={UNICORN_MODE ? 'unicorn-btn' : ''}
                     colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     onClick={() => {
                       setUsername(chosenUsername.toLowerCase())

@@ -63,8 +63,8 @@ export default function Dashboard() {
       <header className="flex  items-center justify-between">
         <UserInfo onClick={copyToClipboard(userNameWithDomain)}>
           <Image
-            className="rounded-full"
-            src={userProfilePicture || '/img/profile-placeholder.svg'}
+            className="rounded-full max-h-[40px] max-w-[40px]"
+            src={userProfilePicture}
             alt={username || ''}
             width={40}
             height={40}
@@ -87,15 +87,13 @@ export default function Dashboard() {
           {priceFormatter.format(estimatedTotalValue)}
         </Typography>
       </BalanceBox>
-      {showPromotionBox && canMintPOAP && (
-        <PromotionBox
-          title="Claim your digital collectible"
-          subtitle="Welcome to your web3 wallet."
-          onClose={() => {
-            setShowPromotionBox(false)
-          }}
-        />
-      )}
+      <PromotionBox
+        title="Claim your digital collectible"
+        subtitle="Welcome to your web3 wallet."
+        onClose={() => {
+          setShowPromotionBox(false)
+        }}
+      />
 
       {userAddress && (
         <div className="h-[100%]">

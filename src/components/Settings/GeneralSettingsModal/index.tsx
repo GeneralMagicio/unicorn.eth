@@ -18,6 +18,7 @@ import {
 } from '@/store/settings'
 import { ChevronRight } from '@/components/Icons/ChevronRight'
 import { MODAL_TYPE } from '@/utils/modals'
+import { brandColor } from '@/lib/client-providers'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -60,6 +61,7 @@ export const GeneralSettingsModal: React.FC<{
                   {value}
                 </Typography>
                 <RadioButton
+                  colorStyle={brandColor}
                   id={value}
                   width="auto"
                   key={value}

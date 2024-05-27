@@ -29,6 +29,20 @@
   --border-primary: #332933;
   --additionalBorder: #ffd900;
 
+  &[data-unicorn-mode=true]{
+    --accent: #FFB409;
+    --background-secondary: #F7E7CD;
+
+   input[type="checkbox"]{
+     &::after{
+      background-color: var(--accent) !important;
+     }
+     &:checked{
+      background-color: var(--borderTetrary) !important;
+     }
+   }
+
+  }
   /* Gradients */
   --gradient-orange: linear-gradient(133deg, #ff8626 0.51%, #ffb409 97.22%);
 }
@@ -48,11 +62,15 @@
   * {
     background-color: white !important;
   }
-}
+} 
 
 .unicorn-btn {
   border: 1px solid var(--border-primary) !important;
   * {
     color: var(--border-primary) !important;
+  }
+  &:disabled{
+    background: var(--accent) !important;
+    opacity: 0.4;
   }
 }

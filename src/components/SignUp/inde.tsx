@@ -3,11 +3,13 @@ import styled from 'styled-components'
 
 export const SignUpButton = styled.button(({ theme }) => ({
   display: 'flex',
+  justifyContent: 'center',
   alignItems: 'center',
-  borderRadius: theme.radii['2xLarge'],
+  borderRadius: '100px',
   padding: `${theme.space['3']} ${theme.space['3']}`,
-  gap: theme.space['2'],
-  border: `2px solid ${
-    UNICORN_MODE ? 'var(--borderTetrary)' : theme.colors.borderPrimary
-  } !important`,
+  gap: '16px',
+  border: `1px solid ${theme.colors.borderPrimary} !important`,
+  boxShadow: UNICORN_MODE
+    ? '0px 4px 0px 0px var(--Brand-colors-Yellow-Yellow-200, #FFB409)'
+    : 'none',
 }))

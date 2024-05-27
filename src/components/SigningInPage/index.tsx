@@ -10,7 +10,7 @@ export const SigningInPage = () => {
       <Image src="/img/circles.svg" alt="Circles" width={360} height={360} />
       <div className="absolute flex flex-col items-center justify-center">
         {UNICORN_MODE ? (
-          <UnicornIcon className="mb-6" />
+          <UnicornIcon className="mb-6 w-10 h-10" />
         ) : (
           <KeyIcon className="mb-6" />
         )}
