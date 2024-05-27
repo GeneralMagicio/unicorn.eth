@@ -14,3 +14,5 @@ export const UnicornButton: typeof Button = React.forwardRef((props, ref) => {
     />
   )
 })
+
+UnicornButton.displayName = 'UnicornButton'
