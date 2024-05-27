@@ -7,6 +7,7 @@ import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
 import { useRouter } from 'next/navigation'
 import { MODAL_TYPE } from '@/utils/modals'
+import { UNICORN_MODE } from '@/store/settings'
 
 const StyledNav = styled.nav(({ theme }) => ({
   position: 'fixed',
@@ -37,6 +38,7 @@ const NavItem = styled.div({
 const TransactionButton = styled(Button)({
   width: '64px',
   height: '64px',
+  background: UNICORN_MODE ? 'var(--gradient-orange)' : 'auto',
   svg: {
     width: '32px',
     height: '32px',

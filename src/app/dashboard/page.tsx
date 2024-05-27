@@ -38,11 +38,11 @@ export default function Dashboard() {
 
   const copyToClipboard = (text: string) => async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(text)
     } catch (err) {
-      console.error('Failed to copy text: ', err);
+      console.error('Failed to copy text: ', err)
     }
- };
+  }
 
   // TODO: Better error handling
   if (errors.tokensError || errors.nftsError || error) return
@@ -69,9 +69,7 @@ export default function Dashboard() {
             width={40}
             height={40}
           />
-          <Typography fontVariant="bodyBold">
-            {userNameWithDomain}
-          </Typography>
+          <Typography fontVariant="bodyBold">{userNameWithDomain}</Typography>
         </UserInfo>
         <div
           onClick={() => setActiveModal(MODAL_TYPE.SCAN)}
@@ -80,7 +78,7 @@ export default function Dashboard() {
         </div>
       </header>
       <BalanceBox>
-        <Typography color="inherit" fontVariant="small">
+        <Typography color="textSecondary" fontVariant="small">
           Estimated Value:
         </Typography>
         <Typography

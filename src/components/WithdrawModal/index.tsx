@@ -23,6 +23,7 @@ import {
 import { TokenItem } from '../TokenItem'
 import { useBalance } from '@/hooks/useBalance'
 import { truncateEthAddress } from '@/utils/strings'
+import { UNICORN_MODE } from '@/store/settings'
 
 enum WithdrawStep {
   ConnectToExchange,
@@ -160,7 +161,8 @@ export const WithdrawModal: React.FC<{
                     height: '40px',
                     borderRadius: '25px',
                   }}
-                  onClick={() => setStep(WithdrawStep.PickToken)}>
+                  onClick={() => setStep(WithdrawStep.PickToken)}
+                  colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
                   Setup
                 </Button>
               </div>
@@ -196,6 +198,7 @@ export const WithdrawModal: React.FC<{
                   onClick={() => {}}
                   className="flex gap-4 cursor-pointer mt-4">
                   <Checkbox
+                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     label={
                       <Typography fontVariant="body">
                         Withdraw Everything
@@ -221,6 +224,9 @@ export const WithdrawModal: React.FC<{
                       role="button"
                       className="flex gap-4 cursor-pointer mt-4">
                       <Checkbox
+                        colorStyle={
+                          UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'
+                        }
                         style={{
                           margin: '50% 0 0 0',
                         }}
@@ -313,6 +319,7 @@ export const WithdrawModal: React.FC<{
           {!isConnectToExchange ? (
             isPickToken ? (
               <Button
+                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                 disabled={!!inputError}
                 onClick={() => {
                   if (!input || !isAddress(input)) {

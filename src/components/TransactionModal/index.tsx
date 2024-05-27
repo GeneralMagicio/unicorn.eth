@@ -61,7 +61,7 @@ export const TransactionModal: React.FC<{
     },
     {
       icon: <WithdrawIcon />,
-      label: 'Witdraw to exhchange',
+      label: 'Witdraw to exchange',
       type: TRANSACTION_ACTION_TYPE.WITHDRAW,
     },
   ]

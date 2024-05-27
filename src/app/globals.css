@@ -6,6 +6,31 @@
   --border-secondary: #b8b8b8;
   --text-secondary: #9b9ba7;
   --background-secondary: #f6f6f6;
+
+  /* Updated colors for unicorn */
+  --accentSurface: #f1efe6;
+  --accentLight: #f1efe6;
+  --accentBright: #ffd900;
+  --accentPrimary: #f1efe6;
+  --accentDim: #0e0e0e;
+  --accentActive: #a0a0a0;
+  --accent: #00b9ff;
+  --backgroundPrimary: #2c2c2c;
+  --background: #f9f9f9;
+  --backgroundSecondary: #ffd900;
+  --textPrimary: #2c2c2c;
+  --text: #f9f9f9;
+  --textSecondary: #adadad;
+  --textTertiary: #0e0e0e;
+  --textAccent: #f9f9f9;
+  --borderPrimary: #2c2c2c;
+  --borderTetrary: #b6a89a;
+  --border: #adadad;
+  --border-primary: #332933;
+  --additionalBorder: #ffd900;
+
+  /* Gradients */
+  --gradient-orange: linear-gradient(133deg, #ff8626 0.51%, #ffb409 97.22%);
 }
 
 @keyframes progress {
@@ -22,5 +47,12 @@
 .allWhiteBg {
   * {
     background-color: white !important;
+  }
+}
+
+.unicorn-btn {
+  border: 1px solid var(--border-primary) !important;
+  * {
+    color: var(--border-primary) !important;
   }
 }

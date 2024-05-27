@@ -1,4 +1,5 @@
 import { activeModalAtom } from '@/store/app'
+import { UNICORN_MODE } from '@/store/settings'
 import { Typography, Spinner, CheckCircleSVG, Button } from '@ensdomains/thorin'
 import { useAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
@@ -44,7 +45,11 @@ export const SwapConfirmation = () => {
           </Typography>
         </div>
       </div>
-      <Button onClick={goToHistory}>Go to Transaction History</Button>
+      <Button
+        colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+        onClick={goToHistory}>
+        Go to Transaction History
+      </Button>
     </>
   )
 }

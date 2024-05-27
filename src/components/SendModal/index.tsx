@@ -19,6 +19,7 @@ import {
   fetchTokenPrices,
 } from '@/app/dashboard/utils/tokens'
 import { useBalance } from '@/hooks/useBalance'
+import { UNICORN_MODE } from '@/store/settings'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -166,7 +167,10 @@ export const SendModal: React.FC<{
                   <div
                     onClick={handlePaste}
                     className="flex items-center gap-1 cursor-pointer">
-                    <Typography color="bluePrimary">Paste</Typography>
+                    <Typography
+                      color={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
+                      Paste
+                    </Typography>
                     <IconButton
                       colorStyle="transparent"
                       size="small"
@@ -243,7 +247,10 @@ export const SendModal: React.FC<{
               {amountError && (
                 <Typography color="red">{amountError}</Typography>
               )}
-              <Button onClick={startTx} className="btn-primary">
+              <Button
+                onClick={startTx}
+                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
+                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
                 Send
               </Button>
             </>

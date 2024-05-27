@@ -11,6 +11,7 @@ import { ICryptoToken } from '@/services/types'
 import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { MODAL_TYPE } from '@/utils/modals'
+import { UNICORN_MODE } from '@/store/settings'
 
 const InfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -154,6 +155,7 @@ export const SwapForm = () => {
             Cancel
           </Button>
           <Button
+            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
             disabled={!Boolean(Object.keys(selectedTokens).length)}
             onClick={() => setStep(2)}>
             Confirm

@@ -81,7 +81,7 @@ export const ScanModal: React.FC<{
           />
         </div>
 
-        <div className="align-center z-10 flex w-[100%] flex-col items-center justify-center ">
+        <div className=" z-10 flex w-[100%] flex-col items-center justify-center ">
           <QRScan />
           <Typography
             className="w-[255px] text-center"
@@ -90,7 +90,7 @@ export const ScanModal: React.FC<{
             Send crypto or connect to dapps by scanning a QR code
           </Typography>
         </div>
-        <div className="align-center z-10 flex min-h-[162px] justify-center rounded-t-xl bg-neutral-800 px-[16px] pb-[48px] pt-[24px] ">
+        <div className=" z-10 flex min-h-[162px] justify-center rounded-t-xl bg-neutral-800 px-[16px] pb-[48px] pt-[24px] ">
           <Button
             style={{
               maxWidth: '200px',
