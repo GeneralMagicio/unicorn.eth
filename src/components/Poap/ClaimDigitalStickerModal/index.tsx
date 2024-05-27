@@ -68,7 +68,7 @@ export const ClaimDigitalStickerModal: React.FC<{
               alt="Unicorn"
             />
             <Typography fontVariant="extraLarge" weight="bold">
-              Welcome to account.eth
+              Welcome to unicorn.eth
             </Typography>
             <UnicornButton onClick={() => setStep(1)}>Mint</UnicornButton>
           </>
@@ -81,14 +81,18 @@ export const ClaimDigitalStickerModal: React.FC<{
                   Receive
                 </Typography>
                 <Typography fontVariant="extraLarge" weight="bold">
-                  Welcome to account.eth
+                  Welcome to unicorn.eth
                 </Typography>
               </div>
               <Image
                 width={46}
                 height={46}
                 className="h-[46px] w-[46px] rounded-full object-cover"
-                src="/img/login-bg.png"
+                src={
+                  UNICORN_MODE
+                    ? '/img/unicorn-black-logo.svg'
+                    : '/img/login-bg.png'
+                }
                 alt="Unicorn"
               />
             </InfoBox>
@@ -128,14 +132,18 @@ export const ClaimDigitalStickerModal: React.FC<{
               <div className="flex flex-col gap-2">
                 <div className="flex gap-2">
                   <Image
+                    src={
+                      UNICORN_MODE
+                        ? '/img/unicorn-black-logo.svg'
+                        : '/img/login-bg.png'
+                    }
                     width={24}
                     height={24}
                     className="h-6 w-6 rounded-full object-cover"
-                    src="/img/login-bg.png"
                     alt="Unicorn"
                   />
                   <Typography fontVariant="extraLarge" weight="bold">
-                    Welcome to account.eth
+                    Welcome to unicorn.eth
                   </Typography>
                 </div>
               </div>
