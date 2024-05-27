@@ -24,6 +24,7 @@ import { TokenItem } from '../TokenItem'
 import { useBalance } from '@/hooks/useBalance'
 import { truncateEthAddress } from '@/utils/strings'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '../UnicornButton'
 
 enum WithdrawStep {
   ConnectToExchange,
@@ -156,15 +157,14 @@ export const WithdrawModal: React.FC<{
                 className="rounded"
               />
               <div className="w-[100px] rounded-xl">
-                <Button
+                <UnicornButton
                   style={{
                     height: '40px',
                     borderRadius: '25px',
                   }}
-                  onClick={() => setStep(WithdrawStep.PickToken)}
-                  colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
+                  onClick={() => setStep(WithdrawStep.PickToken)}>
                   Setup
-                </Button>
+                </UnicornButton>
               </div>
             </div>
           )}

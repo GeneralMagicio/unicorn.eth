@@ -1,3 +1,4 @@
+import { UnicornButton } from '@/components/UnicornButton'
 import { activeModalAtom } from '@/store/app'
 import { UNICORN_MODE } from '@/store/settings'
 import { Typography, Spinner, CheckCircleSVG, Button } from '@ensdomains/thorin'
@@ -45,11 +46,9 @@ export const SwapConfirmation = () => {
           </Typography>
         </div>
       </div>
-      <Button
-        colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
-        onClick={goToHistory}>
+      <UnicornButton onClick={goToHistory}>
         Go to Transaction History
-      </Button>
+      </UnicornButton>
     </>
   )
 }

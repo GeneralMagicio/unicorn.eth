@@ -12,6 +12,7 @@ import { activeModalAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { MODAL_TYPE } from '@/utils/modals'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '@/components/UnicornButton'
 
 const InfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -154,12 +155,11 @@ export const SwapForm = () => {
           <Button colorStyle="greyPrimary" onClick={() => setStep(0)}>
             Cancel
           </Button>
-          <Button
-            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+          <UnicornButton
             disabled={!Boolean(Object.keys(selectedTokens).length)}
             onClick={() => setStep(2)}>
             Confirm
-          </Button>
+          </UnicornButton>
         </div>
       </>
     </>

@@ -25,6 +25,7 @@ import { useActiveAccount, useEstimateGasCost } from 'thirdweb/react'
 import { activeChainId } from '@/lib/third-web/constants'
 import { getSupportedChain } from '@/utils/web3'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '../UnicornButton'
 
 interface ISendTransaction {
   destination: string | null
@@ -288,12 +289,7 @@ const SendConfirmation = ({
           className="btn-secondary">
           Cancel
         </CancelButton>
-        <Button
-          onClick={sendTx}
-          className="btn-primary"
-          colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
-          Confirm
-        </Button>
+        <UnicornButton onClick={sendTx}>Confirm</UnicornButton>
       </FlexRow>
     </>
   )

@@ -20,6 +20,7 @@ import {
 } from '@/app/dashboard/utils/tokens'
 import { useBalance } from '@/hooks/useBalance'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '../UnicornButton'
 
 const TABS = ['Tokens', 'Collectibles']
 
@@ -247,12 +248,7 @@ export const SendModal: React.FC<{
               {amountError && (
                 <Typography color="red">{amountError}</Typography>
               )}
-              <Button
-                onClick={startTx}
-                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
-                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
-                Send
-              </Button>
+              <UnicornButton onClick={startTx}>Send</UnicornButton>
             </>
           )}
         </div>

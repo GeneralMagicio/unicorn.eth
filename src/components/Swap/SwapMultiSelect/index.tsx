@@ -2,6 +2,7 @@ import { TokenItem } from '@/components/TokenItem'
 import { Typography, Checkbox, Button } from '@ensdomains/thorin'
 import { SwapSelectedTokens, useSwapContext } from '../swap-context'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '@/components/UnicornButton'
 
 export const SwapMultiSelect = () => {
   const {
@@ -78,12 +79,11 @@ export const SwapMultiSelect = () => {
         ))}
       </div>
       {error && <Typography color="red">{error}</Typography>}
-      <Button
+      <UnicornButton
         disabled={!Boolean(Object.keys(selectedTokens).length)}
-        colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
         onClick={handleConfirm}>
         Swap
-      </Button>
+      </UnicornButton>
     </>
   )
 }

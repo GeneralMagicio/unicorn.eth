@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 import { ThemeProvider } from 'styled-components'
 
 import StyledComponentsRegistry from '@/lib/styled-components-registry'

@@ -23,6 +23,7 @@ import { UploadIcon } from '@/components/Icons/Upload'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 import { UNICORN_MODE } from '@/store/settings'
 import { useTheme } from 'styled-components'
+import { UnicornButton } from '@/components/UnicornButton'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -32,7 +33,7 @@ const enum LoginSteps {
 
 export default function Login() {
   const router = useRouter()
-  const [step, setStep] = useState(LoginSteps.WELCOME_SCREEN)
+  const [step, setStep] = useState(LoginSteps.PROFILE_PREVIEW)
   const [isSigning, setIsSigning] = useState(false)
   const [chosenUsername, setChosenUsername] = useState('')
   const [error, setError] = useState('')
@@ -105,10 +106,10 @@ export default function Login() {
         isSettingEnsInfo ||
         (wallet && Boolean(username))) && <SigningInPage />}
       <div className="relative h-full max-h-screen w-full grow">
-        <div className="bg-accent-light absolute top-0  flex h-4/5 w-full">
+        <div className="bg-accent-light absolute -top-10  flex h-4/5 w-full">
           {step >= LoginSteps.PICK_USERNAME && (
             <ArrowLeft
-              className="absolute left-5 top-10 z-10"
+              className="absolute left-5 top-20 z-10"
               onClick={handleBack}
             />
           )}
@@ -116,7 +117,7 @@ export default function Login() {
             className="object-contain"
             src={
               UNICORN_MODE
-                ? '/img/logo-unicorn-landing.svg'
+                ? '/img/logo-unicorn-landing.webp'
                 : '/img/login-bg.png'
             }
             alt="Unicorn"
@@ -186,10 +187,8 @@ export default function Login() {
                     />
                   </UserNameInput>
 
-                  <Button
-                    className={UNICORN_MODE ? 'unicorn-btn' : ''}
+                  <UnicornButton
                     loading={isRegistering}
-                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                     disabled={!chosenUsername || !Boolean(isNameAvailable)}
                     onClick={() => {
                       createEnsSubname(chosenUsername).then(() => {
@@ -197,7 +196,7 @@ export default function Login() {
                       })
                     }}>
                     Next
-                  </Button>
+                  </UnicornButton>
                 </>
               )}
               {step === LoginSteps.PROFILE_PREVIEW && (
@@ -215,7 +214,11 @@ export default function Login() {
                       />
                       <Image
                         className="max-h-[72px] max-w-[72px] rounded-full"
-                        src={userProfilePicture}
+                        src={
+                          userProfilePicture || UNICORN_MODE
+                            ? '/img/unicorn-profile-placeholder.svg'
+                            : 'public/img/profile-placeholder.svg'
+                        }
                         alt={username || ''}
                         width={72}
                         height={72}
@@ -237,15 +240,13 @@ export default function Login() {
                       {userEmail}
                     </Typography>
                   </div>
-                  <Button
-                    className={UNICORN_MODE ? 'unicorn-btn' : ''}
-                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+                  <UnicornButton
                     onClick={() => {
                       setUsername(chosenUsername.toLowerCase())
                       router.push('/dashboard')
                     }}>
                     Go to wallet
-                  </Button>
+                  </UnicornButton>
                 </>
               )}
             </div>

@@ -60,6 +60,9 @@ export const SettingsModal: React.FC<{
       setActiveModal(null)
       clearUserInfo()
       localStorage.removeItem(LAST_CONNECT_PERSONAL_WALLET_ID)
+      setTimeout(() => {
+        window.location.reload()
+      })
     }
   }
 
