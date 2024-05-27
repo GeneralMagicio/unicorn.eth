@@ -77,6 +77,8 @@ const SendConfirmation = ({
 
   const selectedTokenAddress = _selectedToken?.address
   const selectedTokenABI = _selectedToken?.abi
+  // TODO: improve this check on supported token list
+  // and add a more clear way to see it's a native token
   const isNativeToken =
     _selectedToken?.address === '' || _selectedToken.symbol === 'ETH'
   const contract = getContract({
