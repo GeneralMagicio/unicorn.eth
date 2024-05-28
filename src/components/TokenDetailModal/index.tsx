@@ -14,6 +14,7 @@ import { SendIcon } from '../Icons/Send'
 import { PlusIcon } from '../Icons/Plus'
 import { SwapIcon } from '../Icons/Swap'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '../UnicornButton'
 
 const createRandomHistoryArray = () => {
   const allowedStrings = ['Buy', 'Swapped', 'Received']
@@ -116,28 +117,22 @@ export const TokenDetailModal: React.FC = () => {
             </div>
 
             <div className="flex gap-4 justify-between">
-              <Button
+              <UnicornButton
                 size="small"
-                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
-                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
                 prefix={<SendIcon color="currentColor" />}
                 onClick={() => setActiveModal(MODAL_TYPE.SEND)}>
                 Send
-              </Button>
-              <Button
-                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
-                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+              </UnicornButton>
+              <UnicornButton
                 size="small"
                 prefix={<PlusIcon color="currentColor" />}>
                 Buy
-              </Button>
-              <Button
-                className={`btn-primary ${UNICORN_MODE && 'unicorn-btn'}`}
-                colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+              </UnicornButton>
+              <UnicornButton
                 size="small"
                 prefix={<SwapIcon color="currentColor" />}>
                 Swap
-              </Button>
+              </UnicornButton>
             </div>
           </div>
         )}

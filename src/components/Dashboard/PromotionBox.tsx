@@ -7,6 +7,7 @@ import { Typography } from '@ensdomains/thorin'
 import { useAtom } from 'jotai'
 import { activeModalAtom } from '@/store'
 import { MODAL_TYPE } from '@/utils/modals'
+import { UNICORN_MODE } from '@/store/settings'
 
 type MessageBoxProps = {
   title: string
@@ -41,7 +42,7 @@ export const PromotionBox: FC<MessageBoxProps> = ({
   return (
     <div
       {...handlers}
-      className="flex w-full flex-col gap-4 rounded-lg bg-[#f4f4f4] p-4">
+      className="flex w-full flex-col gap-4 rounded-lg bg-background-secondary p-4">
       <div className="flex justify-between space-x-2">
         <DotStepper
           activeStep={step}
@@ -58,8 +59,13 @@ export const PromotionBox: FC<MessageBoxProps> = ({
         <div
           className="flex cursor-pointer items-center gap-4"
           onClick={() => setActiveModal(MODAL_TYPE.CLAIM_DIGITAL_STICKER)}>
-          <span className="rounded-full bg-blue-500 p-1">
-            <Image src={'/img/poap1.png'} alt="poap" width={40} height={40} />
+          <span className="rounded-full  p-1">
+            <Image
+              src={UNICORN_MODE ? '/img/poap1.svg' : '/img/poap1.png'}
+              alt="poap"
+              width={40}
+              height={40}
+            />
           </span>
           <div className="flex flex-col gap-1">
             <Typography
@@ -78,9 +84,8 @@ export const PromotionBox: FC<MessageBoxProps> = ({
         </div>
       )}
       {step === 2 && (
-        <div
-          className="flex cursor-pointer items-center gap-4">
-          <span className="rounded-full bg-blue-500 p-1">
+        <div className="flex cursor-pointer items-center gap-4">
+          <span className="rounded-full p-1">
             <Image src={'/img/eth.png'} alt="poap" width={40} height={40} />
           </span>
           <div className="flex flex-col gap-1">
@@ -88,21 +93,20 @@ export const PromotionBox: FC<MessageBoxProps> = ({
               fontVariant="large"
               weight="extraBold"
               className="text-gray-800">
-              {"Test"}
+              {'Test'}
             </Typography>
             <Typography
               fontVariant="small"
               color="textSecondary"
               className="text-gray-600">
-              {"This is a test subtitle"}
+              {'This is a test subtitle'}
             </Typography>
           </div>
         </div>
       )}
       {step === 3 && (
-        <div
-          className="flex cursor-pointer items-center gap-4">
-          <span className="rounded-full bg-blue-500 p-1">
+        <div className="flex cursor-pointer items-center gap-4">
+          <span className="rounded-full p-1">
             <Image src={'/img/ens.png'} alt="poap" width={40} height={40} />
           </span>
           <div className="flex flex-col gap-1">
@@ -110,13 +114,13 @@ export const PromotionBox: FC<MessageBoxProps> = ({
               fontVariant="large"
               weight="extraBold"
               className="text-gray-800">
-              {"Another test"}
+              {'Another test'}
             </Typography>
             <Typography
               fontVariant="small"
               color="textSecondary"
               className="text-gray-600">
-              {"Another subtitle"}
+              {'Another subtitle'}
             </Typography>
           </div>
         </div>

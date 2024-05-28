@@ -17,6 +17,7 @@ import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 import { useAuth } from '@/hooks/useAuth'
 import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '@/components/UnicornButton'
 
 export const enum SETTINGS_ACTION_TYPE {
   DETAILS,
@@ -59,6 +60,9 @@ export const SettingsModal: React.FC<{
       setActiveModal(null)
       clearUserInfo()
       localStorage.removeItem(LAST_CONNECT_PERSONAL_WALLET_ID)
+      setTimeout(() => {
+        window.location.reload()
+      })
     }
   }
 

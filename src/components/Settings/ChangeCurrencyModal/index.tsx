@@ -5,6 +5,7 @@ import { ModalHeader } from '@/components/ModalHeader'
 import {
   LocalCurrenciesDict,
   LocalCurrencyType,
+  UNICORN_MODE,
   localCurrencyAtom,
 } from '@/store/settings'
 import { TickIcon } from '@/components/Icons/Tick'
@@ -27,7 +28,11 @@ export const ChangeCurrencyModal: React.FC<{
           </Typography>
           <div
             className={'flex justify-between gap-2 rounded-lg p-2'}
-            style={{ background: theme.colors.blueSurface }}>
+            style={{
+              background: UNICORN_MODE
+                ? theme.colors.backgroundSecondary
+                : theme.colors.blueSurface,
+            }}>
             <Typography color="textPrimary" fontVariant="small">
               {LocalCurrenciesDict[localCurrency]}
             </Typography>
@@ -35,7 +40,13 @@ export const ChangeCurrencyModal: React.FC<{
               <Typography color="textSecondary" fontVariant="small">
                 {localCurrency}
               </Typography>
-              <TickIcon />
+              <TickIcon
+                color={
+                  UNICORN_MODE
+                    ? theme.colors.orangePrimary
+                    : theme.colors.bluePrimary
+                }
+              />
             </div>
           </div>
           <Typography color="textSecondary" fontVariant="small">

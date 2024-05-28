@@ -10,7 +10,7 @@ export const TickIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => (
     {...props}>
     <path
       d="M4 12.3733L9.351 17.7193L9.779 16.9713C12.0714 12.9629 15.2437 9.52728 19.057 6.9233L20 6.2793"
-      stroke="#3889FF"
+      stroke={props.color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"

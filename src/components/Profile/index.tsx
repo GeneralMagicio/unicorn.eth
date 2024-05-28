@@ -28,6 +28,7 @@ import { useRouter } from 'next/navigation'
 import { EnsRecordType, nsService } from '@/services/enService'
 import { appConfig } from '@/config'
 import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '../UnicornButton'
 
 function Profile({
   username,
@@ -132,11 +133,10 @@ function Profile({
       {memoizedUserBalance}
       <div className="fixed bottom-6 flex w-[90%] justify-center">
         {connectedAccount ? (
-          <Button
-            onClick={() => setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)}
-            colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}>
+          <UnicornButton
+            onClick={() => setActiveModal(DEPOSIT_MODAL_TYPE.DEPOSIT)}>
             Deposit
-          </Button>
+          </UnicornButton>
         ) : (
           <ConnectButton
             wallets={externalAllowedThirdwebWallets}

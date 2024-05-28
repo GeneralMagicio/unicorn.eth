@@ -78,17 +78,17 @@ export async function getBalanceForTokenChainPairs(
     }),
     {}
   )
-  const promises : Promise<void>[] = []
-  const func = async (symbol: string, address: string, chainId: SupportedChainIds) => {
+  const promises: Promise<void>[] = []
+  const func = async (
+    symbol: string,
+    address: string,
+    chainId: SupportedChainIds
+  ) => {
     let result = BigInt(0)
     try {
-      result = await getTokenBalance(
-        chainId,
-        address,
-        walletAddress
-      )
+      result = await getTokenBalance(chainId, address, walletAddress)
     } catch (e) {
-      console.error("error for", e)
+      console.error('error for', e)
     }
     totalBalance[symbol][chainId] = result
   }
@@ -117,20 +117,25 @@ export async function getBalanceForTokenChainPairs(
   return result
 }
 
-export const getAggregatedTotalBalance = (tokenChainBalances: Record<string, Record<SupportedChainIds, number>>) => {
-  const result : Record<string, number> = {} 
+export const getAggregatedTotalBalance = (
+  tokenChainBalances: Record<string, Record<SupportedChainIds, number>>
+) => {
+  const result: Record<string, number> = {}
   for (const token in tokenChainBalances) {
     for (const chain in tokenChainBalances[token]) {
       const chainId = chain as unknown as SupportedChainIds
       const amount = tokenChainBalances[token][chainId]
       const aggregateSymbol = getAggregateSymbol(token, chainId)
-      result[aggregateSymbol] = (!isNaN(result[aggregateSymbol]) ? result[aggregateSymbol] : 0) + amount
+      result[aggregateSymbol] =
+        (!isNaN(result[aggregateSymbol]) ? result[aggregateSymbol] : 0) + amount
     }
   }
 
   for (const token of Object.keys(result)) {
-    result[token] = Math.round(result[token] * Math.pow(10, PrecisionDigits)) / Math.pow(10, PrecisionDigits)
+    result[token] =
+      Math.round(result[token] * Math.pow(10, PrecisionDigits)) /
+      Math.pow(10, PrecisionDigits)
   }
 
-  return result;
+  return result
 }

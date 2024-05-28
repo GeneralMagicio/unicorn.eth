@@ -25,7 +25,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { appConfig } from '@/config'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
-import { UNICORN_MODE } from '@/store/settings'
+import { UnicornButton } from '@/components/UnicornButton'
 
 const UserInfoBox = styled.div(({ theme }) => ({
   display: 'flex',
@@ -138,7 +138,7 @@ export const AccountDetailsModal: React.FC<{
               />
               <Image
                 className="max-h-[60px] max-w-[60px] rounded-full"
-                src={userProfilePicture || '/img/profile-placeholder.svg'}
+                src={userProfilePicture}
                 alt={username || ''}
                 width={60}
                 height={60}
@@ -238,13 +238,12 @@ export const AccountDetailsModal: React.FC<{
                 />
               )}
             />
-            <Button
-              colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
+            <UnicornButton
               className="mt-10"
               type="submit"
               loading={isSubmitting}>
               Update
-            </Button>
+            </UnicornButton>
           </form>
           <Toast
             msToShow={1000}

@@ -23,6 +23,7 @@ import { UploadIcon } from '@/components/Icons/Upload'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 import { UNICORN_MODE } from '@/store/settings'
 import { useTheme } from 'styled-components'
+import { UnicornButton } from '@/components/UnicornButton'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -104,161 +105,152 @@ export default function Login() {
         isAutoConnecting ||
         isSettingEnsInfo ||
         (wallet && Boolean(username))) && <SigningInPage />}
-      <div className="relative h-full max-h-screen w-full grow">
-        <div className="bg-accent-light absolute mb-28 flex h-4/5 w-full">
-          {step >= LoginSteps.PICK_USERNAME && (
-            <ArrowLeft
-              className="absolute left-5 top-10 z-10"
-              color={theme.colors.accent}
-              onClick={handleBack}
-            />
-          )}
-          {!!UNICORN_MODE ? (
-            <div className="flex w-full self-center justify-center absolute">
-              <Image
-                className="object-contain"
-                src={'/img/logo-unicorn-landing.png'}
-                alt="Unicorn"
-                width={200}
-                height={200}
-                style={{ marginTop: '-32%' }}
-              />
-            </div>
-          ) : (
-            <Image
-              className="object-cover"
-              src={'/img/login-bg.png'}
-              alt="Unicorn"
-              fill
-            />
-          )}
-        </div>
-        <div
-          className={`absolute bg-accent-light inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
-            UNICORN_MODE ? 'border-neutral-950' : 'border-transparent'
-          } border-b-transparent px-4 pt-4 pb-12`}>
-          <div className="flex flex-col gap-10 ">
-            <Image
-              src={UNICORN_MODE ? '/img/unicorn-logo.svg' : '/img/logo.svg'}
-              alt="Unicorn"
-              width={UNICORN_MODE ? 231 : 170}
-              height={48}
-              className={cn('mx-auto object-cover', {
-                'mt-[57px]': step === LoginSteps.WELCOME_SCREEN,
-              })}
-            />
-            <div className="flex flex-col gap-6">
-              {step === LoginSteps.WELCOME_SCREEN && (
-                <>
-                  <SignUpButton disabled={isAutoConnecting} onClick={login}>
-                    <GoogleIcon />
-                    <Typography fontVariant="body">
-                      {isAutoConnecting
-                        ? `Welcome back...`
-                        : `Sign in with Google`}
-                    </Typography>
-                  </SignUpButton>
-                </>
-              )}
-              {step === LoginSteps.PICK_USERNAME && (
-                <>
-                  <Typography fontVariant="extraLarge">
-                    Choose your wallet domain.
-                  </Typography>
-                  <UserNameInput
-                    varient={
-                      isNameAvailable === false
-                        ? 'error'
-                        : isNameAvailable === true
-                          ? 'success'
-                          : undefined
-                    }>
-                    <Input
-                      description={
-                        chosenUsername && isNameAvailable
-                          ? 'Great choice! That’s available.'
-                          : ''
-                      }
-                      value={chosenUsername}
-                      onChange={(e) => {
-                        setChosenUsername(e.target.value)
-                        setIsNameAvailable(null)
-                        debouncedCheckUserName(e.target.value)
-                      }}
-                      label=""
-                      name="username"
-                      placeholder="username"
-                      suffix={appConfig.ensDomain}
-                      size="large"
-                      error={
-                        isNameAvailable === false && "Oops! That's unavailable."
-                      }
-                    />
-                  </UserNameInput>
 
-                  <Button
-                    loading={isRegistering}
-                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
-                    disabled={!chosenUsername || !Boolean(isNameAvailable)}
-                    onClick={() => {
-                      createEnsSubname(chosenUsername).then(() => {
-                        setStep(LoginSteps.PROFILE_PREVIEW)
-                      })
-                    }}>
-                    Next
-                  </Button>
-                </>
-              )}
-              {step === LoginSteps.PROFILE_PREVIEW && (
-                <>
-                  <Typography fontVariant="extraLarge">
-                    Welcome to the web3
+      <div className="bg-accent-light absolute top-0 mb-28 flex h-4/5 w-full">
+        {step >= 1 && (
+          <ArrowLeft
+            className="absolute left-5 top-10 z-10"
+            onClick={handleBack}
+          />
+        )}
+
+        <Image
+          className="object-cover"
+          src={
+            UNICORN_MODE
+              ? '/img/logo-unicorn-landing.webp'
+              : '/img/login-bg.png'
+          }
+          alt="Unicorn"
+          fill
+        />
+      </div>
+
+      <div
+        className={`absolute flex flex-col justify-center min-h-[426px] bg-white inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
+          UNICORN_MODE ? 'border-accent' : 'border-transparent'
+        } border-b-transparent px-4 pt-4 pb-12`}>
+        <div className="flex flex-col gap-10 ">
+          <Image
+            src={UNICORN_MODE ? '/img/unicorn-logo.svg' : '/img/logo.svg'}
+            alt="Unicorn"
+            width={UNICORN_MODE ? 231 : 170}
+            height={48}
+            className={cn('mx-auto object-cover', {
+              'mt-[57px]': step === LoginSteps.WELCOME_SCREEN,
+            })}
+          />
+          <div className="flex flex-col gap-6">
+            {step === LoginSteps.WELCOME_SCREEN && (
+              <>
+                <SignUpButton disabled={isAutoConnecting} onClick={login}>
+                  <GoogleIcon />
+                  <Typography fontVariant="body">
+                    {isAutoConnecting
+                      ? `Welcome back...`
+                      : `Sign in with Google`}
                   </Typography>
-                  <div className="flex flex-col items-center justify-center gap-2 rounded-[40px] bg-background-secondary p-2">
-                    <div className="relative">
-                      <input
-                        className="absolute inset-0 z-10 opacity-0"
-                        type="file"
-                        ref={inputRef}
-                        onInput={handleFileChange}
-                      />
-                      <Image
-                        className="max-h-[72px] max-w-[72px] rounded-full"
-                        src={
-                          userProfilePicture || '/img/profile-placeholder.svg'
-                        }
-                        alt={username || ''}
-                        width={72}
-                        height={72}
-                      />
-                      <div className="!absolute bottom-0 right-0 rounded-full bg-white p-1">
-                        <UploadIcon />
-                      </div>
-                      {isUploading && (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Spinner size="medium" color="indigoSurface" />
-                        </div>
-                      )}
+                </SignUpButton>
+              </>
+            )}
+            {step === LoginSteps.PICK_USERNAME && (
+              <>
+                <Typography fontVariant="extraLarge">
+                  Choose your wallet domain.
+                </Typography>
+                <UserNameInput
+                  varient={
+                    isNameAvailable === false
+                      ? 'error'
+                      : isNameAvailable === true
+                        ? 'success'
+                        : undefined
+                  }>
+                  <Input
+                    description={
+                      chosenUsername && isNameAvailable
+                        ? 'Great choice! That’s available.'
+                        : ''
+                    }
+                    value={chosenUsername}
+                    onChange={(e) => {
+                      setChosenUsername(e.target.value)
+                      setIsNameAvailable(null)
+                      debouncedCheckUserName(e.target.value)
+                    }}
+                    label=""
+                    name="username"
+                    placeholder="username"
+                    suffix={appConfig.ensDomain}
+                    size="large"
+                    error={
+                      isNameAvailable === false && "Oops! That's unavailable."
+                    }
+                  />
+                </UserNameInput>
+
+                <UnicornButton
+                  loading={isRegistering}
+                  disabled={!chosenUsername || !Boolean(isNameAvailable)}
+                  onClick={() => {
+                    createEnsSubname(chosenUsername).then(() => {
+                      setStep(LoginSteps.PROFILE_PREVIEW)
+                    })
+                  }}>
+                  Next
+                </UnicornButton>
+              </>
+            )}
+            {step === LoginSteps.PROFILE_PREVIEW && (
+              <>
+                <Typography fontVariant="extraLarge">
+                  Welcome to the web3
+                </Typography>
+                <div className="flex flex-col items-center justify-center gap-2 rounded-[40px] bg-background-secondary p-2">
+                  <div className="relative">
+                    <input
+                      className="absolute inset-0 z-10 opacity-0"
+                      type="file"
+                      ref={inputRef}
+                      onInput={handleFileChange}
+                    />
+                    <Image
+                      className="max-h-[72px] max-w-[72px] rounded-full"
+                      src={
+                        userProfilePicture || UNICORN_MODE
+                          ? '/img/unicorn-profile-placeholder.svg'
+                          : 'public/img/profile-placeholder.svg'
+                      }
+                      alt={username || ''}
+                      width={72}
+                      height={72}
+                    />
+                    <div className="!absolute bottom-0 right-0 rounded-full bg-white p-1">
+                      <UploadIcon />
                     </div>
-                    <Typography className="flex items-center gap-1 lowercase ">
-                      {chosenUsername || username}
-                      {appConfig.ensDomain} <Copy />
-                    </Typography>
-                    <Typography className="text-text-secondary">
-                      {userEmail}
-                    </Typography>
+                    {isUploading && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Spinner size="medium" color="indigoSurface" />
+                      </div>
+                    )}
                   </div>
-                  <Button
-                    colorStyle={UNICORN_MODE ? 'orangePrimary' : 'bluePrimary'}
-                    onClick={() => {
-                      setUsername(chosenUsername.toLowerCase())
-                      router.push('/dashboard')
-                    }}>
-                    Go to wallet
-                  </Button>
-                </>
-              )}
-            </div>
+                  <Typography className="flex items-center gap-1 lowercase ">
+                    {chosenUsername || username}
+                    {appConfig.ensDomain} <Copy />
+                  </Typography>
+                  <Typography className="text-text-secondary">
+                    {userEmail}
+                  </Typography>
+                </div>
+                <UnicornButton
+                  onClick={() => {
+                    setUsername(chosenUsername.toLowerCase())
+                    router.push('/dashboard')
+                  }}>
+                  Go to wallet
+                </UnicornButton>
+              </>
+            )}
           </div>
         </div>
       </div>
