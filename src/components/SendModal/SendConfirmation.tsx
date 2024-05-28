@@ -21,7 +21,11 @@ import {
   SupportedToken,
   supportedTokens,
 } from '@/app/dashboard/data/supported_tokens'
-import { useActiveAccount, useEstimateGasCost } from 'thirdweb/react'
+import {
+  useActiveAccount,
+  useActiveWalletChain,
+  useEstimateGasCost,
+} from 'thirdweb/react'
 import { activeChainId } from '@/lib/third-web/constants'
 import { getSupportedChain } from '@/utils/web3'
 import { UNICORN_MODE } from '@/store/settings'
@@ -55,20 +59,14 @@ const SendConfirmation = ({
   setTxDone,
   isDeposit,
 }: ISendConfirmation) => {
-  console.log({
-    sendTransaction,
-    onDismiss,
-    setConfirmTx,
-    setTxDone,
-    isDeposit,
-  })
-
   const router = useRouter()
   const account = useActiveAccount()
   const { mutate: estimateGasCost, data: gasEstimate } = useEstimateGasCost()
   const [txState, setTxState] = useState<TxState>(TxState.Initial)
-  // TODO: right now sepolia, please make it dynamic according to the token
-  const chainId = activeChainId
+  // TODO: right now current wallet or sepolia
+  // please make it dynamic according to the token
+  const currentChainId = useActiveWalletChain()?.id
+  const chainId = currentChainId || activeChainId
   const selectedToken = sendTransaction?.token
   const supportedToken = supportedTokens.find(
     (token: SupportedToken) => token.symbol === selectedToken?.symbol
@@ -81,7 +79,10 @@ const SendConfirmation = ({
 
   const selectedTokenAddress = _selectedToken?.address
   const selectedTokenABI = _selectedToken?.abi
-  const isNativeToken = _selectedToken?.address === ''
+  // TODO: improve this check on supported token list
+  // and add a more clear way to see it's a native token
+  const isNativeToken =
+    _selectedToken?.address === '' || _selectedToken.symbol === 'ETH'
   const contract = getContract({
     client,
     chain: getSupportedChain(chainId),

@@ -43,9 +43,12 @@ export const ChangeNetworkModal: React.FC<{
               isConnected={false}
               chain={chain}
               action={async () => {
-                // await switchChain(getSupportedChain(chain.chainId))
-                await wallet?.switchChain(getSupportedChain(chain.chainId))
-                onDismiss()
+                try {
+                  await wallet?.switchChain(getSupportedChain(chain.chainId))
+                  onDismiss()
+                } catch (error) {
+                  console.log({ error })
+                }
               }}
             />
           ))}

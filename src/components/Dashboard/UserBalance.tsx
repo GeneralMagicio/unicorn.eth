@@ -22,6 +22,7 @@ import { MODAL_TYPE } from '@/utils/modals'
 interface UserBalanceProps {
   address: string
   isSecondary?: boolean
+  chainId?: number
   action?: (token: any) => void
 }
 
@@ -30,6 +31,7 @@ const TABS = ['Tokens', 'Collectibles']
 const UserBalance: React.FC<UserBalanceProps> = ({
   address,
   isSecondary,
+  chainId,
   action,
 }) => {
   const [, setActiveModal] = useAtom(activeModalAtom)
@@ -42,7 +44,7 @@ const UserBalance: React.FC<UserBalanceProps> = ({
     nfts: collectibleRes,
     errors,
     loading,
-  } = useBalance(address, isSecondary === true)
+  } = useBalance(address, isSecondary === true, chainId)
 
   const { data: tokenPrices, error } = useSWR<Record<string, number>>(
     'token-prices',
