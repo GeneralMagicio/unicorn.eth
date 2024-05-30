@@ -1,6 +1,6 @@
 import { Button, Typography } from '@ensdomains/thorin'
 import { CancelButton, FlexRow, Summary } from './send.styles'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { TokenItem } from '../TokenItem'
 import LoadingArc from './LoadingArc'
@@ -60,6 +60,7 @@ const SendConfirmation = ({
   isDeposit,
 }: ISendConfirmation) => {
   const router = useRouter()
+  const pathname = usePathname()
   const account = useActiveAccount()
   const { mutate: estimateGasCost, data: gasEstimate } = useEstimateGasCost()
   const [txState, setTxState] = useState<TxState>(TxState.Initial)
@@ -160,6 +161,7 @@ const SendConfirmation = ({
   }
   const txLoading = txState === TxState.Loading
   const txComplete = txState === TxState.Complete
+  const skipRedirect = pathname === '/'
 
   if (txLoading || txComplete) {
     return (
@@ -229,7 +231,8 @@ const SendConfirmation = ({
         </Typography>
         <Button
           onClick={async () => {
-            router.push(txComplete ? '/dashboard' : '/dashboard/history')
+            if (!skipRedirect)
+              router.push(txComplete ? '/dashboard' : '/dashboard/history')
             onDismiss()
           }}
           className="btn-primary mt-8">

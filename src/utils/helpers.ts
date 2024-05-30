@@ -1,3 +1,5 @@
+import { createSubdomainSearchParams } from '@/lib/third-web/methods'
+
 export function getSubdomain(url: string): string | null {
   try {
     const parsedUrl = new URL(url)
@@ -16,5 +18,24 @@ export function getSubdomain(url: string): string | null {
   } catch (error) {
     console.error('Invalid URL:', error)
     return null // Return null if URL parsing fails
+  }
+}
+
+export function makeSubdominURL(username: string): URL | null {
+  try {
+    const origin =
+      process.env.NEXT_PUBLIC_WALLET_DOMAIN || 'http://app.unicorn-wallet.com'
+
+    const parsedUrl = new URL(origin.replace('app', username))
+    const hostname = parsedUrl.hostname
+    parsedUrl.search = createSubdomainSearchParams().toString()
+
+    const parts = hostname.split('.')
+    if (parts.length)
+      parsedUrl.hostname = [username, ...parts.slice(1)].join('.')
+    return parsedUrl
+  } catch (error) {
+    console.error('Invalid URL:', error)
+    return null
   }
 }

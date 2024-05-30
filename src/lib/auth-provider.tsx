@@ -13,6 +13,9 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
 import { UNICORN_MODE } from '@/store/settings'
+import { appConfig } from '@/config'
+import { makeSubdominURL } from '@/utils/helpers'
+import { getThirdWebStorageValues } from './third-web/storage'
 
 export const USER_INFO_STORAGE_KEY = 'unicorn-user-info'
 
@@ -73,19 +76,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   )
 
   useEffect(() => {
-    let goToDashboard = false
     const ensSetup = async () => {
-      if (!wallet || !account) return
+      if (!wallet || !account) {
+        if (
+          !getThirdWebStorageValues(localStorage).lastConnectorPersonalWalletId
+        ) {
+          setUsername('')
+        }
+        return
+      }
       setUserAddress(account.address)
       setIsSettingEnsInfo(true)
+      let username = ''
       const email = await getUserEmail({ client })
       if (email) setUserEmail(email)
       try {
         const res = await getSubnameDataset(account.address)
-        const username = res.data[res.data?.length - 1]?.label || ''
+        username = res.data[res.data?.length - 1]?.label || ''
         setUsername(username.toLowerCase())
 
-        goToDashboard = true
         if (username) {
           nsService
             .getSubnameMetadata({
@@ -113,10 +122,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
       } catch (err) {
         console.error(err)
+        setUsername(username)
       } finally {
         setIsSettingEnsInfo(false)
         fetchEthBalance()
-        if (goToDashboard && !skipRedirect) router.push('/dashboard')
+        setUsername(username)
       }
     }
     ensSetup()

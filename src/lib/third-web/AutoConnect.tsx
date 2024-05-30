@@ -6,8 +6,14 @@ import { WalletId, createWallet } from 'thirdweb/wallets'
 import { useAtom } from 'jotai'
 import { isAutoConnectingAtom } from '@/store'
 import { useConnect } from 'thirdweb/react'
-import { LAST_CONNECT_PERSONAL_WALLET_ID } from './constants'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
+import {
+  setThirdWebStorageValues,
+  getThirdWebStorageValues,
+  LAST_CONNECT_PERSONAL_WALLET_ID,
+  clearThirdWebStorage,
+} from './storage'
+import { useAuth } from '@/hooks/useAuth'
 
 export const useIsAutoConnecting = () => {
   const [isAutoConnecting, setIsAutoConnecting] = useAtom(isAutoConnectingAtom)
@@ -18,41 +24,45 @@ export const useIsAutoConnecting = () => {
 export const ThirdwebAutoConnect = () => {
   const { setIsAutoConnecting } = useIsAutoConnecting()
   const { connect } = useConnect()
+  const { setUsername } = useAuth()
 
-  const pathname = usePathname()
-  const skipAutoConnect = pathname.includes('profile')
+  const searchParams = useSearchParams()
 
   useEffect(() => {
     const main = async () => {
       try {
-        // Skipping auto connection for public profile page
-        // This is mainly to avoid auto connecting to the wrong wallet
-        if (skipAutoConnect) return
         setIsAutoConnecting(true)
-        try {
-          const personalWalletId = localStorage.getItem(
-            LAST_CONNECT_PERSONAL_WALLET_ID
-          )
-          if (!personalWalletId) return
-          const personalWallet = createWallet(personalWalletId as WalletId)
-          if (!personalWallet) return
-          const personalAccount = await personalWallet?.autoConnect({
-            client: client,
-          })
-          const smartWallet = createWallet('smart', smartWalletConfig)
-          await smartWallet.connect({ personalAccount, client: client })
-          await connect(smartWallet)
-        } finally {
-          setIsAutoConnecting(false)
-        }
+
+        setThirdWebStorageValues(
+          localStorage,
+          getThirdWebStorageValues(searchParams)
+        )
+        const personalWalletId = localStorage.getItem(
+          LAST_CONNECT_PERSONAL_WALLET_ID
+        )
+
+        if (!personalWalletId) throw new Error('Cancelled')
+        const personalWallet = createWallet(personalWalletId as WalletId)
+        if (!personalWallet) return
+        const personalAccount = await personalWallet?.autoConnect({
+          client: client,
+        })
+        const smartWallet = createWallet('smart', smartWalletConfig)
+        await smartWallet.connect({ personalAccount, client: client })
+        await connect(smartWallet)
+        console.log('CONNNECTED')
       } catch (error) {
         console.error('Auto connect error', error)
+        setIsAutoConnecting(false)
+        clearThirdWebStorage()
+        setUsername('')
+      } finally {
         setIsAutoConnecting(false)
       }
     }
 
     main()
-  }, [skipAutoConnect, setIsAutoConnecting, connect])
+  }, [setIsAutoConnecting, connect])
 
   return <></>
 }

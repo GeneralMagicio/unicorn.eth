@@ -8,10 +8,6 @@ import {
   userProfilePictureAtom,
 } from '@/store'
 
-export const enum AUTH_STATUS {
-  PENDING,
-  RESOLVED,
-}
 export const useAuth = () => {
   const [username, setUsername] = useAtom(usernameAtom)
   const [userAddress, setUserAddress] = useAtom(userAddressAtom)
@@ -35,7 +31,8 @@ export const useAuth = () => {
     setUserProfilePicture('')
     setUserAddress('')
   }
-
+  console.log({ username })
+  const isUsernameSet = username !== null
   return {
     // safeAuthPack,
     // setSafeAuthPack,
@@ -43,6 +40,7 @@ export const useAuth = () => {
     // setSafeAuthSignInInfo,
     // isAuthenticated,
     // setIsAuthenticated,
+    isUsernameSet,
     userProfilePicture,
     setUserProfilePicture,
     setUserAddress,
