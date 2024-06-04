@@ -5,13 +5,14 @@ export const USDC_TOKEN = {
   value: 2500.56,
   price: 1.01,
   icon: '/img/usdc.png',
+  description: "Some Random Description",
 }
 export const MOCK_TOKENS = [
-  { name: 'ETH', value: 6.387, price: 14394.57, icon: '/img/eth.png' },
-  { name: 'ENS', value: 4308.1, price: 3726.88, icon: '/img/ens.png' },
-  { name: 'USDT', value: 47.883, price: 47.88, icon: '/img/usdt.png' },
-  { name: 'UNI', value: 2.64, price: 16.52, icon: '/img/uni.png' },
-  { name: 'UNII', value: 2.64, price: 16.52, icon: '/img/uni.png' },
+  { name: 'ETH', value: 6.387, price: 14394.57, icon: '/img/eth.png', description: "Some Random Description" },
+  { name: 'ENS', value: 4308.1, price: 3726.88, icon: '/img/ens.png', description: "Some Random Description" },
+  { name: 'USDT', value: 47.883, price: 47.88, icon: '/img/usdt.png', description: "Some Random Description" },
+  { name: 'UNI', value: 2.64, price: 16.52, icon: '/img/uni.png', description: "Some Random Description" },
+  { name: 'UNII', value: 2.64, price: 16.52, icon: '/img/uni.png', description: "Some Random Description" },
   USDC_TOKEN,
 ]
 

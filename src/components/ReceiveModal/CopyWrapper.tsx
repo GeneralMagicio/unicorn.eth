@@ -1,3 +1,4 @@
+import { brandColor } from '@/lib/client-providers'
 import { CheckCircleSVG, Tag } from '@ensdomains/thorin'
 import React, { useState, ReactNode } from 'react'
 
@@ -37,7 +38,7 @@ const CopyWrapper: React.FC<CopyWrapperProps> = ({
             bottom: absolute ? '12px' : '',
             left: absolute ? '0' : '',
           }}>
-          <Tag className="gap-2">
+          <Tag colorStyle={brandColor} className="gap-2">
             <CheckCircleSVG /> {copiedMessage}
           </Tag>
         </div>

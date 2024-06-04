@@ -2,6 +2,7 @@ export interface ICryptoToken {
   name: string
   price: number
   value: number
+  description: string;
   icon: string
   chain?: any // TODO: CHANGE THIS TO A VALID TYPE
   abi?: any // TODO: CHANGE THIS TO A VALID TYPE
@@ -9,6 +10,7 @@ export interface ICryptoToken {
   decimals?: number
   symbol?: string
   amount?: number
+  website?: string
 }
 
 export type Collectible = {

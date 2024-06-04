@@ -15,6 +15,7 @@ import { PlusIcon } from '../Icons/Plus'
 import { SwapIcon } from '../Icons/Swap'
 import { UNICORN_MODE } from '@/store/settings'
 import { UnicornButton } from '../UnicornButton'
+import Link from 'next/link'
 
 const createRandomHistoryArray = () => {
   const allowedStrings = ['Buy', 'Swapped', 'Received']
@@ -101,19 +102,15 @@ export const TokenDetailModal: React.FC = () => {
               ))}
               <hr />
               <Typography weight="bold">About ${token?.name}</Typography>
-              <Typography fontVariant="small">
-                Ethereum is a global, open-source platform for decentralized
-                applications. In other words, the vision is to create a world
-                computer that anyone can build applications in a decentralized
-                manner; while all states and data are distributed and publicly
-                accessible.
-              </Typography>
-              <div role="button" className="flex items-center gap-2">
-                <Typography fontVariant="small" color="textSecondary">
-                  Read more
-                </Typography>
+              <Typography fontVariant="small">{token.description}</Typography>
+              {token.website && <div role="button" className="flex items-center gap-2">
+                <Link href={token.website} target='_blank'>
+                  <Typography fontVariant="small" color="textSecondary">
+                    Read more
+                  </Typography>
+                </Link>
                 <ChevronRight />
-              </div>
+              </div>}
             </div>
 
             <div className="flex gap-4 justify-between">
@@ -125,11 +122,13 @@ export const TokenDetailModal: React.FC = () => {
               </UnicornButton>
               <UnicornButton
                 size="small"
+                // onClick={() => setActiveModal(MODAL_TYPE.BUY)}
                 prefix={<PlusIcon color="currentColor" />}>
                 Buy
               </UnicornButton>
               <UnicornButton
                 size="small"
+                onClick={() => setActiveModal(MODAL_TYPE.SWAP)}
                 prefix={<SwapIcon color="currentColor" />}>
                 Swap
               </UnicornButton>
