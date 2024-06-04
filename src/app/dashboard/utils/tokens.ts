@@ -19,6 +19,8 @@ export const createCryptoTokenObject = (
       price: prices[symbol],
       value: balance,
       symbol,
+      description: tokenInfo.description,
+      website: tokenInfo.website,
     })
   }
 

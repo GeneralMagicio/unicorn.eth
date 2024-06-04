@@ -1,10 +1,10 @@
 'use client'
 
 import Image from 'next/image'
-import { Typography } from '@ensdomains/thorin'
+import { CheckCircleSVG, Tag, Typography } from '@ensdomains/thorin'
 import { useTheme } from 'styled-components'
 import { ScanIcon } from '@/components/Icons/Scan'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { BalanceBox, UserInfo } from '@/components/Styled'
 import { useAtom } from 'jotai'
@@ -20,11 +20,13 @@ import { useBalance } from '@/hooks/useBalance'
 import UserBalance from '@/components/Dashboard/UserBalance'
 import { MODAL_TYPE } from '@/utils/modals'
 import { appConfig } from '@/config'
+import { brandColor } from '@/lib/client-providers'
 
 export default function Dashboard() {
   const theme = useTheme()
   const { canMintPOAP } = usePOAP()
   const { username, userProfilePicture, userAddress } = useAuth()
+  const [usernameCopied, setUsernameCopied] = useState(false)
   const [, setActiveModal] = useAtom(activeModalAtom)
   const [showPromotionBox, setShowPromotionBox] = useState(true)
   const account = useActiveAccount()
@@ -39,10 +41,16 @@ export default function Dashboard() {
   const copyToClipboard = (text: string) => async () => {
     try {
       await navigator.clipboard.writeText(text)
+      setUsernameCopied(true)
     } catch (err) {
       console.error('Failed to copy text: ', err)
     }
   }
+
+  useEffect(() => {
+    if (usernameCopied === true)
+      setTimeout(() => setUsernameCopied(false), 1000)
+  }, [usernameCopied])
 
   // TODO: Better error handling
   if (errors.tokensError || errors.nftsError || error) return
@@ -61,6 +69,13 @@ export default function Dashboard() {
   return (
     <>
       <header className="flex  items-center justify-between">
+        {usernameCopied && (
+          <div className="absolute left-0 top-[75px] flex w-full justify-center pt-6">
+            <Tag colorStyle={brandColor} className="gap-2">
+              <CheckCircleSVG /> {'Username copied!'}
+            </Tag>
+          </div>
+        )}
         <UserInfo onClick={copyToClipboard(userNameWithDomain)}>
           <Image
             className="rounded-full max-h-[40px] max-w-[40px]"

@@ -95,6 +95,7 @@ export type SupportedToken = {
   }[]
   decimals: number
   name: string
+  description: string
   ens_address?: string
   website: string
   logo: {
@@ -201,6 +202,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'Ether',
+    description:
+      'Ethereum (ETH) is a decentralized platform that enables smart contracts and decentralized applications (DApps) to be built and run without any downtime, fraud, control, or interference from a third party.',
     ens_address: '',
     website: 'https://ethereum.org',
     logo: {
@@ -250,6 +253,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'Wrapped Ether',
     ens_address: '',
+    description:
+      'Wrapped Ether (WETH) is a token that represents Ethereum (ETH) on the Ethereum blockchain. WETH enables the use of ETH in decentralized finance (DeFi) applications by providing compatibility with ERC-20 tokens.',
     website: 'https://weth.io/',
     logo: {
       src: '/img/ens.png',
@@ -273,6 +278,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'stETH',
+    description:
+      'Staked Ether (stETH) is a token that represents staked ETH in the Ethereum 2.0 network. It allows users to earn rewards on their ETH holdings while maintaining liquidity through the stETH token.',
     website: 'https://stake.lido.fi',
     logo: {
       src: '/img/ens.png',
@@ -316,6 +323,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 6,
     name: 'USD Tether',
+    description:
+      'Tether (USDT) is a stablecoin pegged to the US dollar, designed to maintain a stable value by being backed 1:1 with USD reserves. It is widely used for trading and transferring value within the crypto ecosystem.',
     ens_address: '',
     website: 'https://tether.to',
     logo: {
@@ -349,6 +358,8 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 6,
+    description:
+      'USD Coin (USDC.e) is a version of USDC, a stablecoin fully backed by US dollar reserves, issued on the Avalanche blockchain. It ensures fast, secure, and low-cost transactions.',
     name: 'USD//Coin',
     ens_address: '',
     website: 'https://www.centre.io',
@@ -400,6 +411,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 6,
     name: 'USD Coin',
+    description:
+      'USD Coin (USDC) is a fully collateralized stablecoin pegged to the US dollar. It is widely used for trading, lending, and as a stable store of value in the cryptocurrency ecosystem.',
     ens_address: '',
     website: 'https://www.centre.io',
     logo: {
@@ -431,6 +444,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'Binance Coin',
     ens_address: '',
+    description:
+      'Binance Coin (BNB) is the native cryptocurrency of the Binance exchange. It is used to pay for transaction fees on the platform and can also be used for various applications on the Binance Chain.',
     website: 'https://www.binance.com',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png',
@@ -475,6 +490,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'LINK Chainlink',
     ens_address: '',
+    description:
+      'Chainlink (LINK) is a decentralized oracle network that provides real-world data to smart contracts on the blockchain. LINK tokens are used to pay for data services within the Chainlink ecosystem.',
     website: 'https://link.smartcontract.com',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/877/large/chainlink-new-logo.png',
@@ -509,6 +526,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'Matic Token',
     ens_address: '',
+    description:
+      'Polygon (MATIC) is a layer 2 scaling solution for Ethereum, providing faster and cheaper transactions. MATIC tokens are used for staking, transaction fees, and governance within the Polygon network.',
     website: 'https://polygon.technology/',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/4713/large/polygon.png',
@@ -541,6 +560,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 8,
     name: 'Wrapped Bitcoin',
     ens_address: '',
+    description:
+      "Wrapped Bitcoin (WBTC) is an ERC-20 token representing Bitcoin (BTC) on the Ethereum blockchain. It allows Bitcoin holders to participate in Ethereum's decentralized finance (DeFi) ecosystem.",
     website: 'https://wbtc.network',
     logo: {
       src: 'https://www.wbtc.network/assets/BitGo-favicon.ico',
@@ -570,6 +591,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'TONToken',
+    description:
+      'TON (The Open Network) is a blockchain platform originally developed by Telegram. It aims to enable fast and secure transactions, along with supporting smart contracts and decentralized applications.',
     ens_address: '',
     website: 'https://toncommunity.org',
     logo: {
@@ -595,6 +618,8 @@ export const supportedTokens: SupportedToken[] = [
     decimals: 18,
     name: 'SHIBA INU',
     ens_address: '',
+    description:
+      'Shiba Inu (SHIB) is a decentralized meme token that grew into a vibrant ecosystem. It is inspired by the Shiba Inu dog breed and aims to create a fun and community-driven project in the crypto space.',
     website: 'https://shibatoken.com',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/11939/large/shiba.png',
@@ -631,6 +656,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     ens_address: '',
+    description:
+      'Giveth (GIV) is a cryptocurrency designed to support the Giveth ecosystem, which focuses on creating a decentralized, transparent platform for charitable giving and social impact projects.',
     website: 'https://giveth.io/',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/21792/large/GIVToken_200x200.png',
@@ -666,6 +693,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 6,
     name: 'Cardano',
+    description:
+      "Cardano (ADA) is a blockchain platform for changemakers, innovators, and visionaries. ADA is the native token, used for transactions, staking, and participating in the platform's governance.",
     ens_address: 'cardano.eth',
     website: 'https://cardano.org',
     logo: {
@@ -702,6 +731,8 @@ export const supportedTokens: SupportedToken[] = [
     name: 'Ripple',
     ens_address: 'ripple.eth',
     website: 'https://ripple.com',
+    description:
+      'XRP is the native cryptocurrency of the Ripple network, designed to facilitate fast and low-cost international money transfers. It is used by financial institutions for cross-border payments.',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/4648/large/Ripple.png',
       width: 128,
@@ -733,6 +764,8 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 18,
+    description:
+      'Avalanche (AVAX) is a high-performance blockchain platform designed for decentralized applications and enterprise solutions. AVAX tokens are used for transaction fees, staking, and governance.',
     website: 'http://avax.network',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png',
@@ -759,6 +792,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'Solana',
+    description:
+      'Solana (SOL) is a high-performance blockchain supporting developers around the world in building decentralized applications and marketplaces. SOL is the native token used for transaction fees and staking.',
     website: '',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/4128/large/solana.png',
@@ -780,6 +815,8 @@ export const supportedTokens: SupportedToken[] = [
     name: 'Dogecoin',
     ens_address: '',
     decimals: 8,
+    description:
+      "Dogecoin (DOGE) is a peer-to-peer cryptocurrency featuring a likeness of the Shiba Inu dog from the 'Doge' meme as its logo. It started as a joke but has gained a large and enthusiastic community.",
     website: '',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/5/large/dogecoin.png',
@@ -802,6 +839,8 @@ export const supportedTokens: SupportedToken[] = [
         address: '0xCE7de646e7208a4Ef112cb6ed5038FA6cC6b12e3',
       },
     ],
+    description:
+      'TRON (TRX) is a blockchain platform designed to decentralize the web and enable the creation and sharing of content without intermediaries. TRX is the native token used for transactions and network operations.',
     name: 'TRON',
     decimals: 6,
     website: 'https://tron.network/',
@@ -826,6 +865,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     name: 'BNB pegged Polkadot Token',
     decimals: 18,
+    description:
+      'Polkadot (DOT) is a multi-chain blockchain platform designed to enable different blockchains to interoperate. DOT tokens are used for governance, staking, and bonding within the Polkadot ecosystem.',
     website: 'https://polkadot.network',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/12171/large/polkadot.png',
@@ -869,6 +910,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'Dai Stablecoin',
+    description:
+      'Dai (DAI) is a decentralized stablecoin pegged to the US dollar, maintained by the MakerDAO system. It is generated through collateralized debt positions and is used in various DeFi applications.',
     ens_address: '',
     website: 'https://makerdao.com',
     logo: {
@@ -898,6 +941,8 @@ export const supportedTokens: SupportedToken[] = [
     ],
     decimals: 18,
     name: 'xDai',
+    description:
+      'xDai (xDAI) is a stablecoin pegged to the US dollar and used on the xDai Chain, which is designed for fast and inexpensive transactions. It is popular for payments and decentralized finance (DeFi) applications.',
     ens_address: '',
     logo: {
       src: '/img/ens.png',
@@ -921,6 +966,8 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 18,
+    description:
+      'Optimism (OP) is a layer 2 scaling solution for Ethereum, aimed at reducing transaction costs and increasing throughput. OP tokens are used for governance and to incentivize network participants.',
     website: 'https://app.optimism.io/governance',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/25244/large/Optimism.png',
@@ -947,6 +994,8 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 18,
+    description:
+      'Arbitrum (ARB) is a layer 2 scaling solution for Ethereum, designed to enhance the speed and reduce the cost of transactions. ARB tokens are used within the network for transaction fees and governance.',
     website: 'https://arbitrum.foundation/',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/16547/large/photo_2023-03-29_21.47.00.jpeg',
@@ -968,6 +1017,8 @@ export const supportedTokens: SupportedToken[] = [
       },
     ],
     decimals: 18,
+    description:
+      'Ethereum Name Service (ENS) is a distributed, open, and extensible naming system based on the Ethereum blockchain. ENS tokens are used for governance and incentivizing participants in the ecosystem.',
     website: 'https://ens.domains',
     logo: {
       src: 'https://assets.coingecko.com/coins/images/19785/large/acatxTm8_400x400.jpg',
@@ -984,6 +1035,8 @@ export const supportedTokens: SupportedToken[] = [
   {
     name: 'UnicornTestToken',
     symbol: 'MT',
+    description:
+      'MyToken (MT) is a cryptocurrency designed to support the MyToken ecosystem, which aims to provide real-time market data, news, and insights to cryptocurrency investors and enthusiasts.',
     addresses: [
       {
         chainId: SupportedChainIds.Sepolia,
