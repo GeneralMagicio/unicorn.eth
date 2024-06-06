@@ -32,14 +32,11 @@ import { UnicornButton } from '../UnicornButton'
 
 function Profile({
   username,
-  userProfilePicture,
   userAddress,
 }: {
   username?: string
-  userProfilePicture?: string
   userAddress: string
 }) {
-  const router = useRouter()
   const { isMobile } = useDetectDevice()
   const connectedAccount = useActiveAccount()
   const [, setActiveModal] = useAtom(activeModalAtom)
@@ -123,7 +120,13 @@ function Profile({
         </div>
         <div
           role="button"
-          onClick={() => router.push('/login')}
+          onClick={() => {
+            window.open(
+              appConfig.isDevMode
+                ? '/login'
+                : process.env.NEXT_PUBLIC_WALLET_DOMAIN
+            )
+          }}
           className="flex flex-col justify-center gap-1 ">
           <Typography color="initial">
             Get your own {process.env.NEXT_PUBLIC_OFFCHIAN_ENS_DOMAIN} wallet

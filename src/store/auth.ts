@@ -1,12 +1,14 @@
+import { getThirdWebStorageValues } from '@/lib/third-web/storage'
 import { Provider } from 'ethers'
 import { atom } from 'jotai'
 
 // export const userInfoAtom = atom<UserInfo | null>(null)
-export const usernameAtom = atom<string>('')
+export const usernameAtom = atom<string | null>(null)
 export const userAddressAtom = atom<string>('')
 export const userEmailAtom = atom<string>('')
 export const userProfilePictureAtom = atom<string>('')
-export const isAutoConnectingAtom = atom<boolean | undefined>(undefined)
+export const isAutoConnectingAtom = atom<boolean | undefined>(false)
+
 export const isSettingEnsInfoAtom = atom<boolean | undefined>(false)
 // export const safeAuthPackAtom = atom<SafeAuthPack | null>(null)
 // export const safeAuthSignInInfoAtom = atom<AuthKitSignInData | null>(null)

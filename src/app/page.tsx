@@ -17,9 +17,10 @@ import { getSubdomain } from '@/utils/helpers'
 import { useRouter } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import useSWR from 'swr'
-// import { useIsAutoConnecting } from 'thirdweb/react'
+
 import Profile from '@/components/Profile'
 import { FullPageSpinner } from '@/components/FullPageSpinner'
+import { appConfig } from '@/config'
 
 // TODO: to be removed
 const getSubdomainParam = () =>
@@ -28,7 +29,7 @@ const getSubdomainParam = () =>
 
 export default function Home() {
   const router = useRouter()
-  const { username } = useAuth()
+  const { username, isUsernameSet } = useAuth()
   const [, setCurrentPublicProfile] = useAtom(currentPublicProfileAtom)
   const [, setCurrentPublicProfileName] = useAtom(currentPublicProfileNameAtom)
 
@@ -40,7 +41,6 @@ export default function Home() {
   )
 
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
-  // const isAutoConnecting = useIsAutoConnecting()
 
   const { data, isLoading } = useSWR('account-username', () =>
     subname
@@ -61,17 +61,27 @@ export default function Home() {
     }
   }, [address, subname])
 
-  useEffect(() => {
-    if (!username && !isLoading && !address) {
-      router.replace('/login')
+  if (!username && !isLoading && !address) {
+    if (appConfig.isDevMode) return router.replace('/login')
+    else {
+      return window.location.replace(
+        `${process.env.NEXT_PUBLIC_WALLET_DOMAIN || ''}/login`
+      )
     }
-    // TODO: we can enable auto redication to dashboard whenever the subname is the logged in user
-    // if (username && username === subname) {
-    //   router.replace('/dashboard')
-    // }
-  }, [router, isLoading, address])
+  }
+  if (username && username === subname) {
+    return router.replace('/dashboard')
+  }
 
-  if (isLoading || !subname || !data?.data) return <FullPageSpinner />
+  console.log({
+    CCCC: isLoading || !subname || !isUsernameSet || !data?.data,
+    isLoading,
+    subname,
+    isUsernameSet,
+    d: data?.data,
+  })
+  if (isLoading || !subname || !isUsernameSet || !data?.data)
+    return <FullPageSpinner />
 
   return (
     <div className="flex w-full grow flex-col">

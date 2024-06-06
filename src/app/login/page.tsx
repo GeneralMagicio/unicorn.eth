@@ -17,13 +17,17 @@ import { createSmartWallet } from '@/lib/third-web/methods'
 import { useIsAutoConnecting } from '@/lib/third-web/AutoConnect'
 import { useAtom } from 'jotai'
 import { isSettingEnsInfoAtom } from '@/store'
-import { LAST_CONNECT_PERSONAL_WALLET_ID } from '@/lib/third-web/constants'
 import { appConfig } from '@/config'
 import { UploadIcon } from '@/components/Icons/Upload'
 import { useUploadProfilePicture } from '@/hooks/useUploadProfilePicture'
 import { UNICORN_MODE } from '@/store/settings'
 import { useTheme } from 'styled-components'
 import { UnicornButton } from '@/components/UnicornButton'
+import { makeSubdominURL } from '@/utils/helpers'
+import {
+  LAST_CONNECT_PERSONAL_WALLET_ID,
+  clearThirdWebStorage,
+} from '@/lib/third-web/storage'
 
 const enum LoginSteps {
   WELCOME_SCREEN,
@@ -39,6 +43,7 @@ export default function Login() {
   const [error, setError] = useState('')
   const theme = useTheme()
   const { isAutoConnecting } = useIsAutoConnecting()
+
   const [isSettingEnsInfo] = useAtom(isSettingEnsInfoAtom)
   const { userProfilePicture, isUploading, handleFileChange, inputRef } =
     useUploadProfilePicture()
@@ -71,10 +76,16 @@ export default function Login() {
   useEffect(() => {
     // Check for signed in users
     if (wallet && username && !chosenUsername) {
-      router.push('/dashboard')
+      if (appConfig.isDevMode) {
+        router.push('/dashboard')
+      } else {
+        const url = makeSubdominURL(username)
+        if (url) window.location.replace(url)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallet, username, chosenUsername])
+
   const login = async () => {
     setIsSigning(true)
     try {
@@ -88,7 +99,7 @@ export default function Login() {
     if (wallet) {
       disconnect(wallet)
       clearUserInfo()
-      localStorage.removeItem(LAST_CONNECT_PERSONAL_WALLET_ID)
+      clearThirdWebStorage()
     }
   }
 
@@ -99,13 +110,16 @@ export default function Login() {
     setStep(Math.max(step - 1, 0))
   }
 
+  if (
+    isSigning ||
+    isAutoConnecting ||
+    isSettingEnsInfo ||
+    (wallet && Boolean(username))
+  )
+    return <SigningInPage />
+
   return (
     <>
-      {(isSigning ||
-        isAutoConnecting ||
-        isSettingEnsInfo ||
-        (wallet && Boolean(username))) && <SigningInPage />}
-
       <div className="bg-accent-light absolute top-0 mb-28 flex h-4/5 w-full">
         {step >= 1 && (
           <ArrowLeft
@@ -245,7 +259,12 @@ export default function Login() {
                 <UnicornButton
                   onClick={() => {
                     setUsername(chosenUsername.toLowerCase())
-                    router.push('/dashboard')
+                    if (appConfig.isDevMode) {
+                      router.push('/dashboard')
+                    } else {
+                      const url = makeSubdominURL(chosenUsername)
+                      if (url) window.location.replace(url)
+                    }
                   }}>
                   Go to wallet
                 </UnicornButton>

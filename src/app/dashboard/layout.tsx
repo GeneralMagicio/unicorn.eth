@@ -10,11 +10,13 @@ import { SendModal } from '@/components/SendModal'
 import { Settings } from '@/components/Settings'
 import { TokenDetailModal } from '@/components/TokenDetailModal'
 import { TransactionModal } from '@/components/TransactionModal'
-import { activeModalAtom, currentScanAtom } from '@/store'
+import { activeModalAtom, currentScanAtom, isSettingEnsInfoAtom } from '@/store'
 import { useAtom } from 'jotai'
 import { WithdrawModal } from '@/components/WithdrawModal'
 import { MODAL_TYPE } from '@/utils/modals'
 import { Swap } from '@/components/Swap'
+import { FullPageSpinner } from '@/components/FullPageSpinner'
+import { useAuth } from '@/hooks/useAuth'
 
 export default function DashboardLayout({
   children, // will be a page or nested layout
@@ -23,11 +25,15 @@ export default function DashboardLayout({
 }) {
   const [activeModal, setActiveModal] = useAtom(activeModalAtom)
   const [currentScan, setCurrentScan] = useAtom(currentScanAtom)
-
+  const { isUsernameSet } = useAuth()
+  console.log({ isUsernameSet })
+  if (!isUsernameSet) return <FullPageSpinner />
   return (
     <AuthGuard>
       <div className="flex w-full grow flex-col">
-        <div className="flex h-screen flex-col gap-10 px-[20px] py-10">{children}</div>
+        <div className="flex h-screen flex-col gap-10 px-[20px] py-10">
+          {children}
+        </div>
         <BottomNav />
         <TransactionModal
           open={activeModal === MODAL_TYPE.TRANSACTION}
