@@ -120,16 +120,16 @@ export default function Login() {
 
   return (
     <>
-      <div className="bg-accent-light absolute top-0 mb-28 flex h-4/5 w-full">
+      <div className="absolute -top-8 bottom-12 mb-32 h-4/5 w-full bg-accent-light">
         {step >= 1 && (
           <ArrowLeft
-            className="absolute left-5 top-10 z-10"
+            className="absolute left-5 top-12 z-10"
             onClick={handleBack}
           />
         )}
 
         <Image
-          className="object-cover"
+          className="bottom-4 "
           src={
             UNICORN_MODE
               ? '/img/logo-unicorn-landing.webp'
@@ -141,9 +141,9 @@ export default function Login() {
       </div>
 
       <div
-        className={`absolute flex flex-col justify-center min-h-[426px] bg-white inset-x-[-6px] bottom-0 rounded-t-[42px] border-[6px] ${
+        className={`absolute inset-x-[-6px] bottom-0 flex min-h-[426px] flex-col justify-center rounded-t-[42px] border-[6px] bg-white ${
           UNICORN_MODE ? 'border-accent' : 'border-transparent'
-        } border-b-transparent px-4 pt-4 pb-12`}>
+        } border-b-transparent px-4 pb-12 pt-4`}>
         <div className="flex flex-col gap-10 ">
           <Image
             src={UNICORN_MODE ? '/img/unicorn-logo.svg' : '/img/logo.svg'}
