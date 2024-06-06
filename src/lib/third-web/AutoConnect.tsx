@@ -6,7 +6,6 @@ import { WalletId, createWallet } from 'thirdweb/wallets'
 import { useAtom } from 'jotai'
 import { isAutoConnectingAtom } from '@/store'
 import { useConnect } from 'thirdweb/react'
-import { usePathname, useSearchParams } from 'next/navigation'
 import {
   setThirdWebStorageValues,
   getThirdWebStorageValues,
@@ -26,11 +25,10 @@ export const ThirdwebAutoConnect = () => {
   const { connect } = useConnect()
   const { setUsername } = useAuth()
 
-  const searchParams = useSearchParams()
-
   useEffect(() => {
     const main = async () => {
       try {
+        const searchParams = new URLSearchParams(window.location.search)
         setIsAutoConnecting(true)
 
         setThirdWebStorageValues(
@@ -52,7 +50,6 @@ export const ThirdwebAutoConnect = () => {
         await connect(smartWallet)
         console.log('CONNNECTED')
       } catch (error) {
-        console.error('Auto connect error', error)
         setIsAutoConnecting(false)
         clearThirdWebStorage()
         setUsername('')

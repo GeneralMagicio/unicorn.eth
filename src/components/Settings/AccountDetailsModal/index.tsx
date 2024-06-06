@@ -80,7 +80,7 @@ export const AccountDetailsModal: React.FC<{
   const onSubmit = (data: FormData) => {
     return nsService
       .createTextRecord({
-        label: username,
+        label: username!,
         key: EnsRecordType.account_info,
         data: encodeURIComponent(JSON.stringify(data)),
       })
@@ -105,7 +105,7 @@ export const AccountDetailsModal: React.FC<{
       //   })
       nsService
         .getSubnameMetadata({
-          label: username,
+          label: username!,
           key: EnsRecordType.account_info,
         })
         .then((data) => {
