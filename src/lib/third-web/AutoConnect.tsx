@@ -50,6 +50,7 @@ export const ThirdwebAutoConnect = () => {
         await connect(smartWallet)
         console.log('CONNNECTED')
       } catch (error) {
+        console.log({ error })
         setIsAutoConnecting(false)
         clearThirdWebStorage()
         setUsername('')
